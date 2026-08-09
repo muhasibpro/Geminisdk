@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <title>MUHASIB — Real People + Real Hand Marker + Vector Whiteboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Kalam:wght@700&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      background: #f8fafc;
+      font-family: 'Kalam', cursive, sans-serif;
+      position: relative;
+      user-select: none;
+    }
+
+    /* Soft grid whiteboard background */
+    .board-bg {
+      position: absolute;
+      inset: 0;
+      background-image: 
+        radial-gradient(#cbd5e1 1.5px, transparent 1.5px),
+        radial-gradient(#cbd5e1 1.5px, #f8fafc 1.5px);
+      background-size: 36px 36px;
+      background-position: 0 0, 18px 18px;
+      opacity: 0.6;
+    }
+
+    /* Main SVG Drawing Canvas for Vector Elements */
+    svg.canvas {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      z-index: 10;
+    }
+
+    /* Vector Path Stroke Styles */
+    .draw-stroke {
+      fill: none;
+      stroke: #1e293b;
+      stroke-width: 4.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .draw-blue {
+      fill: none;
+      stroke: #2563eb;
+      stroke-width: 5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .draw-red {
+      fill: none;
+      stroke: #dc2626;
+      stroke-width: 5.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .draw-green {
+      fill: none;
+      stroke: #16a34a;
+      stroke-width: 5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .draw-gold {
+      fill: none;
+      stroke: #d97706;
+      stroke-width: 5.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* Typography */
+    .wb-title {
+      font-family: 'Kalam', cursive;
+      font-size: 54px;
+      font-weight: 700;
+      fill: #1e3a8a;
+    }
+    .wb-subtitle {
+      font-family: 'Kalam', cursive;
+      font-size: 36px;
+      font-weight: 700;
+      fill: #1e293b;
+    }
+    .wb-text-red {
+      font-family: 'Kalam', cursive;
+      font-size: 38px;
+      font-weight: 700;
+      fill: #dc2626;
+    }
+    .wb-text-green {
+      font-family: 'Kalam', cursive;
+      font-size: 36px;
+      font-weight: 700;
+      fill: #15803d;
+    }
+
+    /* Real Photo Cutout Layer */
+    .real-people-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      pointer-events: none;
+    }
+    .person-cutout {
+      position: absolute;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.25));
+    }
+
+    /* Real Photo Hand Marker Container */
+    #real-hand-wrapper {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 400px;
+      height: 400px;
+      z-index: 999;
+      pointer-events: none;
+      transform: translate(1920px, 1080px);
+      filter: drop-shadow(12px 20px 15px rgba(15, 23, 42, 0.35));
+    }
+    #real-hand-img {
+      width: 400px;
+      height: 400px;
+      object-fit: contain;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Whiteboard Grid Background -->
+  <div class="board-bg"></div>
+
+  <!-- Real People Photo Cutouts Layer -->
+  <div class="real-people-layer">
+    <!-- Scene 1: Real Worried Merchant Photo Cutout -->
+    <img id="real-merchant-img" class="person-cutout" src="layers/real_worried_merchant.png" 
+         style="left: 120px; bottom: 40px; height: 750px; opacity: 0; transform: translateY(50px);">
+
+    <!-- Scene 2: Real Happy Cashier Photo Cutout -->
+    <img id="real-cashier-img" class="person-cutout" src="layers/real_happy_cashier.png" 
+         style="right: 80px; bottom: 40px; height: 800px; opacity: 0; transform: translateY(50px);">
+  </div>
+
+  <!-- SVG Drawing Canvas for Vector UI & Whiteboard Elements -->
+  <svg class="canvas" viewBox="0 0 1920 1080">
+    <defs>
+      <filter id="glow-gold" x="-20%" y="-20%" width="140%" height="140%">
+        <feGaussianBlur stdDeviation="6" result="blur"/>
+        <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+      </filter>
+    </defs>
+
+    <!-- ================= SCENE 1: MUAMMO (0s - 5.5s) ================= -->
+    <g id="scene-1">
+      <path id="s1-title-box" class="draw-red" d="M 600,60 L 1320,60 L 1310,135 L 610,135 Z" />
+      <text id="s1-title-text" x="660" y="115" class="wb-title" style="fill:#dc2626; font-size:48px;"></text>
+
+      <!-- Doodle Notebook & Calculator drawn next to Real Merchant -->
+      <path id="s1-notebook" class="draw-stroke" d="M 720,300 L 980,300 L 980,480 L 720,480 Z M 850,300 L 850,480 M 740,340 L 830,340 M 740,380 L 830,380 M 870,340 L 960,340" />
+      <path id="s1-calc" class="draw-stroke" d="M 1050,300 L 1250,300 L 1250,480 L 1050,480 Z M 1070,320 L 1230,320 L 1230,360 L 1070,360 Z" />
+      <text id="s1-calc-err" x="1090" y="352" font-family="'Outfit', sans-serif" font-weight="900" font-size="28" fill="#dc2626">ERROR 9999</text>
+
+      <!-- Huge Red Cross over manual system -->
+      <path id="s1-cross-1" class="draw-red" stroke-width="8" d="M 700,260 L 1300,520" />
+      <path id="s1-cross-2" class="draw-red" stroke-width="8" d="M 1300,260 L 700,520" />
+
+      <!-- Subtitle Warnings -->
+      <text id="s1-subtext-1" x="720" y="620" class="wb-text-red" style="font-size:38px;"></text>
+      <text id="s1-subtext-2" x="720" y="680" class="wb-text-red" style="font-size:38px;"></text>
+    </g>
+
+
+    <!-- ================= SCENE 2: MUHASIB POS TERMINAL (5.5s - 12.5s) ================= -->
+    <g id="scene-2" opacity="0">
+      <path id="s2-box" class="draw-blue" stroke-width="6" d="M 80,40 L 1840,40 L 1830,990 L 90,990 Z" />
+
+      <!-- Header Banner -->
+      <path id="s2-banner" class="draw-gold" stroke-width="5" d="M 500,80 L 1400,80 L 1380,165 L 520,165 Z" />
+      <text id="s2-banner-text" x="550" y="142" class="wb-title" style="fill:#d97706; font-size:50px; font-weight:bold;"></text>
+
+      <!-- Vector POS Terminal UI (Drawn Live) -->
+      <g id="s2-terminal">
+        <path id="s2-t-base" class="draw-stroke" stroke-width="5" d="M 220,680 L 580,680 L 540,580 L 260,580 Z" />
+        <path id="s2-t-screen" class="draw-blue" stroke-width="6" d="M 160,240 L 640,240 L 640,580 L 160,580 Z" />
+        <path id="s2-t-ui1" class="draw-stroke" d="M 190,270 L 420,270 L 420,430 L 190,430 Z" />
+        <path id="s2-t-ui2" class="draw-stroke" d="M 440,270 L 610,270 L 610,430 L 440,430 Z" />
+        <path id="s2-t-ui3" class="draw-green" stroke-width="4" d="M 190,450 L 610,450 L 610,550 L 190,550 Z" />
+        <text id="s2-t-price" x="220" y="520" font-family="'Outfit', sans-serif" font-weight="900" font-size="44" fill="#16a34a">150 000 SO'M</text>
+      </g>
+
+      <!-- Barcode Scanner -->
+      <g id="s2-scanner">
+        <path id="s2-sc-gun" class="draw-stroke" stroke-width="5" d="M 750,360 C 810,320 850,360 830,420 L 790,520 L 750,500 L 770,430 Z" />
+        <path id="s2-sc-laser" class="draw-red" stroke-width="6" d="M 740,375 L 645,385 M 740,385 L 645,405" />
+      </g>
+
+      <!-- Receipt Printer -->
+      <g id="s2-printer">
+        <path id="s2-pr-box" class="draw-stroke" stroke-width="5" d="M 900,450 L 1120,450 L 1100,580 L 920,580 Z" />
+        <path id="s2-pr-paper" class="draw-stroke" stroke-dasharray="6,4" d="M 950,450 L 950,260 L 1070,260 L 1070,450 Z" />
+        <path id="s2-pr-lines" class="draw-stroke" d="M 970,280 L 1050,280 M 970,310 L 1050,310 M 970,340 L 1030,340" />
+        <path id="s2-pr-check" class="draw-green" stroke-width="6" d="M 980,410 L 1005,430 L 1055,390" />
+      </g>
+
+      <text id="s2-subtext" x="180" y="740" class="wb-subtitle" style="font-size:42px; fill:#1e3a8a;"></text>
+    </g>
+
+
+    <!-- ================= SCENE 3: 4 AFZALLIK (12.5s - 19.5s) ================= -->
+    <g id="scene-3" opacity="0">
+      <path id="s3-title-line" class="draw-blue" stroke-width="5" d="M 450,70 L 1470,70" />
+      <text id="s3-title-text" x="480" y="55" class="wb-title" style="fill:#1e3a8a; font-size:46px;"></text>
+
+      <!-- Card 1 -->
+      <g id="s3-card-1">
+        <path id="s3-c1-box" class="draw-stroke" stroke-width="4" d="M 120,130 L 910,130 L 910,490 L 120,490 Z" />
+        <path id="s3-c1-icon" class="draw-gold" stroke-width="6" d="M 200,170 L 160,270 L 210,270 L 180,370 L 250,240 L 200,240 Z" />
+        <path id="s3-c1-check" class="draw-green" stroke-width="7" d="M 830,170 L 860,200 L 900,150" />
+        <text id="s3-c1-t1" x="270" y="210" class="wb-subtitle" style="font-size:38px; fill:#d97706;"></text>
+        <text id="s3-c1-t2" x="150" y="310" class="wb-subtitle" style="font-size:30px; fill:#334155;"></text>
+        <text id="s3-c1-t3" x="150" y="360" class="wb-subtitle" style="font-size:30px; fill:#334155;"></text>
+        <text id="s3-c1-t4" x="150" y="430" class="wb-text-green" style="font-size:32px;"></text>
+      </g>
+
+      <!-- Card 2 -->
+      <g id="s3-card-2">
+        <path id="s3-c2-box" class="draw-stroke" stroke-width="4" d="M 1010,130 L 1800,130 L 1800,490 L 1010,490 Z" />
+        <path id="s3-c2-icon" class="draw-blue" stroke-width="5" d="M 1060,210 L 1130,170 L 1200,210 L 1200,290 L 1130,330 L 1060,290 Z M 1060,210 L 1130,250 L 1200,210 M 1130,250 L 1130,330" />
+        <path id="s3-c2-check" class="draw-green" stroke-width="7" d="M 1720,170 L 1750,200 L 1790,150" />
+        <text id="s3-c2-t1" x="1220" y="210" class="wb-subtitle" style="font-size:38px; fill:#2563eb;"></text>
+        <text id="s3-c2-t2" x="1050" y="310" class="wb-subtitle" style="font-size:30px; fill:#334155;"></text>
+        <text id="s3-c2-t3" x="1050" y="360" class="wb-subtitle" style="font-size:30px; fill:#334155;"></text>
+        <text id="s3-c2-t4" x="1050" y="430" class="wb-text-green" style="font-size:32px;"></text>
+      </g>
+
+      <!-- Card 3 -->
+      <g id="s3-card-3">
+        <path id="s3-c3-box" class="draw-stroke" stroke-width="4" d="M 120,530 L 910,530 L 910,990 L 120,990 Z" />
+        <path id="s3-c3-icon" class="draw-green" stroke-width="6" d="M 160,710 L 160,590 M 160,710 L 300,710 M 180,690 L 210,650 L 240,670 L 290,600 M 270,600 L 290,600 L 290,620" />
+        <path id="s3-c3-check" class="draw-green" stroke-width="7" d="M 830,570 L 860,600 L 900,550" />
+        <text id="s3-c3-t1" x="310" y="610" class="wb-subtitle" style="font-size:38px; fill:#16a34a;"></text>
+        <text id="s3-c3-t2" x="150" y="770" class="wb-subtitle" style="font-size:30px; fill:#334155;"></text>
+        <text id="s3-c3-t3" x="150" y="820" class="wb-subtitle" style="font-size:30px; fill:#334155;"></text>
+        <text id="s3-c3-t4" x="150" y="900" class="wb-text-green" style="font-size:32px;"></text>
+      </g>
+
+      <!-- Card 4 -->
+      <g id="s3-card-4">
+        <path id="s3-c4-box" class="draw-stroke" stroke-width="4" d="M 1010,530 L 1800,530 L 1800,990 L 1010,990 Z" />
+        <path id="s3-c4-icon" class="draw-blue" stroke-width="5" d="M 1050,590 L 1120,590 L 1120,720 L 1050,720 Z M 1090,640 L 1140,620 L 1125,670 L 1110,655" />
+        <path id="s3-c4-check" class="draw-green" stroke-width="7" d="M 1720,570 L 1750,600 L 1790,550" />
+        <text id="s3-c4-t1" x="1150" y="610" class="wb-subtitle" style="font-size:38px; fill:#2563eb;"></text>
+        <text id="s3-c4-t2" x="1050" y="770" class="wb-subtitle" style="font-size:30px; fill:#334155;"></text>
+        <text id="s3-c4-t3" x="1050" y="820" class="wb-subtitle" style="font-size:30px; fill:#334155;"></text>
+        <text id="s3-c4-t4" x="1050" y="900" class="wb-text-green" style="font-size:32px;"></text>
+      </g>
+    </g>
+
+
+    <!-- ================= SCENE 4: YAKUN (19.5s - 25.5s) ================= -->
+    <g id="scene-4" opacity="0">
+      <path id="s4-badge" class="draw-gold" stroke-width="8" filter="url(#glow-gold)" d="M 250,90 L 1670,90 L 1700,470 L 220,470 Z" />
+      <text id="s4-badge-t1" x="320" y="220" class="wb-title" style="fill:#d97706; font-size:72px; font-weight:bold;"></text>
+      <text id="s4-badge-t2" x="360" y="350" class="wb-title" style="fill:#16a34a; font-size:64px; font-weight:bold;"></text>
+
+      <path id="s4-star-1" class="draw-gold" stroke-width="5" d="M 160,170 L 180,130 L 200,170 L 240,190 L 200,210 L 180,250 L 160,210 L 120,190 Z" />
+      <path id="s4-star-2" class="draw-gold" stroke-width="5" d="M 1730,210 L 1750,170 L 1770,210 L 1810,230 L 1770,250 L 1750,290 L 1730,250 L 1690,230 Z" />
+
+      <path id="s4-contact-box" class="draw-blue" stroke-width="6" d="M 300,550 L 1620,550 L 1600,960 L 320,960 Z" />
+      <text id="s4-logo-text" x="610" y="650" class="wb-title" style="fill:#1e3a8a; font-size:68px; font-weight:bold;"></text>
+
+      <path id="s4-phone-icon" class="draw-green" stroke-width="6" d="M 400,770 C 400,730 450,730 450,770 C 450,820 390,850 430,880" />
+      <text id="s4-phone-text" x="490" y="800" class="wb-subtitle" style="font-size:48px; fill:#15803d; font-weight:bold;"></text>
+
+      <path id="s4-web-icon" class="draw-blue" stroke-width="6" d="M 1100,780 C 1100,730 1180,730 1180,780 C 1180,830 1100,830 1100,780 Z" />
+      <text id="s4-web-text" x="1200" y="800" class="wb-subtitle" style="font-size:48px; fill:#1d4ed8; font-weight:bold;"></text>
+
+      <path id="s4-final-check" class="draw-green" stroke-width="12" d="M 100,480 L 280,660 L 720,200" />
+    </g>
+
+  </svg>
+
+  <!-- ================= REAL PHOTO HAND MARKER ================= -->
+  <div id="real-hand-wrapper">
+    <img id="real-hand-img" src="layers/real_hand_pen.png" alt="Real Photo Hand Marker">
+  </div>
+
+  <script>
+    window.DURATION = 25.5;
+
+    function seg(t, t0, t1) {
+      if (t <= t0) return 0;
+      if (t >= t1) return 1;
+      return (t - t0) / (t1 - t0);
+    }
+
+    const pathElements = [];
+    document.querySelectorAll('path[id]').forEach(path => {
+      try {
+        const len = path.getTotalLength();
+        path.style.strokeDasharray = len;
+        path.style.strokeDashoffset = len;
+        pathElements.push({ id: path.id, el: path, len: len });
+      } catch(e) {}
+    });
+
+    function drawStroke(id, progress) {
+      const item = pathElements.find(p => p.id === id);
+      if (!item) return { x: 960, y: 540 };
+      const pClamped = Math.max(0, Math.min(1, progress));
+      item.el.style.strokeDashoffset = item.len * (1 - pClamped);
+      try {
+        const pt = item.el.getPointAtLength(item.len * pClamped);
+        return { x: pt.x, y: pt.y };
+      } catch(e) {
+        return { x: 960, y: 540 };
+      }
+    }
+
+    function writeText(id, fullStr, progress, xStart, yStart, xEnd) {
+      const el = document.getElementById(id);
+      if (!el) return { x: xStart, y: yStart };
+      const pClamped = Math.max(0, Math.min(1, progress));
+      const chars = Math.floor(fullStr.length * pClamped);
+      el.textContent = fullStr.substring(0, chars);
+      const currentX = xStart + (xEnd - xStart) * pClamped;
+      return { x: currentX, y: yStart };
+    }
+
+    // Real Photo Marker Tip Offset calibration (tip detected at x=185, y=762 in 1024x1024, scaled to 400px width => offset ~72px, 298px)
+    const handWrapper = document.getElementById('real-hand-wrapper');
+    function setHandPos(x, y, opacity = 1) {
+      const handX = x - 72;
+      const handY = y - 298;
+      handWrapper.style.transform = `translate(${handX}px, ${handY}px)`;
+      handWrapper.style.opacity = opacity;
+    }
+
+    const realMerchant = document.getElementById('real-merchant-img');
+    const realCashier = document.getElementById('real-cashier-img');
+
+    const scene1 = document.getElementById('scene-1');
+    const scene2 = document.getElementById('scene-2');
+    const scene3 = document.getElementById('scene-3');
+    const scene4 = document.getElementById('scene-4');
+
+    window.SEEK = function(t) {
+      let handPt = { x: 1750, y: 950 };
+
+      // ---------------- SCENE 1 (0.0s - 5.5s) ----------------
+      if (t < 5.5) {
+        scene1.style.opacity = 1; scene2.style.opacity = 0; scene3.style.opacity = 0; scene4.style.opacity = 0;
+
+        // Show Real Worried Merchant Photo Cutout
+        const mP = seg(t, 0.2, 0.8);
+        realMerchant.style.opacity = mP;
+        realMerchant.style.transform = `translateY(${(1 - mP) * 50}px)`;
+        realCashier.style.opacity = 0;
+
+        if (t >= 0.2 && t < 1.2) {
+          drawStroke('s1-title-box', seg(t, 0.2, 0.8));
+          handPt = writeText('s1-title-text', "KASSADAGI MUAMMO?", seg(t, 0.5, 1.2), 660, 115, 1250);
+        } else if (t >= 1.2) {
+          drawStroke('s1-title-box', 1); writeText('s1-title-text', "KASSADAGI MUAMMO?", 1, 660, 115, 1250);
+        }
+
+        if (t >= 1.2 && t < 3.0) {
+          drawStroke('s1-notebook', seg(t, 1.2, 2.0));
+          handPt = drawStroke('s1-calc', seg(t, 2.0, 3.0));
+        } else if (t >= 3.0) {
+          drawStroke('s1-notebook', 1); drawStroke('s1-calc', 1);
+        }
+
+        if (t >= 3.0 && t < 5.5) {
+          drawStroke('s1-cross-1', seg(t, 3.0, 3.6));
+          handPt = drawStroke('s1-cross-2', seg(t, 3.6, 4.2));
+          writeText('s1-subtext-1', "❌ Daftarlarda chalkashlik va dasta navbatlar...", seg(t, 4.0, 4.8), 720, 620, 1400);
+          handPt = writeText('s1-subtext-2', "❌ Soliq va kassa tushumida xatoliklar!", seg(t, 4.7, 5.5), 720, 680, 1400);
+        } else if (t >= 5.5) {
+          drawStroke('s1-cross-1', 1); drawStroke('s1-cross-2', 1);
+          writeText('s1-subtext-1', "❌ Daftarlarda chalkashlik va dasta navbatlar...", 1, 720, 620, 1400);
+          writeText('s1-subtext-2', "❌ Soliq va kassa tushumida xatoliklar!", 1, 720, 680, 1400);
+        }
+      }
+
+      // ---------------- SCENE 2 (5.5s - 12.5s) ----------------
+      else if (t >= 5.5 && t < 12.5) {
+        scene1.style.opacity = Math.max(0, 1 - seg(t, 5.5, 6.0));
+        scene2.style.opacity = seg(t, 5.5, 6.0);
+        scene3.style.opacity = 0; scene4.style.opacity = 0;
+
+        realMerchant.style.opacity = Math.max(0, 1 - seg(t, 5.5, 6.0));
+
+        // Show Real Happy Cashier Photo Cutout
+        const cP = seg(t, 6.0, 6.8);
+        realCashier.style.opacity = cP;
+        realCashier.style.transform = `translateY(${(1 - cP) * 50}px)`;
+
+        if (t >= 5.8 && t < 7.2) {
+          drawStroke('s2-box', seg(t, 5.8, 6.5));
+          drawStroke('s2-banner', seg(t, 6.3, 6.8));
+          handPt = writeText('s2-banner-text', "YECHIM: MUHASIB POS KASSA", seg(t, 6.6, 7.2), 550, 142, 1300);
+        } else if (t >= 7.2) {
+          drawStroke('s2-box', 1); drawStroke('s2-banner', 1);
+          writeText('s2-banner-text', "YECHIM: MUHASIB POS KASSA", 1, 550, 142, 1300);
+        }
+
+        if (t >= 7.2 && t < 9.5) {
+          drawStroke('s2-t-base', seg(t, 7.2, 7.6));
+          drawStroke('s2-t-screen', seg(t, 7.6, 8.2));
+          drawStroke('s2-t-ui1', seg(t, 8.2, 8.6));
+          drawStroke('s2-t-ui2', seg(t, 8.6, 8.9));
+          handPt = drawStroke('s2-t-ui3', seg(t, 8.9, 9.5));
+        } else if (t >= 9.5) {
+          ['s2-t-base', 's2-t-screen', 's2-t-ui1', 's2-t-ui2', 's2-t-ui3'].forEach(id => drawStroke(id, 1));
+        }
+
+        if (t >= 9.5 && t < 11.2) {
+          drawStroke('s2-sc-gun', seg(t, 9.5, 9.9));
+          drawStroke('s2-sc-laser', seg(t, 9.9, 10.2));
+          drawStroke('s2-pr-box', seg(t, 10.2, 10.5));
+          drawStroke('s2-pr-paper', seg(t, 10.5, 10.8));
+          drawStroke('s2-pr-lines', seg(t, 10.8, 11.0));
+          handPt = drawStroke('s2-pr-check', seg(t, 11.0, 11.2));
+        } else if (t >= 11.2) {
+          ['s2-sc-gun', 's2-sc-laser', 's2-pr-box', 's2-pr-paper', 's2-pr-lines', 's2-pr-check'].forEach(id => drawStroke(id, 1));
+        }
+
+        if (t >= 11.2 && t < 12.5) {
+          handPt = writeText('s2-subtext', "✨ Savdoni 100% avtomatlashtiruvchi aqlli dastur!", seg(t, 11.2, 12.5), 180, 740, 1100);
+        } else if (t >= 12.5) {
+          writeText('s2-subtext', "✨ Savdoni 100% avtomatlashtiruvchi aqlli dastur!", 1, 180, 740, 1100);
+        }
+      }
+
+      // ---------------- SCENE 3 (12.5s - 19.5s) ----------------
+      else if (t >= 12.5 && t < 19.5) {
+        scene1.style.opacity = 0;
+        scene2.style.opacity = Math.max(0, 1 - seg(t, 12.5, 13.0));
+        scene3.style.opacity = seg(t, 12.5, 13.0);
+        scene4.style.opacity = 0;
+
+        realMerchant.style.opacity = 0;
+        realCashier.style.opacity = Math.max(0, 1 - seg(t, 12.5, 13.0));
+
+        if (t >= 12.6 && t < 13.5) {
+          drawStroke('s3-title-line', seg(t, 12.6, 13.0));
+          handPt = writeText('s3-title-text', "MUHASIB POS KASSANING 4 AFZALLIGI", seg(t, 12.8, 13.5), 480, 55, 1400);
+        } else if (t >= 13.5) {
+          drawStroke('s3-title-line', 1); writeText('s3-title-text', "MUHASIB POS KASSANING 4 AFZALLIGI", 1, 480, 55, 1400);
+        }
+
+        // Card 1
+        if (t >= 13.5 && t < 15.0) {
+          drawStroke('s3-c1-box', seg(t, 13.5, 13.8));
+          drawStroke('s3-c1-icon', seg(t, 13.8, 14.1));
+          drawStroke('s3-c1-check', seg(t, 14.1, 14.3));
+          writeText('s3-c1-t1', "⚡ 1-Soniyada Skanerlash", seg(t, 14.0, 14.4), 270, 210, 750);
+          writeText('s3-c1-t2', "• Shtrix-kod bilan tovarlarni", seg(t, 14.3, 14.7), 150, 310, 650);
+          writeText('s3-c1-t3', "  lahzada kassa chekiga urish", seg(t, 14.5, 14.9), 150, 360, 650);
+          handPt = writeText('s3-c1-t4', "✅ Navbatlar 3 baravar qisqaradi!", seg(t, 14.7, 15.0), 150, 430, 750);
+        } else if (t >= 15.0) {
+          ['s3-c1-box', 's3-c1-icon', 's3-c1-check'].forEach(id => drawStroke(id, 1));
+          writeText('s3-c1-t1', "⚡ 1-Soniyada Skanerlash", 1, 270, 210, 750);
+          writeText('s3-c1-t2', "• Shtrix-kod bilan tovarlarni", 1, 150, 310, 650);
+          writeText('s3-c1-t3', "  lahzada kassa chekiga urish", 1, 150, 360, 650);
+          writeText('s3-c1-t4', "✅ Navbatlar 3 baravar qisqaradi!", 1, 150, 430, 750);
+        }
+
+        // Card 2
+        if (t >= 15.0 && t < 16.5) {
+          drawStroke('s3-c2-box', seg(t, 15.0, 15.3));
+          drawStroke('s3-c2-icon', seg(t, 15.3, 15.6));
+          drawStroke('s3-c2-check', seg(t, 15.6, 15.8));
+          writeText('s3-c2-t1', "📦 Ombor Nazorati", seg(t, 15.5, 15.9), 1220, 210, 1600);
+          writeText('s3-c2-t2', "• Qolgan mahsulotlar soni va", seg(t, 15.8, 16.2), 1050, 310, 1550);
+          writeText('s3-c2-t3', "  muddati haqida avto-ogohlantirish", seg(t, 16.0, 16.4), 1050, 360, 1650);
+          handPt = writeText('s3-c2-t4', "✅ Kamomat va yo'qotishlarga barham!", seg(t, 16.2, 16.5), 1050, 430, 1700);
+        } else if (t >= 16.5) {
+          ['s3-c2-box', 's3-c2-icon', 's3-c2-check'].forEach(id => drawStroke(id, 1));
+          writeText('s3-c2-t1', "📦 Ombor Nazorati", 1, 1220, 210, 1600);
+          writeText('s3-c2-t2', "• Qolgan mahsulotlar soni va", 1, 1050, 310, 1550);
+          writeText('s3-c2-t3', "  muddati haqida avto-ogohlantirish", 1, 1050, 360, 1650);
+          writeText('s3-c2-t4', "✅ Kamomat va yo'qotishlarga barham!", 1, 1050, 430, 1700);
+        }
+
+        // Card 3
+        if (t >= 16.5 && t < 18.0) {
+          drawStroke('s3-c3-box', seg(t, 16.5, 16.8));
+          drawStroke('s3-c3-icon', seg(t, 16.8, 17.1));
+          drawStroke('s3-c3-check', seg(t, 17.1, 17.3));
+          writeText('s3-c3-t1', "📊 Aniq Foyda Tahlili", seg(t, 17.0, 17.4), 310, 610, 750);
+          writeText('s3-c3-t2', "• Kunlik, haftalik va oylik", seg(t, 17.3, 17.7), 150, 770, 650);
+          writeText('s3-c3-t3', "  sof daromad va harajatlar", seg(t, 17.5, 17.9), 150, 820, 650);
+          handPt = writeText('s3-c3-t4', "✅ 100% Aniq moliya hisobi!", seg(t, 17.7, 18.0), 150, 900, 750);
+        } else if (t >= 18.0) {
+          ['s3-c3-box', 's3-c3-icon', 's3-c3-check'].forEach(id => drawStroke(id, 1));
+          writeText('s3-c3-t1', "📊 Aniq Foyda Tahlili", 1, 310, 610, 750);
+          writeText('s3-c3-t2', "• Kunlik, haftalik va oylik", 1, 150, 770, 650);
+          writeText('s3-c3-t3', "  sof daromad va harajatlar", 1, 150, 820, 650);
+          writeText('s3-c3-t4', "✅ 100% Aniq moliya hisobi!", 1, 150, 900, 750);
+        }
+
+        // Card 4
+        if (t >= 18.0 && t < 19.5) {
+          drawStroke('s3-c4-box', seg(t, 18.0, 18.3));
+          drawStroke('s3-c4-icon', seg(t, 18.3, 18.6));
+          drawStroke('s3-c4-check', seg(t, 18.6, 18.8));
+          writeText('s3-c4-t1', "📱 Telegram-Bot Nazorati", seg(t, 18.5, 18.9), 1150, 610, 1650);
+          writeText('s3-c4-t2', "• Istalgan joydan savdoni", seg(t, 18.8, 19.2), 1050, 770, 1550);
+          writeText('s3-c4-t3', "  telefoningizda kuzating", seg(t, 19.0, 19.4), 1050, 820, 1550);
+          handPt = writeText('s3-c4-t4', "✅ Biznes kaftingizda!", seg(t, 19.2, 19.5), 1050, 900, 1600);
+        } else if (t >= 19.5) {
+          ['s3-c4-box', 's3-c4-icon', 's3-c4-check'].forEach(id => drawStroke(id, 1));
+          writeText('s3-c4-t1', "📱 Telegram-Bot Nazorati", 1, 1150, 610, 1650);
+          writeText('s3-c4-t2', "• Istalgan joydan savdoni", 1, 1050, 770, 1550);
+          writeText('s3-c4-t3', "  telefoningizda kuzating", 1, 1050, 820, 1550);
+          writeText('s3-c4-t4', "✅ Biznes kaftingizda!", 1, 1050, 900, 1600);
+        }
+      }
+
+      // ---------------- SCENE 4 (19.5s - 25.5s) ----------------
+      else if (t >= 19.5) {
+        scene1.style.opacity = 0; scene2.style.opacity = 0;
+        scene3.style.opacity = Math.max(0, 1 - seg(t, 19.5, 20.0));
+        scene4.style.opacity = seg(t, 19.5, 20.0);
+
+        realMerchant.style.opacity = 0; realCashier.style.opacity = 0;
+
+        if (t >= 19.8 && t < 21.5) {
+          drawStroke('s4-badge', seg(t, 19.8, 20.4));
+          writeText('s4-badge-t1', "🚀 SAVDONGIZNI 2 BARAVAR OSHIRING!", seg(t, 20.2, 20.9), 320, 220, 1550);
+          writeText('s4-badge-t2', "100% Aniq Hisob va Zamonaviy Kassa", seg(t, 20.8, 21.4), 360, 350, 1500);
+          drawStroke('s4-star-1', seg(t, 21.0, 21.3));
+          handPt = drawStroke('s4-star-2', seg(t, 21.2, 21.5));
+        } else if (t >= 21.5) {
+          drawStroke('s4-badge', 1); drawStroke('s4-star-1', 1); drawStroke('s4-star-2', 1);
+          writeText('s4-badge-t1', "🚀 SAVDONGIZNI 2 BARAVAR OSHIRING!", 1, 320, 220, 1550);
+          writeText('s4-badge-t2', "100% Aniq Hisob va Zamonaviy Kassa", 1, 360, 350, 1500);
+        }
+
+        if (t >= 21.5 && t < 25.5) {
+          drawStroke('s4-contact-box', seg(t, 21.5, 22.0));
+          writeText('s4-logo-text', "MUHASIB POS KASSA", seg(t, 21.9, 22.5), 610, 650, 1350);
+          drawStroke('s4-phone-icon', seg(t, 22.3, 22.6));
+          writeText('s4-phone-text', "+998 (90) 123-45-67", seg(t, 22.5, 23.0), 490, 800, 950);
+          drawStroke('s4-web-icon', seg(t, 22.8, 23.1));
+          writeText('s4-web-text', "www.muhasib.uz", seg(t, 23.0, 23.5), 1200, 800, 1550);
+          handPt = drawStroke('s4-final-check', seg(t, 23.2, 24.2));
+        } else {
+          ['s4-contact-box', 's4-phone-icon', 's4-web-icon', 's4-final-check'].forEach(id => drawStroke(id, 1));
+          writeText('s4-logo-text', "MUHASIB POS KASSA", 1, 610, 650, 1350);
+          writeText('s4-phone-text', "+998 (90) 123-45-67", 1, 490, 800, 950);
+          writeText('s4-web-text', "www.muhasib.uz", 1, 1200, 800, 1550);
+        }
+      }
+
+      if (handPt && handPt.x !== undefined && handPt.y !== undefined) {
+        setHandPos(handPt.x, handPt.y, 1);
+      } else {
+        setHandPos(1800, 950, 0.5);
+      }
+    };
+  </script>
+</body>
+</html>

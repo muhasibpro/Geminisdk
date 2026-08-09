@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Capital Bank — Brend Logotip Strategiyasi & Dizayn Sistemasi</title>
+  
+  <!-- Modern Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <style>
+    :root {
+      --bg-dark: #090D16;
+      --card-bg: rgba(18, 26, 43, 0.75);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --primary-gold: #D4AF37;
+      --gold-gradient: linear-gradient(135deg, #FFE259 0%, #FFA751 100%);
+      --accent-blue: #2563EB;
+      --text-bright: #F8FAFC;
+      --text-sub: #94A3B8;
+      --text-muted: #64748B;
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-bright);
+      min-height: 100vh;
+      line-height: 1.6;
+      background-image: 
+        radial-gradient(circle at 10% 10%, rgba(37, 99, 235, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 90% 90%, rgba(212, 175, 55, 0.08) 0%, transparent 40%);
+      background-attachment: fixed;
+      padding-bottom: 80px;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Hero Header */
+    header {
+      padding: 60px 0 40px;
+      text-align: center;
+      position: relative;
+    }
+
+    .brand-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 20px;
+      border-radius: 30px;
+      background: rgba(212, 175, 55, 0.1);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      color: #E2B842;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .brand-badge i {
+      font-size: 14px;
+    }
+
+    h1.hero-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 52px;
+      font-weight: 900;
+      letter-spacing: -1.5px;
+      background: linear-gradient(135deg, #FFFFFF 40%, #CBD5E1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 18px;
+    }
+
+    p.hero-subtitle {
+      font-size: 19px;
+      color: var(--text-sub);
+      max-width: 780px;
+      margin: 0 auto 36px;
+      font-weight: 400;
+    }
+
+    /* Quick Stats Bar */
+    .concept-nav {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 50px;
+    }
+
+    .nav-btn {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid var(--card-border);
+      color: var(--text-sub);
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-btn:hover, .nav-btn.active {
+      background: rgba(37, 99, 235, 0.2);
+      border-color: rgba(56, 189, 248, 0.5);
+      color: #38BDF8;
+      transform: translateY(-2px);
+    }
+
+    .nav-btn.active {
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.3), rgba(212, 175, 55, 0.2));
+      border-color: var(--primary-gold);
+      color: #FFF;
+    }
+
+    /* Grid Layout */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 32px;
+      margin-bottom: 48px;
+    }
+
+    @media (max-width: 992px) {
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+
+    /* Cards */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      padding: 36px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.5);
+      transition: var(--transition);
+    }
+
+    .card:hover {
+      border-color: rgba(255, 255, 255, 0.18);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .card-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--text-bright);
+    }
+
+    .card-tag {
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .tag-gold { background: rgba(212, 175, 55, 0.15); color: #F59E0B; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .tag-blue { background: rgba(37, 99, 235, 0.15); color: #60A5FA; border: 1px solid rgba(96, 165, 250, 0.3); }
+    .tag-red { background: rgba(225, 29, 72, 0.15); color: #FB7185; border: 1px solid rgba(251, 113, 133, 0.3); }
+    .tag-green { background: rgba(16, 185, 129, 0.15); color: #34D399; border: 1px solid rgba(52, 211, 153, 0.3); }
+
+    /* SVG Display Canvas */
+    .logo-canvas {
+      height: 260px;
+      background: radial-gradient(circle at center, #1E293B 0%, #0F172A 100%);
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 30px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      transition: var(--transition);
+    }
+
+    .logo-canvas.light-mode {
+      background: radial-gradient(circle at center, #FFFFFF 0%, #F1F5F9 100%);
+    }
+
+    .logo-canvas svg {
+      max-width: 100%;
+      max-height: 180px;
+      filter: drop-shadow(0 12px 24px rgba(0,0,0,0.3));
+      transition: transform 0.4s ease;
+    }
+
+    .logo-canvas:hover svg {
+      transform: scale(1.05);
+    }
+
+    /* Action Buttons */
+    .action-row {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 12px 18px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #2563EB, #1D4ED8);
+      color: white;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #3B82F6, #2563EB);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-bright);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    /* Explanation Text */
+    .concept-desc {
+      color: var(--text-sub);
+      font-size: 14px;
+      margin-bottom: 20px;
+      min-height: 60px;
+    }
+
+    .feature-tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .chip {
+      font-size: 12px;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-sub);
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    /* Mockups Showcase Section */
+    .section-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 32px;
+      font-weight: 800;
+      text-align: center;
+      margin: 60px 0 16px;
+    }
+
+    .section-desc {
+      text-align: center;
+      color: var(--text-sub);
+      max-width: 600px;
+      margin: 0 auto 40px;
+    }
+
+    .mockup-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 32px;
+      margin-bottom: 60px;
+    }
+
+    @media (max-width: 768px) {
+      .mockup-grid { grid-template-columns: 1fr; }
+    }
+
+    .mockup-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    }
+
+    .mockup-img {
+      width: 100%;
+      height: 320px;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+
+    .mockup-card:hover .mockup-img {
+      transform: scale(1.03);
+    }
+
+    .mockup-info {
+      padding: 24px;
+    }
+
+    .mockup-info h3 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .mockup-info p {
+      color: var(--text-sub);
+      font-size: 14px;
+    }
+
+    /* SVG Modal / Code Drawer */
+    .code-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(10px);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .code-modal.active {
+      display: flex;
+    }
+
+    .modal-box {
+      background: #0F172A;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 20px;
+      max-width: 720px;
+      width: 100%;
+      padding: 30px;
+      position: relative;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--text-sub);
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    pre code {
+      display: block;
+      background: #020617;
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #38BDF8;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      max-height: 380px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    /* Toast notification */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: #10B981;
+      color: white;
+      padding: 14px 24px;
+      border-radius: 12px;
+      font-weight: 600;
+      box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <div class="brand-badge">
+        <i class="fa-solid fa-building-columns"></i> CAPITAL BANK BRAND IDENTITY
+      </div>
+      <h1 class="hero-title">Capital Bank Logotip Konsepsiyalari</h1>
+      <p class="hero-subtitle">
+        Zamonaviy bank va moliya brendingining premium 4 xil yo'nalishdagi eksklyuziv SVG logotip variantlari. Barcha logotiplar vektor shaklida, istalgan o'lchamda va rangda ishlatish uchun moslashtirilgan.
+      </p>
+
+      <div class="concept-nav">
+        <button class="nav-btn active" onclick="scrollToSection('all')"><i class="fa-solid fa-grid-2"></i> Barcha Konsepsiyalar</button>
+        <button class="nav-btn" onclick="scrollToSection('mockups')"><i class="fa-solid fa-eye"></i> Real Amaliyotda (Mockups)</button>
+      </div>
+    </header>
+
+    <!-- 4 Logo Concepts Grid -->
+    <div class="grid-2" id="concepts-grid">
+
+      <!-- Concept 1: Sovereign Shield Monogram -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">1. Sovereign Shield ("CB")</div>
+          <span class="card-tag tag-gold">Premium & Xavfsizlik</span>
+        </div>
+        
+        <div class="logo-canvas" id="canvas-1">
+          <svg viewBox="0 0 450 140" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="goldGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#FFE259"/>
+                <stop offset="50%" stop-color="#D4AF37"/>
+                <stop offset="100%" stop-color="#9A7B1C"/>
+              </linearGradient>
+              <linearGradient id="blueGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#3B82F6"/>
+                <stop offset="100%" stop-color="#1D4ED8"/>
+              </linearGradient>
+              <filter id="glow1" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#D4AF37" flood-opacity="0.3"/>
+              </filter>
+            </defs>
+
+            <!-- Emblem -->
+            <g transform="translate(10, 10)">
+              <!-- Shield background path -->
+              <path d="M60 10 L105 30 V70 C105 95 60 115 60 115 C60 115 15 95 15 70 V30 Z" fill="url(#blueGrad1)" opacity="0.2"/>
+              <!-- Outer C shape -->
+              <path d="M75 32 C45 32 30 52 30 70 C30 88 45 108 75 108 C90 108 100 100 105 92" fill="none" stroke="url(#goldGrad1)" stroke-width="11" stroke-linecap="round" filter="url(#glow1)"/>
+              <!-- Inner B / Growth Arrow -->
+              <path d="M58 45 H82 C92 45 98 52 98 60 C98 68 90 73 80 73 H60 M60 73 H85 C96 73 102 80 102 89 C102 98 94 104 82 104 H58 V45 Z" fill="none" stroke="#FFFFFF" stroke-width="7" stroke-linejoin="round"/>
+            </g>
+
+            <!-- Typography -->
+            <g transform="translate(140, 52)">
+              <text x="0" y="24" font-family="'Outfit', sans-serif" font-weight="900" font-size="30" fill="#FFFFFF" letter-spacing="1">CAPITAL</text>
+              <text x="0" y="52" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="20" fill="url(#goldGrad1)" letter-spacing="7">BANK</text>
+            </g>
+          </svg>
+        </div>
+
+        <p class="concept-desc">
+          Geo-Shield strukturasi va ultra-zamonaviy "CB" monogrammasi birikmasi. Qalqon — moliya xavfsizligi va ishonchni, yuqoriga harakatlanuvchi kontur esa kapital o'sishini anglatadi.
+        </p>
+
+        <div class="feature-tags">
+          <span class="chip"><i class="fa-solid fa-shield"></i> Ishonch</span>
+          <span class="chip"><i class="fa-solid fa-crown"></i> Premium</span>
+          <span class="chip"><i class="fa-solid fa-chart-line"></i> O'sish</span>
+        </div>
+
+        <div class="action-row">
+          <button class="btn btn-primary" onclick="copySVG(1)"><i class="fa-regular fa-copy"></i> SVG Kod Olish</button>
+          <button class="btn btn-secondary" onclick="toggleCanvasBg(1)"><i class="fa-solid fa-circle-half-stroke"></i> Fon Switch</button>
+        </div>
+      </div>
+
+      <!-- Concept 2: Imperial Crown Pillars -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">2. Sovereign Pillars (Klassik & Obro')</div>
+          <span class="card-tag tag-red">Barqarorlik & Qudrat</span>
+        </div>
+
+        <div class="logo-canvas" id="canvas-2">
+          <svg viewBox="0 0 450 140" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="goldGrad2" x1="0%" y1="100%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#B8860B"/>
+                <stop offset="50%" stop-color="#FFD700"/>
+                <stop offset="100%" stop-color="#FFF8DC"/>
+              </linearGradient>
+              <linearGradient id="burgundyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#881337"/>
+                <stop offset="100%" stop-color="#4C0519"/>
+              </linearGradient>
+            </defs>
+
+            <!-- Emblem -->
+            <g transform="translate(20, 15)">
+              <!-- Outer Arch -->
+              <path d="M20 70 C20 30 50 15 80 15 C110 15 140 30 140 70" fill="none" stroke="url(#goldGrad2)" stroke-width="8" stroke-linecap="round"/>
+              <!-- 3 Pillar Bars -->
+              <rect x="42" y="45" width="14" height="55" rx="4" fill="url(#goldGrad2)"/>
+              <rect x="73" y="32" width="14" height="68" rx="4" fill="url(#goldGrad2)"/>
+              <rect x="104" y="45" width="14" height="55" rx="4" fill="url(#goldGrad2)"/>
+              <!-- Base platform -->
+              <path d="M25 106 H135" stroke="url(#goldGrad2)" stroke-width="6" stroke-linecap="round"/>
+            </g>
+
+            <!-- Typography -->
+            <g transform="translate(170, 52)">
+              <text x="0" y="24" font-family="'Outfit', sans-serif" font-weight="900" font-size="32" fill="#FFFFFF" letter-spacing="1.5">CAPITAL</text>
+              <text x="0" y="52" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="18" fill="#E2E8F0" letter-spacing="9">BANK</text>
+            </g>
+          </svg>
+        </div>
+
+        <p class="concept-desc">
+          Moliya institutlarining 3 ta ustuni: Barqarorlik, Kapital va Ishonch. Rim arxitekturasi va zamonaviy minimalizm uyg'unligida yaratilgan obro'li brend belgisi.
+        </p>
+
+        <div class="feature-tags">
+          <span class="chip"><i class="fa-solid fa-landmark"></i> Institutsional</span>
+          <span class="chip"><i class="fa-solid fa-gem"></i> Obro'</span>
+          <span class="chip"><i class="fa-solid fa-coins"></i> Kapital</span>
+        </div>
+
+        <div class="action-row">
+          <button class="btn btn-primary" onclick="copySVG(2)"><i class="fa-regular fa-copy"></i> SVG Kod Olish</button>
+          <button class="btn btn-secondary" onclick="toggleCanvasBg(2)"><i class="fa-solid fa-circle-half-stroke"></i> Fon Switch</button>
+        </div>
+      </div>
+
+      <!-- Concept 3: Neo-Fintech Orbit -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">3. Neo-Fintech Orbit (Raqamli Bank)</div>
+          <span class="card-tag tag-blue">Innovatsiya & Neo-Bank</span>
+        </div>
+
+        <div class="logo-canvas" id="canvas-3">
+          <svg viewBox="0 0 450 140" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="cyanGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#06B6D4"/>
+                <stop offset="50%" stop-color="#3B82F6"/>
+                <stop offset="100%" stop-color="#6366F1"/>
+              </linearGradient>
+            </defs>
+
+            <!-- Emblem -->
+            <g transform="translate(15, 10)">
+              <!-- Dynamic Orbit Rings -->
+              <circle cx="65" cy="60" r="45" fill="none" stroke="url(#cyanGrad)" stroke-width="12" stroke-dasharray="210 70" stroke-linecap="round" transform="rotate(-45 65 60)"/>
+              <circle cx="65" cy="60" r="28" fill="none" stroke="#FFFFFF" stroke-width="7" stroke-dasharray="120 40" stroke-linecap="round" transform="rotate(135 65 60)"/>
+              <!-- Center glowing core -->
+              <circle cx="65" cy="60" r="10" fill="#06B6D4"/>
+            </g>
+
+            <!-- Typography -->
+            <g transform="translate(145, 52)">
+              <text x="0" y="24" font-family="'Outfit', sans-serif" font-weight="900" font-size="30" fill="#FFFFFF" letter-spacing="1">CAPITAL<tspan fill="#06B6D4">.</tspan></text>
+              <text x="0" y="52" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="20" fill="#94A3B8" letter-spacing="7">BANK</text>
+            </g>
+          </svg>
+        </div>
+
+        <p class="concept-desc">
+          Raqamli ekotizim va to'lov orbitasini tasvirlaydigan futuristik dinamik logotip. Mobil ilovalar, fintech fintech ekotizimi va tezkor o'tkazmalar uchun ideal yechim.
+        </p>
+
+        <div class="feature-tags">
+          <span class="chip"><i class="fa-solid fa-bolt"></i> Tezkor</span>
+          <span class="chip"><i class="fa-solid fa-mobile-screen"></i> Digital First</span>
+          <span class="chip"><i class="fa-solid fa-network-wired"></i> Ekotizim</span>
+        </div>
+
+        <div class="action-row">
+          <button class="btn btn-primary" onclick="copySVG(3)"><i class="fa-regular fa-copy"></i> SVG Kod Olish</button>
+          <button class="btn btn-secondary" onclick="toggleCanvasBg(3)"><i class="fa-solid fa-circle-half-stroke"></i> Fon Switch</button>
+        </div>
+      </div>
+
+      <!-- Concept 4: Diamond Vault Emblem -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">4. Emerald Diamond Vault</div>
+          <span class="card-tag tag-green">Investitsiya & Boylik</span>
+        </div>
+
+        <div class="logo-canvas" id="canvas-4">
+          <svg viewBox="0 0 450 140" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="emeraldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#34D399"/>
+                <stop offset="50%" stop-color="#10B981"/>
+                <stop offset="100%" stop-color="#065F46"/>
+              </linearGradient>
+            </defs>
+
+            <!-- Emblem -->
+            <g transform="translate(20, 10)">
+              <!-- Hexagon Diamond Outer -->
+              <polygon points="65,10 115,38 115,92 65,120 15,92 15,38" fill="none" stroke="url(#emeraldGrad)" stroke-width="8" stroke-linejoin="round"/>
+              <!-- Inner Geometric C & Arrow -->
+              <path d="M85 42 L50 65 L85 88" fill="none" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="50" cy="65" r="7" fill="#34D399"/>
+            </g>
+
+            <!-- Typography -->
+            <g transform="translate(155, 52)">
+              <text x="0" y="24" font-family="'Outfit', sans-serif" font-weight="900" font-size="30" fill="#FFFFFF" letter-spacing="1">CAPITAL</text>
+              <text x="0" y="52" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="19" fill="#34D399" letter-spacing="6">BANK</text>
+            </g>
+          </svg>
+        </div>
+
+        <p class="concept-desc">
+          Olmos va Seyf (Vault) geometriyasi. Zumrad yashil rangi doimiy o'sish, kapital jamg'arish hamda yuqori investitsion jozibadorlikni namoyon etadi.
+        </p>
+
+        <div class="feature-tags">
+          <span class="chip"><i class="fa-solid fa-diamond"></i> Olmos Xavfsizlik</span>
+          <span class="chip"><i class="fa-solid fa-seedling"></i> Investitsiya</span>
+          <span class="chip"><i class="fa-solid fa-vault"></i> Seyf Guard</span>
+        </div>
+
+        <div class="action-row">
+          <button class="btn btn-primary" onclick="copySVG(4)"><i class="fa-regular fa-copy"></i> SVG Kod Olish</button>
+          <button class="btn btn-secondary" onclick="toggleCanvasBg(4)"><i class="fa-solid fa-circle-half-stroke"></i> Fon Switch</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Mockups Section -->
+    <div id="mockups">
+      <h2 class="section-title">Real Amaliyotda Brend Ko'rinishi</h2>
+      <p class="section-desc">Logotiplarning fiziki va raqamli tashuvchilarda (bank kartochkalari, fasad vizualizatsiyasi) qo'llanilishi</p>
+
+      <div class="mockup-grid">
+        <div class="mockup-card">
+          <img src="capital_bank_card_1785603120099.jpg" alt="Capital Bank Metal Card" class="mockup-img">
+          <div class="mockup-info">
+            <h3>Capital Platinum Metal Card</h3>
+            <p>Qora va oltin metall bank plastik kartasida metalllashtirilgan Sovereign Shield logotip embrasi.</p>
+          </div>
+        </div>
+
+        <div class="mockup-card">
+          <img src="capital_bank_hq_1785603131669.jpg" alt="Capital Bank HQ Sign" class="mockup-img">
+          <div class="mockup-info">
+            <h3>Bosh Ofis va Fasad Vizualizatsiyasi</h3>
+            <p>Moliya markazidagi shisha fasadda 3D neon va latun oltin yoritgichli Capital Bank brending belgisi.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SVG Code Modal -->
+  <div class="code-modal" id="codeModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 style="font-size:20px; font-weight:700;">SVG Manba Kodi</h3>
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+      </div>
+      <pre><code id="codeText"></code></pre>
+      <div style="margin-top:20px; display:flex; justify-content:flex-end;">
+        <button class="btn btn-primary" style="flex:initial; padding:10px 24px;" onclick="copyCodeFromModal()"><i class="fa-solid fa-copy"></i> Nusxalash</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast">SVG kodi buferga nusxalandi!</div>
+
+  <script>
+    const svgCodes = {
+      1: `<svg viewBox="0 0 450 140" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="goldGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFE259"/>
+      <stop offset="50%" stop-color="#D4AF37"/>
+      <stop offset="100%" stop-color="#9A7B1C"/>
+    </linearGradient>
+    <linearGradient id="blueGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3B82F6"/>
+      <stop offset="100%" stop-color="#1D4ED8"/>
+    </linearGradient>
+    <filter id="glow1" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#D4AF37" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  <g transform="translate(10, 10)">
+    <path d="M60 10 L105 30 V70 C105 95 60 115 60 115 C60 115 15 95 15 70 V30 Z" fill="url(#blueGrad1)" opacity="0.2"/>
+    <path d="M75 32 C45 32 30 52 30 70 C30 88 45 108 75 108 C90 108 100 100 105 92" fill="none" stroke="url(#goldGrad1)" stroke-width="11" stroke-linecap="round" filter="url(#glow1)"/>
+    <path d="M58 45 H82 C92 45 98 52 98 60 C98 68 90 73 80 73 H60 M60 73 H85 C96 73 102 80 102 89 C102 98 94 104 82 104 H58 V45 Z" fill="none" stroke="#FFFFFF" stroke-width="7" stroke-linejoin="round"/>
+  </g>
+  <g transform="translate(140, 52)">
+    <text x="0" y="24" font-family="'Outfit', sans-serif" font-weight="900" font-size="30" fill="#FFFFFF" letter-spacing="1">CAPITAL</text>
+    <text x="0" y="52" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="20" fill="url(#goldGrad1)" letter-spacing="7">BANK</text>
+  </g>
+</svg>`,
+
+      2: `<svg viewBox="0 0 450 140" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="goldGrad2" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#B8860B"/>
+      <stop offset="50%" stop-color="#FFD700"/>
+      <stop offset="100%" stop-color="#FFF8DC"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(20, 15)">
+    <path d="M20 70 C20 30 50 15 80 15 C110 15 140 30 140 70" fill="none" stroke="url(#goldGrad2)" stroke-width="8" stroke-linecap="round"/>
+    <rect x="42" y="45" width="14" height="55" rx="4" fill="url(#goldGrad2)"/>
+    <rect x="73" y="32" width="14" height="68" rx="4" fill="url(#goldGrad2)"/>
+    <rect x="104" y="45" width="14" height="55" rx="4" fill="url(#goldGrad2)"/>
+    <path d="M25 106 H135" stroke="url(#goldGrad2)" stroke-width="6" stroke-linecap="round"/>
+  </g>
+  <g transform="translate(170, 52)">
+    <text x="0" y="24" font-family="'Outfit', sans-serif" font-weight="900" font-size="32" fill="#FFFFFF" letter-spacing="1.5">CAPITAL</text>
+    <text x="0" y="52" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="18" fill="#E2E8F0" letter-spacing="9">BANK</text>
+  </g>
+</svg>`,
+
+      3: `<svg viewBox="0 0 450 140" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="cyanGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06B6D4"/>
+      <stop offset="50%" stop-color="#3B82F6"/>
+      <stop offset="100%" stop-color="#6366F1"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(15, 10)">
+    <circle cx="65" cy="60" r="45" fill="none" stroke="url(#cyanGrad)" stroke-width="12" stroke-dasharray="210 70" stroke-linecap="round" transform="rotate(-45 65 60)"/>
+    <circle cx="65" cy="60" r="28" fill="none" stroke="#FFFFFF" stroke-width="7" stroke-dasharray="120 40" stroke-linecap="round" transform="rotate(135 65 60)"/>
+    <circle cx="65" cy="60" r="10" fill="#06B6D4"/>
+  </g>
+  <g transform="translate(145, 52)">
+    <text x="0" y="24" font-family="'Outfit', sans-serif" font-weight="900" font-size="30" fill="#FFFFFF" letter-spacing="1">CAPITAL<tspan fill="#06B6D4">.</tspan></text>
+    <text x="0" y="52" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="20" fill="#94A3B8" letter-spacing="7">BANK</text>
+  </g>
+</svg>`,
+
+      4: `<svg viewBox="0 0 450 140" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="emeraldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34D399"/>
+      <stop offset="50%" stop-color="#10B981"/>
+      <stop offset="100%" stop-color="#065F46"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(20, 10)">
+    <polygon points="65,10 115,38 115,92 65,120 15,92 15,38" fill="none" stroke="url(#emeraldGrad)" stroke-width="8" stroke-linejoin="round"/>
+    <path d="M85 42 L50 65 L85 88" fill="none" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="50" cy="65" r="7" fill="#34D399"/>
+  </g>
+  <g transform="translate(155, 52)">
+    <text x="0" y="24" font-family="'Outfit', sans-serif" font-weight="900" font-size="30" fill="#FFFFFF" letter-spacing="1">CAPITAL</text>
+    <text x="0" y="52" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="19" fill="#34D399" letter-spacing="6">BANK</text>
+  </g>
+</svg>`
+    };
+
+    function copySVG(id) {
+      const code = svgCodes[id];
+      document.getElementById('codeText').textContent = code;
+      document.getElementById('codeModal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('codeModal').classList.remove('active');
+    }
+
+    function copyCodeFromModal() {
+      const code = document.getElementById('codeText').textContent;
+      navigator.clipboard.writeText(code).then(() => {
+        showToast();
+      });
+    }
+
+    function showToast() {
+      const toast = document.getElementById('toast');
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+
+    function toggleCanvasBg(id) {
+      const canvas = document.getElementById(`canvas-${id}`);
+      canvas.classList.toggle('light-mode');
+    }
+
+    function scrollToSection(id) {
+      if(id === 'all') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        const el = document.getElementById(id);
+        if(el) el.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  </script>
+</body>
+</html>

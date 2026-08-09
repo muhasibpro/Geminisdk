@@ -1,0 +1,104 @@
+<h1>💾 Zaxira Olish, Tiklash va Sozlamalar</h1>
+<div class="karta">
+  <h3>📦 Baza va Dastur Zaxirasi (Backup)</h3>
+  <p>Hisob-kitoblaringiz va sahifalaringizni zaxira fayl (ZIP/JSON) ko'rinishida saqlang yoki qayta yuklang.</p>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:15px">
+    <button onclick="olZaxira()" style="background:#16a34a;padding:12px 20px;font-size:15px">📥 Zaxira Faylini Yuklab Olish (.zip)</button>
+  </div>
+</div>
+
+<div class="karta">
+  <h3>🔄 Zaxiradan Qayta Tiklash (Restore)</h3>
+  <p>Avval olingan `.zip` yoki `.json` zaxira faylini tanlab bazani tiklang:</p>
+  <form id="restoreForm" onsubmit="tiklaZaxira(event)" style="display:flex;gap:10px;align-items:center">
+    <input type="file" id="backupFile" accept=".zip,.json" required style="flex:1">
+    <button type="submit" style="background:#d97706;padding:10px 18px">♻️ Bazaga Tiklash</button>
+  </form>
+  <div id="restoreMsg" style="margin-top:10px;font-weight:bold"></div>
+</div>
+
+<div class="karta">
+  <h3>🎓 Antigravity AI O'rgatilgan Qoidalar (Yo'riqnomalar)</h3>
+  <p>Foydalanuvchi bir marta o'rgatgan va AI agent eslab qolgan qoidalar:</p>
+  <div style="display:flex;gap:8px;margin-bottom:12px">
+    <input type="text" id="newYoriq" placeholder="Yangi qoida yoki yo'riqnoma matni..." style="flex:1">
+    <button onclick="qoshYoriq()">+ Qo'shish</button>
+  </div>
+  <div id="yoriqList"></div>
+</div>
+
+<script>
+async function olZaxira(){
+  const res = await fetch('/api/zaxira/olish', {method: 'POST'});
+  const d = await res.json();
+  if(d.ok && d.url){
+    window.location.href = d.url;
+  } else {
+    alert("Zaxira olishda xato: " + (d.xato || 'Noma'lum'));
+  }
+}
+
+async function tiklaZaxira(e){
+  e.preventDefault();
+  const fileInput = document.getElementById('backupFile');
+  if(!fileInput.files.length) return;
+  const file = fileInput.files[0];
+  const formData = new FormData();
+  formData.append('file', file);
+
+  document.getElementById('restoreMsg').innerText = "Yuklanmoqda...";
+  try {
+    const res = await fetch('/api/zaxira/tiklash', {
+      method: 'POST',
+      body: formData
+    });
+    const d = await res.json();
+    if(d.ok){
+      document.getElementById('restoreMsg').innerText = "✅ " + d.msg;
+      setTimeout(()=> location.reload(), 1500);
+    } else {
+      document.getElementById('restoreMsg').innerText = "❌ Xato: " + d.xato;
+    }
+  } catch(err){
+    document.getElementById('restoreMsg').innerText = "❌ Xato: " + err.message;
+  }
+}
+
+async function yuklaYoriq(){
+  const res = await fetch('/api/yoriqnoma');
+  const list = await res.json();
+  let html = '';
+  if(!list.length){
+    html = '<div style="color:#94a3b8">Hali hech qanday maxsus yo'riqnoma o'rgatilmadi.</div>';
+  } else {
+    list.forEach(y => {
+      html += `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:#f8fafc;border-radius:8px;margin-bottom:6px">
+        <div>📌 <b>${y.matn}</b> <small style="color:#94a3b8">(${y.sana})</small></div>
+        <button onclick="ochirYoriq(${y.id})" style="background:#ef4444;padding:3px 8px;font-size:12px">❌</button>
+      </div>`;
+    });
+  }
+  document.getElementById('yoriqList').innerHTML = html;
+}
+
+async function qoshYoriq(){
+  const txt = document.getElementById('newYoriq').value.trim();
+  if(!txt) return;
+  await fetch('/api/yoriqnoma', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({matn: txt})
+  });
+  document.getElementById('newYoriq').value = '';
+  yuklaYoriq();
+}
+
+async function ochirYoriq(id){
+  if(confirm("Ushbu yo'riqnomani o'chirmoqchimisiz?")){
+    await fetch('/api/yoriqnoma?id=' + id, {method: 'DELETE'});
+    yuklaYoriq();
+  }
+}
+
+yuklaYoriq();
+</script>

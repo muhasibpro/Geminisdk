@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MUHASIB POS - Zamonaviy Kassa Tizimi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>
+    :root {
+      --bg-dark: #090d16;
+      --bg-card: rgba(19, 26, 43, 0.7);
+      --bg-card-hover: rgba(28, 38, 62, 0.85);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-accent: rgba(168, 85, 247, 0.3);
+      --accent-purple: #a855f7;
+      --accent-cyan: #06b6d4;
+      --accent-green: #10b981;
+      --accent-pink: #ec4899;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(168, 85, 247, 0.12) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(6, 182, 212, 0.12) 0px, transparent 50%);
+      color: var(--text-main);
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+    }
+
+    /* Sidebar Navigation */
+    .sidebar {
+      width: 80px;
+      background: rgba(13, 18, 30, 0.8);
+      backdrop-filter: blur(16px);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 0;
+      z-index: 10;
+    }
+
+    .brand-logo {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 22px;
+      box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+      margin-bottom: 30px;
+      cursor: pointer;
+    }
+
+    .nav-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      width: 100%;
+      align-items: center;
+    }
+
+    .nav-item {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .nav-item:hover, .nav-item.active {
+      background: rgba(168, 85, 247, 0.15);
+      color: var(--accent-purple);
+      box-shadow: inset 0 0 0 1px var(--accent-purple);
+    }
+
+    .nav-item.active::before {
+      content: '';
+      position: absolute;
+      left: -15px;
+      width: 4px;
+      height: 24px;
+      background: var(--accent-purple);
+      border-radius: 0 4px 4px 0;
+      box-shadow: 0 0 10px var(--accent-purple);
+    }
+
+    /* Main Container Layout */
+    .app-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Top Bar */
+    .topbar {
+      height: 70px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      background: rgba(13, 18, 30, 0.5);
+      backdrop-filter: blur(12px);
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 8px 16px;
+      width: 450px;
+      gap: 12px;
+      transition: all 0.3s ease;
+    }
+
+    .search-box:focus-within {
+      border-color: var(--accent-purple);
+      box-shadow: 0 0 15px rgba(168, 85, 247, 0.25);
+    }
+
+    .search-box input {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text-main);
+      font-size: 14px;
+      width: 100%;
+    }
+
+    .search-box input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .top-stats {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .stat-pill {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-color);
+      padding: 6px 14px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-green);
+      box-shadow: 0 0 8px var(--accent-green);
+    }
+
+    .cashier-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-left: 1px solid var(--border-color);
+      padding-left: 20px;
+    }
+
+    .avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+    }
+
+    /* Content Area */
+    .content-grid {
+      display: flex;
+      flex: 1;
+      height: calc(100vh - 70px);
+      overflow: hidden;
+    }
+
+    /* Products Section */
+    .products-section {
+      flex: 1;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      overflow-y: auto;
+    }
+
+    /* Category Filter Tabs */
+    .categories-bar {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .category-tab {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      padding: 10px 18px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+
+    .category-tab:hover, .category-tab.active {
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(6, 182, 212, 0.2));
+      border-color: var(--accent-purple);
+      color: var(--text-main);
+    }
+
+    /* Product Cards Grid */
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+      padding-bottom: 20px;
+    }
+
+    .product-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 12px;
+      transition: all 0.25s ease;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .product-card:hover {
+      transform: translateY(-4px);
+      background: var(--bg-card-hover);
+      border-color: var(--border-accent);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 0 15px rgba(168, 85, 247, 0.15);
+    }
+
+    .product-card img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 10px;
+      background: #1e293b;
+    }
+
+    .product-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.3;
+    }
+
+    .product-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .product-price {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--accent-cyan);
+    }
+
+    .stock-badge {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 6px;
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent-green);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .add-btn {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 8px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .product-card:hover .add-btn {
+      background: var(--accent-purple);
+      border-color: var(--accent-purple);
+      box-shadow: 0 0 12px rgba(168, 85, 247, 0.5);
+    }
+
+    /* Cart Sidebar Panel */
+    .cart-panel {
+      width: 380px;
+      background: rgba(13, 18, 30, 0.85);
+      backdrop-filter: blur(20px);
+      border-left: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+    }
+
+    .cart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .cart-title {
+      font-size: 18px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .cart-badge {
+      background: var(--accent-purple);
+      color: white;
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-weight: 700;
+    }
+
+    .clear-cart {
+      color: var(--accent-pink);
+      font-size: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Cart Items Scroll List */
+    .cart-items {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .cart-item {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: all 0.2s;
+    }
+
+    .cart-item:hover {
+      border-color: var(--border-accent);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .cart-item-details {
+      flex: 1;
+    }
+
+    .cart-item-title {
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .cart-item-price {
+      font-size: 12px;
+      color: var(--accent-cyan);
+      margin-top: 2px;
+    }
+
+    .qty-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 4px 8px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    .qty-btn {
+      width: 22px;
+      height: 22px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .qty-btn:hover {
+      background: var(--accent-purple);
+    }
+
+    /* Cart Summary Footer */
+    .cart-summary {
+      border-top: 1px solid var(--border-color);
+      padding-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .summary-row.total {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text-main);
+      padding-top: 8px;
+      border-top: 1px dashed var(--border-color);
+    }
+
+    .checkout-btn {
+      background: linear-gradient(135deg, var(--accent-purple), #9333ea);
+      border: none;
+      color: white;
+      padding: 16px;
+      border-radius: 14px;
+      font-weight: 800;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 4px 20px rgba(168, 85, 247, 0.4);
+      transition: all 0.3s ease;
+      margin-top: 10px;
+    }
+
+    .checkout-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(168, 85, 247, 0.6);
+    }
+
+    /* Modal Styling */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(10px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-card {
+      background: #111827;
+      border: 1px solid var(--border-accent);
+      border-radius: 20px;
+      width: 480px;
+      padding: 24px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .payment-methods {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .pay-opt {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-color);
+      padding: 14px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .pay-opt.active, .pay-opt:hover {
+      border-color: var(--accent-cyan);
+      background: rgba(6, 182, 212, 0.15);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Left Navigation Bar -->
+  <aside class="sidebar">
+    <div class="brand-logo" title="MUHASIB POS">M</div>
+    <nav class="nav-menu">
+      <div class="nav-item active" title="Kassa (Sales)"><i data-lucide="shopping-bag"></i></div>
+      <div class="nav-item" title="Mahsulotlar (Inventory)"><i data-lucide="box"></i></div>
+      <div class="nav-item" title="Mijozlar (Customers)"><i data-lucide="users"></i></div>
+      <div class="nav-item" title="Qarz Daftar (Debts)"><i data-lucide="book-open"></i></div>
+      <div class="nav-item" title="Hisobotlar (Analytics)"><i data-lucide="bar-chart-3"></i></div>
+      <div class="nav-item" title="Sozlamalar (Settings)"><i data-lucide="settings"></i></div>
+    </nav>
+  </aside>
+
+  <!-- Main Content Layout -->
+  <div class="app-main">
+    
+    <!-- Top Bar Header -->
+    <header class="topbar">
+      <div class="search-box">
+        <i data-lucide="search" style="color: var(--text-muted)"></i>
+        <input type="text" id="searchInput" placeholder="Mahsulot nomi yoki shtrix-kod kiriting (Shtrix-kod skaner tayyor)..." oninput="filterProducts()">
+        <i data-lucide="qr-code" style="color: var(--accent-cyan); cursor: pointer;" title="Skanerlash"></i>
+      </div>
+
+      <div class="top-stats">
+        <div class="stat-pill">
+          <div class="status-dot"></div>
+          <span>Kassa №1 (Online)</span>
+        </div>
+        <div class="stat-pill">
+          <i data-lucide="clock" size="14" style="color: var(--accent-purple)"></i>
+          <span id="liveClock">14:45:02</span>
+        </div>
+        <div class="cashier-info">
+          <div class="avatar">S</div>
+          <div>
+            <div style="font-weight: 700; font-size: 13px;">Sardorbek K.</div>
+            <div style="font-size: 11px; color: var(--text-muted);">Kassir / Operator</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Grid Content -->
+    <div class="content-grid">
+      
+      <!-- Left Products View -->
+      <main class="products-section">
+        
+        <!-- Category Tabs -->
+        <div class="categories-bar">
+          <button class="category-tab active" onclick="setCategory('all', this)">🔥 Barchasi</button>
+          <button class="category-tab" onclick="setCategory('tech', this)">💻 Elektronika & Gadjetlar</button>
+          <button class="category-tab" onclick="setCategory('apparel', this)">👕 Kiyim-Kechak</button>
+          <button class="category-tab" onclick="setCategory('drinks', this)">🥤 Ichimliklar & Salqin</button>
+          <button class="category-tab" onclick="setCategory('snacks', this)">🍿 Shirinliklar & Yegulik</button>
+        </div>
+
+        <!-- Product Cards -->
+        <div class="products-grid" id="productsGrid">
+          <!-- Dynamically Rendered -->
+        </div>
+
+      </main>
+
+      <!-- Right Shopping Cart Sidebar -->
+      <aside class="cart-panel">
+        <div class="cart-header">
+          <div class="cart-title">
+            <i data-lucide="shopping-cart" style="color: var(--accent-purple)"></i>
+            <span>Savat</span>
+            <span class="cart-badge" id="cartBadgeCount">0</span>
+          </div>
+          <div class="clear-cart" onclick="clearCart()">
+            <i data-lucide="trash-2" size="14"></i> Tozalash
+          </div>
+        </div>
+
+        <!-- Cart Items -->
+        <div class="cart-items" id="cartItemsContainer">
+          <div style="text-align: center; color: var(--text-muted); margin-top: 60px;">
+            <i data-lucide="shopping-bag" size="48" style="opacity: 0.3; margin-bottom: 10px;"></i>
+            <p>Savat hozircha bo'sh</p>
+            <p style="font-size: 12px; opacity: 0.6;">Mahsulot ustiga bosing</p>
+          </div>
+        </div>
+
+        <!-- Cart Summary -->
+        <div class="cart-summary">
+          <div class="summary-row">
+            <span>Oraliq summa:</span>
+            <span id="subtotalAmount">0 UZS</span>
+          </div>
+          <div class="summary-row">
+            <span>QQS (12%):</span>
+            <span id="taxAmount">0 UZS</span>
+          </div>
+          <div class="summary-row">
+            <span>Chegirma:</span>
+            <span style="color: var(--accent-green);">-0 UZS</span>
+          </div>
+          <div class="summary-row total">
+            <span>JAMI:</span>
+            <span id="totalAmount" style="color: var(--accent-cyan)">0 UZS</span>
+          </div>
+
+          <button class="checkout-btn" onclick="openPaymentModal()">
+            <i data-lucide="credit-card"></i>
+            <span>TO'LOVGA O'TISH</span>
+          </button>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+
+  <!-- Payment Modal -->
+  <div class="modal-overlay" id="paymentModal">
+    <div class="modal-card">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="font-size: 18px; font-weight: 800;">To'lov Turi va Qabul Qilish</h3>
+        <i data-lucide="x" style="cursor: pointer;" onclick="closePaymentModal()"></i>
+      </div>
+      
+      <div style="background: rgba(255,255,255,0.05); padding: 14px; border-radius: 12px; text-align: center;">
+        <div style="font-size: 12px; color: var(--text-muted);">To'lanishi kerak bo'lgan summa:</div>
+        <div id="modalTotalSum" style="font-size: 26px; font-weight: 800; color: var(--accent-cyan); margin-top: 4px;">0 UZS</div>
+      </div>
+
+      <div class="payment-methods">
+        <div class="pay-opt active" onclick="selectPayMethod(this)">
+          <i data-lucide="banknote" style="color: var(--accent-green)"></i>
+          <span style="font-weight: 700; font-size: 14px;">Naqd Pul</span>
+        </div>
+        <div class="pay-opt" onclick="selectPayMethod(this)">
+          <i data-lucide="credit-card" style="color: var(--accent-purple)"></i>
+          <span style="font-weight: 700; font-size: 14px;">HUMO / UzCard</span>
+        </div>
+        <div class="pay-opt" onclick="selectPayMethod(this)">
+          <i data-lucide="smartphone" style="color: var(--accent-pink)"></i>
+          <span style="font-weight: 700; font-size: 14px;">Click / Payme</span>
+        </div>
+        <div class="pay-opt" onclick="selectPayMethod(this)">
+          <i data-lucide="book-user" style="color: #f59e0b"></i>
+          <span style="font-weight: 700; font-size: 14px;">Nasiya (Qarz)</span>
+        </div>
+      </div>
+
+      <button class="checkout-btn" style="background: linear-gradient(135deg, var(--accent-green), #059669);" onclick="completeSale()">
+        <i data-lucide="check-circle"></i>
+        <span>TO'LOVNI AMALGA OSHIRISH</span>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // Initial Sample Data
+    const productsData = [
+      { id: 1, name: 'Cyber Hoodie Neon', category: 'apparel', price: 280000, stock: 14, img: 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=400&q=80' },
+      { id: 2, name: 'Smart Watch Series 9', category: 'tech', price: 420000, stock: 8, img: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=400&q=80' },
+      { id: 3, name: 'Urban Tech Ryukzak', category: 'apparel', price: 195000, stock: 22, img: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=400&q=80' },
+      { id: 4, name: 'Wireless Headphones Pro', category: 'tech', price: 350000, stock: 5, img: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=400&q=80' },
+      { id: 5, name: 'Energetik Ichimlik 0.5L', category: 'drinks', price: 14000, stock: 120, img: 'https://images.unsplash.com/photo-1622543925917-763c34d1a86e?auto=format&fit=crop&w=400&q=80' },
+      { id: 6, name: 'Organik Dark Chocolate 85%', category: 'snacks', price: 25000, stock: 45, img: 'https://images.unsplash.com/photo-1587132137056-bfbf0166836e?auto=format&fit=crop&w=400&q=80' },
+      { id: 7, name: 'Mechanical RGB Keyboard', category: 'tech', price: 580000, stock: 9, img: 'https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=400&q=80' },
+      { id: 8, name: 'Kofe Arabica Blend 250g', category: 'drinks', price: 65000, stock: 30, img: 'https://images.unsplash.com/photo-1559056199-641a0ac8b55e?auto=format&fit=crop&w=400&q=80' }
+    ];
+
+    let currentCategory = 'all';
+    let cart = [];
+
+    // Render Products Grid
+    function renderProducts(items) {
+      const grid = document.getElementById('productsGrid');
+      grid.innerHTML = '';
+
+      items.forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.onclick = () => addToCart(p.id);
+        card.innerHTML = `
+          <img src="${p.img}" alt="${p.name}" loading="lazy">
+          <div>
+            <div class="product-title">${p.name}</div>
+            <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Shtrix: 8710${p.id}93</div>
+          </div>
+          <div class="product-meta">
+            <div class="product-price">${p.price.toLocaleString()} UZS</div>
+            <div class="stock-badge">${p.stock} ta bor</div>
+          </div>
+          <button class="add-btn">
+            <i data-lucide="plus" size="14"></i> Savatga
+          </button>
+        `;
+        grid.appendChild(card);
+      });
+      lucide.createIcons();
+    }
+
+    // Category Filter
+    function setCategory(cat, btn) {
+      currentCategory = cat;
+      document.querySelectorAll('.category-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      filterProducts();
+    }
+
+    function filterProducts() {
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      const filtered = productsData.filter(p => {
+        const matchesCategory = currentCategory === 'all' || p.category === currentCategory;
+        const matchesSearch = p.name.toLowerCase().includes(query) || p.id.toString().includes(query);
+        return matchesCategory && matchesSearch;
+      });
+      renderProducts(filtered);
+    }
+
+    // Cart Management
+    function addToCart(productId) {
+      const product = productsData.find(p => p.id === productId);
+      const existing = cart.find(item => item.id === productId);
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        cart.push({ ...product, qty: 1 });
+      }
+      updateCartUI();
+    }
+
+    function updateQty(productId, delta) {
+      const item = cart.find(i => i.id === productId);
+      if (!item) return;
+      item.qty += delta;
+      if (item.qty <= 0) {
+        cart = cart.filter(i => i.id !== productId);
+      }
+      updateCartUI();
+    }
+
+    function clearCart() {
+      cart = [];
+      updateCartUI();
+    }
+
+    function updateCartUI() {
+      const container = document.getElementById('cartItemsContainer');
+      const badge = document.getElementById('cartBadgeCount');
+      
+      const totalCount = cart.reduce((sum, item) => sum + item.qty, 0);
+      badge.innerText = totalCount;
+
+      if (cart.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; color: var(--text-muted); margin-top: 60px;">
+            <i data-lucide="shopping-bag" size="48" style="opacity: 0.3; margin-bottom: 10px;"></i>
+            <p>Savat hozircha bo'sh</p>
+            <p style="font-size: 12px; opacity: 0.6;">Mahsulot ustiga bosing</p>
+          </div>
+        `;
+      } else {
+        container.innerHTML = '';
+        cart.forEach(item => {
+          const div = document.createElement('div');
+          div.className = 'cart-item';
+          div.innerHTML = `
+            <div class="cart-item-details">
+              <div class="cart-item-title">${item.name}</div>
+              <div class="cart-item-price">${(item.price * item.qty).toLocaleString()} UZS</div>
+            </div>
+            <div class="qty-controls">
+              <button class="qty-btn" onclick="updateQty(${item.id}, -1)">-</button>
+              <span style="font-weight: 700; font-size: 13px;">${item.qty}</span>
+              <button class="qty-btn" onclick="updateQty(${item.id}, 1)">+</button>
+            </div>
+          `;
+          container.appendChild(div);
+        });
+      }
+
+      // Calculate totals
+      const subtotal = cart.reduce((sum, i) => sum + (i.price * i.qty), 0);
+      const tax = Math.round(subtotal * 0.12);
+      const grandTotal = subtotal + tax;
+
+      document.getElementById('subtotalAmount').innerText = subtotal.toLocaleString() + ' UZS';
+      document.getElementById('taxAmount').innerText = tax.toLocaleString() + ' UZS';
+      document.getElementById('totalAmount').innerText = grandTotal.toLocaleString() + ' UZS';
+      document.getElementById('modalTotalSum').innerText = grandTotal.toLocaleString() + ' UZS';
+
+      lucide.createIcons();
+    }
+
+    // Modal Controls
+    function openPaymentModal() {
+      if (cart.length === 0) {
+        alert("Savat bo'sh! Iltimos, mahsulot qo'shing.");
+        return;
+      }
+      document.getElementById('paymentModal').classList.add('active');
+    }
+
+    function closePaymentModal() {
+      document.getElementById('paymentModal').classList.remove('active');
+    }
+
+    function selectPayMethod(el) {
+      document.querySelectorAll('.pay-opt').forEach(opt => opt.classList.remove('active'));
+      el.classList.add('active');
+    }
+
+    function completeSale() {
+      alert("✅ Chek chop etildi va to'lov muvaffaqiyatli qabul qilindi!");
+      closePaymentModal();
+      clearCart();
+    }
+
+    // Live Clock
+    setInterval(() => {
+      const now = new Date();
+      document.getElementById('liveClock').innerText = now.toTimeString().split(' ')[0];
+    }, 1000);
+
+    // Initial render
+    renderProducts(productsData);
+  </script>
+</body>
+</html>

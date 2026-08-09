@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  body { margin: 0; padding: 0; background: #0b0f19; display: flex; justify-content: center; align-items: center; width: 1920px; height: 1080px; font-family: 'Arial', sans-serif; overflow: hidden; }
+  svg { width: 1920px; height: 1080px; }
+  text { font-family: 'Impact', 'Trebuchet MS', sans-serif; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Background Gradients -->
+    <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1a002c"/>
+      <stop offset="40%" stop-color="#4d1234"/>
+      <stop offset="70%" stop-color="#9e2a2b"/>
+      <stop offset="100%" stop-color="#ff9f1c"/>
+    </linearGradient>
+    
+    <radialGradient id="sunGrad" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#fff3b0" stop-opacity="1"/>
+      <stop offset="50%" stop-color="#ffb703" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#fb8500" stop-opacity="0"/>
+    </radialGradient>
+    
+    <linearGradient id="goldGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffe259"/>
+      <stop offset="100%" stop-color="#ffa751"/>
+    </linearGradient>
+    
+    <linearGradient id="palaceGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2b1e3a"/>
+      <stop offset="100%" stop-color="#120a1c"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Sky & Sun -->
+  <rect x="0" y="0" width="1920" height="1080" fill="url(#skyGrad)"/>
+  <circle cx="960" cy="500" r="450" fill="url(#sunGrad)"/>
+
+  <!-- Mountains -->
+  <polygon points="-100,1080 300,550 700,1080" fill="#240046" opacity="0.7"/>
+  <polygon points="1200,1080 1600,480 2020,1080" fill="#240046" opacity="0.7"/>
+  <polygon points="400,1080 960,350 1520,1080" fill="#10002b" opacity="0.9"/>
+
+  <!-- Jade Palace Silhouette -->
+  <g fill="url(#palaceGrad)" transform="translate(660, 260) scale(0.7)">
+    <!-- Main Roof -->
+    <path d="M-100,250 Q400,150 900,250 L850,200 Q400,100 -50,200 Z"/>
+    <rect x="50" y="240" width="700" height="150"/>
+    <path d="M-150,400 Q400,280 950,400 L900,340 Q400,220 -100,340 Z"/>
+    <rect x="-20" y="390" width="840" height="250"/>
+    <!-- Pillars & Stairs -->
+    <polygon points="100,640 700,640 800,850 0,850"/>
+  </g>
+
+  <!-- Cherry Blossom Petals Floating -->
+  <g fill="#ffb7b2" opacity="0.8">
+    <ellipse cx="300" cy="200" rx="12" ry="6" transform="rotate(25 300 200)"/>
+    <ellipse cx="450" cy="350" rx="15" ry="7" transform="rotate(-15 450 350)"/>
+    <ellipse cx="1400" cy="180" rx="10" ry="5" transform="rotate(40 1400 180)"/>
+    <ellipse cx="1650" cy="310" rx="14" ry="6" transform="rotate(-30 1650 310)"/>
+    <ellipse cx="900" cy="150" rx="16" ry="8" transform="rotate(10 900 150)"/>
+  </g>
+
+  <!-- TITLE HEADER -->
+  <text x="960" y="130" text-anchor="middle" fill="url(#goldGrad)" font-size="72" letter-spacing="6" stroke="#000" stroke-width="3">KUNG FU PANDA</text>
+  <text x="960" y="185" text-anchor="middle" fill="#ffffff" font-size="32" letter-spacing="10" opacity="0.9">BARCHA ASOSIY QAHRAMONLAR</text>
+
+  <!-- CHARACTERS GROUP -->
+  
+  <!-- 1. MASTER CRANE (Turna) - Top Left Flying -->
+  <g id="crane" transform="translate(380, 260)">
+    <!-- Wings -->
+    <path d="M0,80 Q-150,-60 -250,-20 Q-120,40 0,80 Z" fill="#f8f9fa"/>
+    <path d="M0,80 Q150,-60 250,-20 Q120,40 0,80 Z" fill="#f8f9fa"/>
+    <!-- Body & Neck -->
+    <ellipse cx="0" cy="90" rx="35" ry="50" fill="#e9ecef"/>
+    <path d="M-10,60 Q-20,0 -5,-40 Q15,-40 10,60 Z" fill="#e9ecef"/>
+    <!-- Head & Hat -->
+    <circle cx="2" cy="-45" r="14" fill="#212529"/>
+    <path d="M2,-45 L-50,-35 L2,-42 Z" fill="#d97706"/> <!-- Beak -->
+    <polygon points="2,-75 -40,-45 40,-45" fill="#92400e"/> <!-- Cone Hat -->
+    <!-- Pants -->
+    <rect x="-20" y="130" width="40" height="30" fill="#1e3a8a" rx="5"/>
+  </g>
+
+  <!-- 2. MASTER MONKEY (Maymun) - Left Side -->
+  <g id="monkey" transform="translate(420, 520)">
+    <!-- Tail -->
+    <path d="M-40,80 Q-120,40 -80,-20 Q-60,0 -30,60" fill="none" stroke="#78350f" stroke-width="16" stroke-linecap="round"/>
+    <!-- Body -->
+    <ellipse cx="0" cy="60" rx="55" ry="70" fill="#78350f"/>
+    <!-- Legs -->
+    <rect x="-45" y="110" width="30" height="70" rx="15" fill="#451a03"/>
+    <rect x="15" y="110" width="30" height="70" rx="15" fill="#451a03"/>
+    <!-- Head -->
+    <circle cx="0" cy="-20" r="45" fill="#78350f"/>
+    <ellipse cx="0" cy="-10" rx="32" ry="25" fill="#fde68a"/> <!-- Face -->
+    <circle cx="-12" cy="-18" r="6" fill="#000"/><circle cx="12" cy="-18" r="6" fill="#000"/>
+    <path d="M-15,-2 Q0,12 15,-2" fill="none" stroke="#78350f" stroke-width="4" stroke-linecap="round"/>
+    <!-- Arms in Martial Stance -->
+    <path d="M-40,30 Q-90,0 -70,-40" fill="none" stroke="#78350f" stroke-width="24" stroke-linecap="round"/>
+    <path d="M40,30 Q90,0 70,-40" fill="none" stroke="#78350f" stroke-width="24" stroke-linecap="round"/>
+    <rect x="-35" y="90" width="70" height="25" fill="#dc2626" rx="5"/> <!-- Belt -->
+  </g>
+
+  <!-- 3. MASTER TIGRESS (Yo'lbars) - Left Center -->
+  <g id="tigress" transform="translate(680, 580)">
+    <!-- Body & Vest -->
+    <ellipse cx="0" cy="80" rx="75" ry="100" fill="#d97706"/>
+    <!-- Tiger Stripes -->
+    <path d="M-60,40 L-30,50 M-70,80 L-40,85 M-60,120 L-30,115" stroke="#000" stroke-width="8" stroke-linecap="round"/>
+    <path d="M60,40 L30,50 M70,80 L40,85 M60,120 L30,115" stroke="#000" stroke-width="8" stroke-linecap="round"/>
+    <!-- Red Vest with Gold Pattern -->
+    <path d="M-65,20 L65,20 L50,140 L-50,140 Z" fill="#b91c1c"/>
+    <path d="M0,20 L0,140" stroke="#f59e0b" stroke-width="4"/>
+    <!-- Legs -->
+    <rect x="-55" y="160" width="45" height="120" rx="20" fill="#1e293b"/>
+    <rect x="10" y="160" width="45" height="120" rx="20" fill="#1e293b"/>
+    <!-- Head -->
+    <circle cx="0" cy="-30" r="60" fill="#d97706"/>
+    <!-- Ear -->
+    <circle cx="-50" cy="-75" r="18" fill="#d97706"/><circle cx="50" cy="-75" r="18" fill="#d97706"/>
+    <ellipse cx="0" cy="-15" rx="40" ry="30" fill="#fff"/> <!-- Snout -->
+    <!-- Eyes (Fierce) -->
+    <polygon points="-30,-45 -10,-35 -35,-30" fill="#000"/>
+    <circle cx="-20" cy="-37" r="6" fill="#f59e0b"/>
+    <polygon points="30,-45 10,-35 35,-30" fill="#000"/>
+    <circle cx="20" cy="-37" r="6" fill="#f59e0b"/>
+    <!-- Arms Action Pose -->
+    <path d="M-60,40 L-130,-10" stroke="#d97706" stroke-width="32" stroke-linecap="round"/>
+    <path d="M60,40 L120,90" stroke="#d97706" stroke-width="32" stroke-linecap="round"/>
+  </g>
+
+  <!-- 4. PO THE DRAGON WARRIOR (Panda) - CENTER HERO -->
+  <g id="po" transform="translate(960, 560)">
+    <!-- Legs & Feet -->
+    <rect x="-110" y="200" width="85" height="150" rx="40" fill="#111827"/>
+    <rect x="25" y="200" width="85" height="150" rx="40" fill="#111827"/>
+    <!-- Golden Belt Patch -->
+    <rect x="-105" y="180" width="210" height="45" fill="#ca8a04" rx="10"/>
+    <rect x="-95" y="190" width="190" height="25" fill="#dc2626" rx="5"/>
+
+    <!-- Large Body -->
+    <ellipse cx="0" cy="80" rx="150" ry="140" fill="#111827"/>
+    <ellipse cx="0" cy="70" rx="115" ry="110" fill="#ffffff"/> <!-- White Tummy -->
+
+    <!-- Head -->
+    <circle cx="0" cy="-70" r="110" fill="#ffffff"/>
+    <!-- Black Ears -->
+    <circle cx="-95" cy="-155" r="38" fill="#111827"/>
+    <circle cx="95" cy="-155" r="38" fill="#111827"/>
+
+    <!-- Black Eye Patches -->
+    <ellipse cx="-45" cy="-80" rx="32" ry="42" transform="rotate(-15 -45 -80)" fill="#111827"/>
+    <ellipse cx="45" cy="-80" rx="32" ry="42" transform="rotate(15 45 -80)" fill="#111827"/>
+    <!-- Green Dragon Warrior Eyes -->
+    <circle cx="-40" cy="-80" r="12" fill="#16a34a"/>
+    <circle cx="-40" cy="-80" r="5" fill="#ffffff"/>
+    <circle cx="40" cy="-80" r="12" fill="#16a34a"/>
+    <circle cx="40" cy="-80" r="5" fill="#ffffff"/>
+
+    <!-- Nose & Mouth (Confident Smile) -->
+    <ellipse cx="0" cy="-45" rx="18" ry="12" fill="#111827"/>
+    <path d="M-35,-25 Q0,20 35,-25 Z" fill="#991b1b"/> <!-- Open Happy Mouth -->
+    <path d="M-20,-20 Q0,-5 20,-20" fill="#fff"/> <!-- Teeth -->
+
+    <!-- Arms Powerful Kung Fu Pose -->
+    <path d="M-120,40 Q-230,0 -200,-80" fill="none" stroke="#111827" stroke-width="65" stroke-linecap="round"/>
+    <circle cx="-200" cy="-80" r="35" fill="#111827"/> <!-- Paw -->
+    <path d="M120,40 Q230,0 200,-80" fill="none" stroke="#111827" stroke-width="65" stroke-linecap="round"/>
+    <circle cx="200" cy="-80" r="35" fill="#111827"/> <!-- Paw -->
+  </g>
+
+  <!-- 5. MASTER SHIFU - Right Center -->
+  <g id="shifu" transform="translate(1240, 640)">
+    <!-- Big Tail -->
+    <path d="M60,60 Q180,40 160,-60 Q120,-80 40,20" fill="#ea580c" stroke="#fff" stroke-width="6"/>
+    <!-- Robe / Body -->
+    <path d="M-40,40 L40,40 L60,160 L-60,160 Z" fill="#57534e"/>
+    <path d="M-30,40 L30,40 L40,160 L-40,160 Z" fill="#d97706"/>
+    <rect x="-45" y="90" width="90" height="20" fill="#1c1917" rx="4"/>
+    <!-- Head -->
+    <ellipse cx="0" cy="-10" rx="45" ry="35" fill="#f5f5f4"/>
+    <!-- Long Ears -->
+    <path d="M-35,-30 Q-90,-100 -50,-110 Q-20,-70 -15,-30 Z" fill="#f5f5f4"/>
+    <path d="M35,-30 Q90,-100 50,-110 Q20,-70 15,-30 Z" fill="#f5f5f4"/>
+    <!-- Moustache & Eyes -->
+    <path d="M-40,5 Q0,-10 -5,25 M40,5 Q0,-10 5,25" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="-18" cy="-15" r="6" fill="#78350f"/><circle cx="18" cy="-15" r="6" fill="#78350f"/>
+    <!-- Staff -->
+    <line x1="-60" y1="-80" x2="-60" y2="180" stroke="#78350f" stroke-width="10" stroke-linecap="round"/>
+    <circle cx="-60" cy="-85" r="14" fill="#15803d"/> <!-- Green Jade Top -->
+  </g>
+
+  <!-- 6. MASTER VIPER (Ilon) - Foreground Right -->
+  <g id="viper" transform="translate(1450, 720)">
+    <!-- Coiled Serpent Body -->
+    <path d="M0,140 Q-80,100 -20,40 Q40,-20 100,20 Q140,70 80,120 Q20,160 -40,120 Q-100,60 0,-40" 
+          fill="none" stroke="#22c55e" stroke-width="32" stroke-linecap="round"/>
+    <!-- Flower Ribbon Ornaments on Head -->
+    <circle cx="0" cy="-55" r="10" fill="#ec4899"/>
+    <circle cx="-12" cy="-45" r="8" fill="#f472b6"/>
+    <!-- Snake Head -->
+    <ellipse cx="0" cy="-40" rx="22" ry="18" fill="#4ade80"/>
+    <circle cx="-8" cy="-45" r="4" fill="#000"/><circle cx="8" cy="-45" r="4" fill="#000"/>
+  </g>
+
+  <!-- 7. MASTER MANTIS (Ibodatchi) - On Po's Shoulder -->
+  <g id="mantis" transform="translate(770, 440)">
+    <!-- Tiny Green Body -->
+    <ellipse cx="0" cy="0" rx="14" ry="22" fill="#15803d"/>
+    <!-- Head & Big Eyes -->
+    <circle cx="0" cy="-20" r="10" fill="#22c55e"/>
+    <circle cx="-8" cy="-24" r="5" fill="#fef08a"/><circle cx="8" cy="-24" r="5" fill="#fef08a"/>
+    <!-- Scythe Arms -->
+    <path d="M-10,-10 Q-30,-30 -15,-45" fill="none" stroke="#15803d" stroke-width="5" stroke-linecap="round"/>
+    <path d="M10,-10 Q30,-30 15,-45" fill="none" stroke="#15803d" stroke-width="5" stroke-linecap="round"/>
+  </g>
+
+  <!-- FOOTER BADGE -->
+  <g transform="translate(960, 1000)">
+    <rect x="-300" y="-35" width="600" height="50" rx="25" fill="#1e293b" opacity="0.9" stroke="#ca8a04" stroke-width="2"/>
+    <text x="0" y="0" text-anchor="middle" fill="#fde047" font-size="22" letter-spacing="4">PO • SHIFU • TIGRESS • MONKEY • CRANE • MANTIS • VIPER</text>
+  </g>
+</svg>
+</body>
+</html>

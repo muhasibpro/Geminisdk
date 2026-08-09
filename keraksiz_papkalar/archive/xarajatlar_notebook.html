@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Katak Daftar - Xarajatlar va Hisob-Kitob Daftari</title>
+  
+  <!-- Google Fonts: Caveat (Qo'lyozma), Kalam, Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Kalam:wght@400;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --paper-bg: #faf9f5;
+      --paper-line: rgba(74, 144, 226, 0.28);
+      --margin-line: #ff6b6b;
+      --ink-blue: #1c3b70;
+      --ink-handwriting: #182848;
+      --accent: #2e7d32;
+      --danger: #c62828;
+      --shadow: 0 10px 30px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.08);
+      --font-hand: 'Caveat', 'Kalam', cursive;
+      --font-sans: 'Outfit', sans-serif;
+    }
+
+    [data-theme="dark-notebook"] {
+      --paper-bg: #1c2331;
+      --paper-line: rgba(100, 160, 240, 0.18);
+      --margin-line: #e65100;
+      --ink-blue: #e2e8f0;
+      --ink-handwriting: #7dd3fc;
+      --shadow: 0 12px 36px rgba(0,0,0,0.5);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: #e9ecef;
+      background-image: 
+        radial-gradient(#cfd8dc 1px, transparent 1px),
+        radial-gradient(#cfd8dc 1px, #e9ecef 1px);
+      background-size: 24px 24px;
+      background-position: 0 0, 12px 12px;
+      font-family: var(--font-sans);
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 10px 40px;
+    }
+
+    /* Controls Bar top */
+    .toolbar {
+      width: 100%;
+      max-width: 850px;
+      background: #ffffff;
+      padding: 12px 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .toolbar-title {
+      font-weight: 700;
+      font-size: 18px;
+      color: #1a252f;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      background: #f1f3f5;
+      color: #212529;
+      border: 1px solid #ced4da;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn:hover {
+      background: #e9ecef;
+      border-color: #adb5bd;
+    }
+
+    .btn-primary {
+      background: #228be6;
+      color: #fff;
+      border-color: #1c7ed6;
+    }
+    .btn-primary:hover {
+      background: #1c7ed6;
+    }
+
+    .btn-success {
+      background: #40c057;
+      color: #fff;
+      border-color: #37b24d;
+    }
+    .btn-success:hover {
+      background: #37b24d;
+    }
+
+    /* NOTEBOOK PAGE CONTAINER */
+    .notebook-wrapper {
+      width: 100%;
+      max-width: 850px;
+      perspective: 1000px;
+    }
+
+    .notebook-page {
+      background-color: var(--paper-bg);
+      /* Real Katak Daftar Grid Background: 24px x 24px grid cells */
+      background-image: 
+        linear-gradient(var(--paper-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--paper-line) 1px, transparent 1px);
+      background-size: 24px 24px;
+      border-radius: 4px;
+      box-shadow: var(--shadow);
+      position: relative;
+      padding: 30px 30px 40px 65px; /* left padding for red margin line */
+      min-height: 950px;
+      border: 1px solid #d0d7de;
+      transition: background 0.3s ease;
+      overflow: hidden;
+    }
+
+    /* Left Red Margin Line (Hoshiya) */
+    .notebook-page::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50px;
+      width: 2px;
+      background-color: var(--margin-line);
+      opacity: 0.75;
+      z-index: 2;
+    }
+
+    /* TOP NOTEBOOK HEADER - Matches Image exactly */
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 25px;
+      z-index: 3;
+      position: relative;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    /* Notebook Star Symbol top-left */
+    .notebook-star {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--ink-blue);
+    }
+    .notebook-star svg {
+      width: 28px;
+      height: 28px;
+      stroke: var(--ink-blue);
+      fill: none;
+      stroke-width: 2;
+    }
+
+    /* Long Title Box */
+    .title-box {
+      border: 1.5px solid var(--ink-blue);
+      border-radius: 4px;
+      padding: 4px 16px;
+      background: rgba(255,255,255,0.7);
+      min-width: 220px;
+    }
+    .title-box input {
+      border: none;
+      outline: none;
+      background: transparent;
+      font-family: var(--font-hand);
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--ink-blue);
+      width: 100%;
+    }
+
+    /* Date / Page Boxes (Right Header) */
+    .header-right {
+      display: flex;
+      gap: 6px;
+    }
+    .date-box {
+      border: 1.5px solid var(--ink-blue);
+      width: 42px;
+      height: 28px;
+      border-radius: 3px;
+      background: rgba(255,255,255,0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .date-box input {
+      width: 100%;
+      text-align: center;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-family: var(--font-sans);
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--ink-blue);
+    }
+
+    /* PAGE TITLE IN HANDWRITING */
+    .handwriting-title {
+      font-family: var(--font-hand);
+      font-size: 46px;
+      font-weight: 700;
+      color: var(--ink-handwriting);
+      margin-bottom: 20px;
+      line-height: 48px;
+      letter-spacing: 1px;
+      border-bottom: 2px dashed rgba(28, 59, 112, 0.25);
+      padding-bottom: 8px;
+    }
+
+    /* ENTRIES LIST (Grid notebook aligned) */
+    .entries-container {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+
+    .entry-row {
+      display: grid;
+      grid-template-columns: 1fr 140px 90px 40px;
+      gap: 15px;
+      align-items: center;
+      padding: 6px 12px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.45);
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+    }
+
+    .entry-row:hover {
+      background: rgba(255, 255, 255, 0.85);
+      border-color: rgba(74, 144, 226, 0.3);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    .entry-title {
+      font-family: var(--font-hand);
+      font-size: 34px;
+      font-weight: 600;
+      color: var(--ink-handwriting);
+      line-height: 48px;
+    }
+
+    .entry-amount {
+      font-family: var(--font-hand);
+      font-size: 36px;
+      font-weight: 700;
+      color: #1a365d;
+      text-align: right;
+    }
+
+    .entry-badge {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 12px;
+      text-align: center;
+      background: #e7f5ff;
+      color: #1c7ed6;
+    }
+
+    .entry-badge.chq {
+      background: #fff0f6;
+      color: #d6336c;
+    }
+
+    .btn-delete {
+      background: transparent;
+      border: none;
+      color: #adb5bd;
+      cursor: pointer;
+      font-size: 18px;
+      border-radius: 4px;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .btn-delete:hover {
+      color: var(--danger);
+      background: rgba(239, 68, 68, 0.1);
+    }
+
+    /* ADD ENTRY FORM (Interactive Katak Daftar Line) */
+    .add-form-card {
+      background: rgba(255, 255, 255, 0.9);
+      border: 2px dashed var(--ink-blue);
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-top: 10px;
+      margin-bottom: 30px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr auto;
+      gap: 12px;
+      align-items: center;
+    }
+
+    @media (max-width: 600px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+      .entry-row {
+        grid-template-columns: 1fr auto auto;
+      }
+    }
+
+    .form-input {
+      padding: 10px 14px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-family: var(--font-sans);
+      font-size: 15px;
+      outline: none;
+    }
+
+    .form-input:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+
+    /* SUMMARY TOTAL FOOTER */
+    .notebook-footer {
+      border-top: 2px solid var(--ink-blue);
+      padding-top: 20px;
+      margin-top: auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .total-box {
+      background: rgba(28, 59, 112, 0.06);
+      padding: 12px 20px;
+      border-radius: 8px;
+      border-left: 4px solid var(--ink-blue);
+    }
+
+    .total-label {
+      font-size: 14px;
+      color: #64748b;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .total-val {
+      font-family: var(--font-hand);
+      font-size: 42px;
+      font-weight: 700;
+      color: var(--ink-handwriting);
+    }
+
+    .currency-rate {
+      font-size: 13px;
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .currency-rate input {
+      width: 75px;
+      padding: 4px 6px;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+
+    /* Print Styles */
+    @media print {
+      body {
+        background: none;
+        padding: 0;
+      }
+      .toolbar, .add-form-card, .btn-delete {
+        display: none !important;
+      }
+      .notebook-page {
+        box-shadow: none;
+        border: none;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOOLBAR CONTROL -->
+  <div class="toolbar">
+    <div class="toolbar-title">
+      📒 Katak Daftar - Xarajatlar Tizimi
+    </div>
+    <div class="btn-group">
+      <button class="btn" onclick="toggleTheme()">🌓 Mavzu (Tun/Kun)</button>
+      <button class="btn" onclick="toggleFont()">✍️ Shriftni o'zgartirish</button>
+      <button class="btn btn-success" onclick="exportData()">📥 Yuklab olish (JSON)</button>
+      <button class="btn btn-primary" onclick="window.print()">🖨️ Chop etish</button>
+    </div>
+  </div>
+
+  <!-- NOTEBOOK WRAPPER -->
+  <div class="notebook-wrapper">
+    <div class="notebook-page" id="notebookPage">
+      
+      <!-- PAGE HEADER MATCHING PHOTO -->
+      <div class="page-header">
+        <div class="header-left">
+          <div class="notebook-star" title="Katak Daftar Belgisi">
+            <!-- Uzbek/CIS Notebook 8-point star SVG -->
+            <svg viewBox="0 0 24 24">
+              <path d="M12 2L14.5 8.5L21 9L16 13.5L18 20L12 16L6 20L8 13.5L3 9L9.5 8.5L12 2Z" fill="none" stroke="currentColor"/>
+            </svg>
+          </div>
+          <div class="title-box">
+            <input type="text" id="notebookTitle" value="Xarajatlar Daftari" placeholder="Daftar nomi...">
+          </div>
+        </div>
+
+        <div class="header-right">
+          <div class="date-box"><input type="text" value="31" title="Kuni"></div>
+          <div class="date-box"><input type="text" value="07" title="Oyi"></div>
+          <div class="date-box"><input type="text" value="26" title="Yili"></div>
+        </div>
+      </div>
+
+      <!-- MAIN HANDWRITTEN TITLE -->
+      <div class="handwriting-title" id="mainTitle">xarajatlar</div>
+
+      <!-- ENTRIES CONTAINER -->
+      <div class="entries-container" id="entriesList">
+        <!-- Dynamic Items rendered by JS -->
+      </div>
+
+      <!-- ADD NEW ENTRY FORM -->
+      <div class="add-form-card">
+        <div class="form-row">
+          <input type="text" id="newTitle" class="form-input" placeholder="Xarajat nomi (Masalan: Bojxonaga berdim)" autofocus>
+          <input type="number" id="newAmount" class="form-input" placeholder="Summa ($)">
+          <select id="newCategory" class="form-input">
+            <option value="Tashkiliy">Tashkiliy</option>
+            <option value="Oylik">Oylik</option>
+            <option value="Bojxona">Bojxona</option>
+            <option value="Mahsulot">Mahsulot</option>
+            <option value="Boshqa">Boshqa</option>
+          </select>
+          <button class="btn btn-primary" onclick="addEntry()" style="padding: 10px 18px; font-weight: 600;">+ Qo'shish</button>
+        </div>
+      </div>
+
+      <!-- NOTEBOOK FOOTER TOTAL -->
+      <div class="notebook-footer">
+        <div class="total-box">
+          <div class="total-label">Jami Xarajatlar (USD)</div>
+          <div class="total-val" id="totalUSD">$0</div>
+        </div>
+
+        <div class="total-box" style="border-left-color: #2b8a3e;">
+          <div class="total-label">Jami Xarajatlar (UZS So'm)</div>
+          <div class="total-val" id="totalUZS" style="font-size: 32px;">0 so'm</div>
+        </div>
+
+        <div class="currency-rate">
+          <span>1 USD =</span>
+          <input type="number" id="usdRate" value="12800" onchange="calculateTotals()">
+          <span>SO'M</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // Initial data matching the exact image provided by user:
+    // 1. Sut / Non / Jub oldim 50 $
+    // 2. Oylik berdim 50 $
+    // 3. Bojxonaga 100 $ berdim
+    const defaultEntries = [
+      { id: 1, title: "Sut oldim", amount: 50, category: "Tashkiliy" },
+      { id: 2, title: "Oylik berdim", amount: 50, category: "Oylik" },
+      { id: 3, title: "Bojxonaga berdim", amount: 100, category: "Bojxona" }
+    ];
+
+    let entries = JSON.parse(localStorage.getItem('katak_entries')) || defaultEntries;
+
+    function renderEntries() {
+      const container = document.getElementById('entriesList');
+      container.innerHTML = '';
+
+      entries.forEach(entry => {
+        const row = document.createElement('div');
+        row.className = 'entry-row';
+        row.innerHTML = `
+          <div class="entry-title">${escapeHtml(entry.title)}</div>
+          <div class="entry-amount">${entry.amount} $</div>
+          <div class="entry-badge ${entry.category === 'Bojxona' ? 'chq' : ''}">${entry.category}</div>
+          <button class="btn-delete" onclick="deleteEntry(${entry.id})" title="O'chirish">✕</button>
+        `;
+        container.appendChild(row);
+      });
+
+      calculateTotals();
+      localStorage.setItem('katak_entries', JSON.stringify(entries));
+    }
+
+    function addEntry() {
+      const titleInput = document.getElementById('newTitle');
+      const amountInput = document.getElementById('newAmount');
+      const categoryInput = document.getElementById('newCategory');
+
+      const title = titleInput.value.trim();
+      const amount = parseFloat(amountInput.value);
+
+      if (!title || isNaN(amount) || amount <= 0) {
+        alert("Iltimos, xarajat nomi va to'g'ri summani kiriting!");
+        return;
+      }
+
+      entries.push({
+        id: Date.now(),
+        title: title,
+        amount: amount,
+        category: categoryInput.value
+      });
+
+      titleInput.value = '';
+      amountInput.value = '';
+      titleInput.focus();
+
+      renderEntries();
+    }
+
+    function deleteEntry(id) {
+      entries = entries.filter(e => e.id !== id);
+      renderEntries();
+    }
+
+    function calculateTotals() {
+      const total = entries.reduce((sum, e) => sum + e.amount, 0);
+      const rate = parseFloat(document.getElementById('usdRate').value) || 12800;
+      
+      document.getElementById('totalUSD').innerText = `$${total.toLocaleString()}`;
+      document.getElementById('totalUZS').innerText = `${(total * rate).toLocaleString()} so'm`;
+    }
+
+    function toggleTheme() {
+      const body = document.body;
+      if (body.getAttribute('data-theme') === 'dark-notebook') {
+        body.removeAttribute('data-theme');
+      } else {
+        body.setAttribute('data-theme', 'dark-notebook');
+      }
+    }
+
+    let isHandwriting = true;
+    function toggleFont() {
+      const titles = document.querySelectorAll('.entry-title, .handwriting-title, #notebookTitle');
+      isHandwriting = !isHandwriting;
+      titles.forEach(el => {
+        el.style.fontFamily = isHandwriting ? "var(--font-hand)" : "var(--font-sans)";
+      });
+    }
+
+    function exportData() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(entries, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", "katak_daftar_xarajatlar.json");
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+
+    // Enter key shortcuts
+    document.getElementById('newAmount').addEventListener('keyup', (e) => {
+      if (e.key === 'Enter') addEntry();
+    });
+
+    // Init page
+    renderEntries();
+  </script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+{
+  "duration": 27.74,
+  "lines": [
+    {
+      "who": "dilnoza",
+      "start": 1.0,
+      "dur": 7.9
+    },
+    {
+      "who": "robot1",
+      "start": 9.9,
+      "dur": 5.21
+    },
+    {
+      "who": "robot2",
+      "start": 16.1,
+      "dur": 8.14
+    }
+  ],
+  "dilnozaText": [
+    "Vaqt judayam kam, navbat ketyapti!",
+    "Kassa hisobini qanday tezlashtirsam bo'ladi?"
+  ],
+  "robotText1": [
+    "Xavotir olmang, Opa!",
+    "Sizga MUHASIB AI kassa yordamga keladi!"
+  ],
+  "robotText2": [
+    "MUHASIB kassa dasturi bilan:",
+    "⚡ 1 soniyada skanerlash",
+    "📊 Aniq hisob va 100% nazorat!"
+  ]
+}

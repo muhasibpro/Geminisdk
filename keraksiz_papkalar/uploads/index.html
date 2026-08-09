@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MUHASIB Dasturi - Reklama Videosi (Kinematik Animatsiya)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header / Brand Top Bar -->
+        <header class="top-nav">
+            <div class="logo">
+                <span class="logo-icon">📊</span>
+                <span class="logo-text">MUHASIB <span class="badge">PRO</span></span>
+            </div>
+            <div class="subtitle">Avtomatlashtirilgan Do'kon va Savdo Tizimi</div>
+            <div class="nav-actions">
+                <button id="toggleAudioBtn" class="btn btn-secondary">
+                    <span class="icon">🔊</span> Ovoz: ON
+                </button>
+                <button id="fullscreenBtn" class="btn btn-primary">
+                    <span class="icon">⛶</span> To'liq Ekranda Ko'rish
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Video Screen Area -->
+        <main class="video-section">
+            <div class="canvas-wrapper" id="canvasContainer">
+                <canvas id="animCanvas" width="1280" height="720"></canvas>
+                
+                <!-- Overlay Speech Bubbles & Cinematic Titles -->
+                <div id="subtitleBox" class="subtitle-box">
+                    <p id="subtitleText">Animatsiyani boshlash uchun "Play" tugmasini bosing</p>
+                </div>
+
+                <!-- Scene 4 Muhasib Promo Banner Overlay -->
+                <div id="muhasibOverlay" class="muhasib-overlay hidden">
+                    <div class="promo-card">
+                        <div class="promo-badge">⚡ TEZKOR & QULAY</div>
+                        <h2>MUHASIB DASTURI</h2>
+                        <p class="promo-desc">Chaqqon va xatosiz savdo boshqaruvi tizimi!</p>
+                        
+                        <div class="promo-features">
+                            <div class="feat">
+                                <span class="feat-icon">⚡</span>
+                                <div>
+                                    <strong>1 Soniyada Skanerlash</strong>
+                                    <p>Navbatlarsiz instant kassa hisob-kitobi</p>
+                                </div>
+                            </div>
+                            <div class="feat">
+                                <span class="feat-icon">📱</span>
+                                <div>
+                                    <strong>Telefon va PC'da Nazorat</strong>
+                                    <p>Istalgan joydan ombor va daromad tahlili</p>
+                                </div>
+                            </div>
+                            <div class="feat">
+                                <span class="feat-icon">🧾</span>
+                                <div>
+                                    <strong>Avtomatik Chek va Hisobot</strong>
+                                    <p>Soliq va ichki hisobotlar bir tugmada</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="promo-cta">
+                            <a href="#contact" class="cta-btn pulse">MUHASIB'NI O'RNATISH (BEPUL DEMO)</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Play Overlay Button -->
+                <div id="startOverlay" class="start-overlay">
+                    <button id="bigPlayBtn" class="big-play-btn">
+                        <div class="play-triangle"></div>
+                        <span>VIDEONI TOMOSHA QILISH</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Video Controls Bar -->
+            <div class="controls-bar">
+                <button id="playPauseBtn" class="ctrl-btn" title="Ijro / Pauza">▶</button>
+                <button id="restartBtn" class="ctrl-btn" title="Boshidan boshlash">🔄</button>
+                
+                <div class="timeline-container">
+                    <input type="range" id="timeline" min="0" max="100" value="0" step="0.1">
+                    <div class="time-display">
+                        <span id="currentTime">00:00</span> / <span id="duration">00:18</span>
+                    </div>
+                </div>
+
+                <div class="scene-jump">
+                    <button class="scene-btn" data-time="0">1-Sahna (Kirish)</button>
+                    <button class="scene-btn" data-time="4.5">2-Sahna (Energetik)</button>
+                    <button class="scene-btn" data-time="8.5">3-Sahna (Kassa)</button>
+                    <button class="scene-btn" data-time="13">4-Sahna (MUHASIB)</button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Scenario Explanation & Interactive Details -->
+        <section class="details-section">
+            <div class="details-card">
+                <h3>🎬 Video Ssenariysi va Voqealar Rivoji</h3>
+                <ul class="story-list">
+                    <li><span class="step-num">1</span> <strong>Do'konga kirish:</strong> Bola energiya bilan do'konga kiradi, javonlar va chiroqlar harakatlanadi.</li>
+                    <li><span class="step-num">2</span> <strong>Energetik ichimlik:</strong> Javondan energetik ichimlikni qo'liga oladi va kassa tomon yuradi.</li>
+                    <li><span class="step-num">3</span> <strong>Kassadagi muammo:</strong> Kassachi eski usulda qo'lda sekin narx hisoblab qiynaladi.</li>
+                    <li><span class="step-num">4</span> <strong>Haqiqiy emotsiya:</strong> Bola hayratda: <em>"Vay! Nega sizlarda MUHASIB dasturi yo'q?!"</em> deydi.</li>
+                    <li><span class="step-num">5</span> <strong>Yechim:</strong> MUHASIB dasturi afzalliklari namoyish etiladi va do'kon tezkor ishlay boshlaydi.</li>
+                </ul>
+            </div>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+{
+  "duration": 28.29,
+  "lines": [
+    {
+      "key": "prv_line1",
+      "start": 0.5,
+      "dur": 4.85
+    },
+    {
+      "key": "prv_line2",
+      "start": 6.15,
+      "dur": 5.98
+    },
+    {
+      "key": "prv_line3",
+      "start": 12.92,
+      "dur": 6.36
+    },
+    {
+      "key": "prv_line4",
+      "start": 20.08,
+      "dur": 5.21
+    }
+  ]
+}

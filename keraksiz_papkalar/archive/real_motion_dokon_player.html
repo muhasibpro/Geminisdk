@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MUHASIB Dasturi - Real Harakatlanuvchi Video Rolik v2</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: #05070f;
+            color: #ffffff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .header-title {
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.2rem;
+            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 50%, #00c6ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .video-container {
+            width: 100%;
+            max-width: 960px;
+            background: #0b0f19;
+            border-radius: 20px;
+            border: 2px solid rgba(0, 242, 254, 0.4);
+            box-shadow: 0 20px 50px rgba(0, 242, 254, 0.2);
+            overflow: hidden;
+            position: relative;
+        }
+        canvas { width: 100%; height: auto; display: block; }
+        .subtitle-box {
+            position: absolute;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 88%;
+            background: rgba(8, 12, 24, 0.95);
+            border: 1px solid rgba(0, 242, 254, 0.6);
+            border-radius: 16px;
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            backdrop-filter: blur(12px);
+        }
+        .speaker-badge {
+            background: linear-gradient(135deg, #ef4444, #f59e0b);
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 10px;
+            font-weight: 800;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+        .speaker-text {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fff;
+        }
+        .controls {
+            padding: 16px 24px;
+            background: #060912;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .btn-play {
+            background: linear-gradient(135deg, #00f2fe, #0072ff);
+            border: none;
+            color: #000;
+            font-weight: 800;
+            font-size: 15px;
+            padding: 10px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="header-title">
+        <h1>🎬 MUHASIB Dasturi — Real Harakatlanuvchi Video</h1>
+        <p style="color: #94a3b8; margin-top: 4px;">"Vay! Nega sizlarda MUHASIB dasturi yo'q?!" — Yangi Real Stil</p>
+    </div>
+
+    <div class="video-container">
+        <canvas id="canvas" width="960" height="540"></canvas>
+        <div class="subtitle-box">
+            <div class="speaker-badge" id="speaker">👦 BOLA</div>
+            <div class="speaker-text" id="subText">Do'konga kirib energetik ichimlik oldi...</div>
+        </div>
+        <div class="controls">
+            <button class="btn-play" id="playBtn">▶ Videoni Boshlash</button>
+            <span style="color: #64748b; font-size: 14px;">Fayl nomi: <code>dokon_energetik_muhasib_v2.mp4</code></span>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let frame = 0;
+        let isPlaying = false;
+
+        function drawFrame() {
+            frame++;
+            ctx.fillStyle = '#060912';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Dynamic camera grid animation
+            ctx.strokeStyle = 'rgba(0, 242, 254, 0.15)';
+            ctx.lineWidth = 1;
+            for(let x = 0; x < canvas.width; x += 40) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+
+            // Moving barcode laser scanner beam
+            const laserY = 200 + Math.sin(frame * 0.08) * 150;
+            ctx.strokeStyle = '#ef4444';
+            ctx.lineWidth = 4;
+            ctx.shadowColor = '#ef4444';
+            ctx.shadowBlur = 15;
+            ctx.beginPath();
+            ctx.moveTo(100, laserY);
+            ctx.lineTo(860, laserY);
+            ctx.stroke();
+
+            // Text logo
+            ctx.font = '900 36px Outfit';
+            ctx.fillStyle = '#00f2fe';
+            ctx.shadowColor = '#00f2fe';
+            ctx.shadowBlur = 20;
+            ctx.fillText('MUHASIB POS AUTOMATION', 250, 260);
+
+            if(isPlaying) requestAnimationFrame(drawFrame);
+        }
+
+        document.getElementById('playBtn').addEventListener('click', () => {
+            isPlaying = !isPlaying;
+            document.getElementById('playBtn').innerText = isPlaying ? '⏸ Pausa' : '▶ Videoni Boshlash';
+            if(isPlaying) drawFrame();
+        });
+
+        drawFrame();
+    </script>
+</body>
+</html>

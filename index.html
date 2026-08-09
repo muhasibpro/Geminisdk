@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LUXURY RETAIL - MUHASIB POS SYSTEM</title>
+  <meta name="description" content="Ultra-futuristic high-end luxury Point of Sale & Inventory Orchestrator System with AI telemetry and radial HUD category navigator.">
+  
+  <link rel="stylesheet" href="css/luxury_pos.css">
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- Top Header HUD Bar -->
+    <header class="header-bar">
+      <div class="brand-title">
+        <div class="brand-logo">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="brand-name">LUXURY RETAIL</h1>
+          <div class="brand-sub">MUHASIB POS PRO • HUD v4.8</div>
+        </div>
+      </div>
+
+      <div class="header-status">
+        <div class="status-badge">
+          <div class="pulse-dot"></div>
+          <span>SYSTEM ONLINE • 256-BIT QUANTUM ENCRYPTED</span>
+        </div>
+        <div class="time-display" id="timeDisplay">21:58:24</div>
+      </div>
+    </header>
+
+    <!-- Main 3-Column Layout Grid -->
+    <main class="main-grid">
+
+      <!-- Left Column: Products Panel -->
+      <section class="products-panel">
+        <div class="panel-header">
+          <span>CATALOG SELECTION</span>
+          <span style="color: var(--color-cyan)">6 ITEMS AVAILABLE</span>
+        </div>
+        <div id="productsContainer" style="display: flex; flex-direction: column; gap: 14px;">
+          <!-- Dynamically populated via JS -->
+        </div>
+      </section>
+
+      <!-- Center Column: Interactive Radial Category Wheel -->
+      <section class="center-wheel-panel">
+        <div class="radial-wheel-wrapper">
+          <div class="outer-glow-ring"></div>
+          <div class="outer-tech-ring"></div>
+
+          <!-- SVG Radial Wheel -->
+          <svg class="svg-wheel" id="svgWheel" viewBox="0 0 430 430"></svg>
+
+          <!-- Central Core Hub -->
+          <div class="center-hub">
+            <div class="hub-ring"></div>
+            <div class="hub-title" id="hubCategoryTitle">JEWELRY</div>
+            <div class="hub-value" id="hubValueDisplay">$12,500</div>
+          </div>
+        </div>
+
+        <!-- Giant Bottom Checkout Hex Button -->
+        <button class="checkout-giant-btn" onclick="openCheckoutModal()">
+          <span>CHECKOUT</span>
+          <span id="checkoutTotalDisplay">$12,500</span>
+        </button>
+      </section>
+
+      <!-- Right Column: Numpad & AI Assistant Telemetry -->
+      <section class="right-panel">
+
+        <!-- Transaction Numpad Card -->
+        <div class="numpad-card">
+          <div class="numpad-header">
+            <span>TRANSACTION INPUT</span>
+            <span style="color: var(--color-gold)">KEYPAD MODE</span>
+          </div>
+
+          <div class="numpad-display" id="numpadDisplay">$12,500</div>
+
+          <div class="numpad-grid">
+            <button class="num-btn" data-val="1">1</button>
+            <button class="num-btn" data-val="2">2</button>
+            <button class="num-btn" data-val="3">3</button>
+            <button class="num-btn op-btn" data-val="÷">÷</button>
+
+            <button class="num-btn" data-val="7">7</button>
+            <button class="num-btn" data-val="8">8</button>
+            <button class="num-btn" data-val="9">9</button>
+            <button class="num-btn op-btn" data-val="-">-</button>
+
+            <button class="num-btn" data-val="4">4</button>
+            <button class="num-btn" data-val="5">5</button>
+            <button class="num-btn" data-val="6">6</button>
+            <button class="num-btn op-btn" data-val="+">+</button>
+
+            <button class="num-btn" data-val="1">1</button>
+            <button class="num-btn" data-val="2">2</button>
+            <button class="num-btn" data-val="3">3</button>
+            <button class="num-btn checkout-num-btn" onclick="openCheckoutModal()">CHECKOUT</button>
+
+            <button class="num-btn" data-val="0" style="grid-column: span 2">0</button>
+            <button class="num-btn" data-val=".">.</button>
+          </div>
+        </div>
+
+        <!-- AI Assistant & Live Telemetry Card -->
+        <div class="ai-card">
+          <div class="ai-header">
+            <img src="images/ai_assistant_head_1785603546056.jpg" class="ai-avatar" alt="AI Avatar">
+            <div class="ai-title-block">
+              <div class="ai-title">AI ASSISTANT</div>
+              <div class="ai-subtitle" id="aiSubtitle">Real-time demand high for Jewelry category.</div>
+            </div>
+          </div>
+
+          <div class="metrics-row">
+            <div class="metric-box">
+              <div class="metric-lbl">REAL-TIME REVENUE</div>
+              <div class="metric-val" id="revenueDisplay">$45,678</div>
+              <div style="font-size: 9px; color: var(--color-emerald); margin-top: 2px;">TODAY ▲ +24%</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric-lbl">SALES VOLUME</div>
+              <div class="metric-val gold" id="salesVolumeDisplay">124</div>
+              <div style="font-size: 9px; color: var(--color-gold); margin-top: 2px;">TRANSACTIONS</div>
+            </div>
+          </div>
+
+          <!-- Live Bezier Area Chart Canvas -->
+          <div class="chart-wrapper">
+            <canvas id="salesChart"></canvas>
+          </div>
+
+          <!-- AI Chat Prompt -->
+          <div class="ai-prompt-box">
+            <input type="text" id="aiInput" class="ai-prompt-input" placeholder="Ask AI Assistant or type command..." onkeydown="if(event.key==='Enter') { event.preventDefault(); askAIAssistant(); }">
+            <button type="button" class="ai-send-btn" onclick="askAIAssistant()">➤</button>
+          </div>
+        </div>
+
+        <!-- Bottom Seller Performance Card -->
+        <div class="seller-card">
+          <div class="seller-avatar">ST</div>
+          <div class="seller-details">
+            <div style="display: flex; justify-content: space-between;">
+              <span class="seller-name">STOKES</span>
+              <span class="seller-rating">★★★★☆</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 10px; color: var(--text-muted); margin-top: 4px;">
+              <span>SELLER: <strong style="color: var(--color-cyan)">55%</strong></span>
+              <span>CUSTOMER: <strong style="color: var(--color-gold)">33%</strong></span>
+            </div>
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill"></div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+  <!-- Modal Checkout Overlay -->
+  <div class="modal-overlay" id="checkoutModal">
+    <div class="modal-content">
+      <div class="modal-title">LUXURY POS • CHECKOUT & PAYMENT</div>
+      
+      <div style="font-size: 12px; color: var(--text-muted); font-family: var(--font-mono);">SELECTED TRANSACTION ITEMS:</div>
+      <div class="order-items-list" id="modalOrderItems"></div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-glass); padding-top: 12px;">
+        <span style="font-family: var(--font-hud); font-size: 14px;">TOTAL AMOUNT DUE:</span>
+        <span style="font-family: var(--font-hud); font-size: 24px; color: var(--color-gold-bright);" id="modalTotalVal">$12,500</span>
+      </div>
+
+      <div style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono);">SELECT PAYMENT METHOD:</div>
+      <div class="payment-methods">
+        <div class="pay-btn selected" onclick="document.querySelectorAll('.pay-btn').forEach(b=>b.classList.remove('selected')); this.classList.add('selected')">💳 CARD (VISA/AMEX)</div>
+        <div class="pay-btn" onclick="document.querySelectorAll('.pay-btn').forEach(b=>b.classList.remove('selected')); this.classList.add('selected')">💵 CASH (USD)</div>
+        <div class="pay-btn" onclick="document.querySelectorAll('.pay-btn').forEach(b=>b.classList.remove('selected')); this.classList.add('selected')">⚡ CRYPTO (USDT)</div>
+      </div>
+
+      <div style="display: flex; gap: 12px;">
+        <button class="confirm-pay-btn" style="flex: 1;" onclick="confirmPayment()">CONFIRM & PROCESS PAYMENT</button>
+        <button class="confirm-pay-btn" style="background: rgba(255,255,255,0.1); color: var(--text-main);" onclick="closeCheckoutModal()">CANCEL</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/luxury_pos.js"></script>
+</body>
+</html>

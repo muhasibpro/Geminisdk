@@ -1,0 +1,532 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<title>MUHASIB — Cyberpunk POS Revolution</title>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background: #060913;
+    overflow: hidden;
+  }
+  svg {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+  }
+  text {
+    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+</style>
+</head>
+<body>
+
+<svg id="stage" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <!-- Cyber Background Gradients -->
+  <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#0a051b"/>
+    <stop offset="50%" stop-color="#0d1127"/>
+    <stop offset="100%" stop-color="#050a14"/>
+  </linearGradient>
+
+  <linearGradient id="gridGrad" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#00f0ff" stop-opacity="0.15"/>
+    <stop offset="100%" stop-color="#7000ff" stop-opacity="0.0"/>
+  </linearGradient>
+
+  <linearGradient id="cyberCounter" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#1a1c2e"/>
+    <stop offset="100%" stop-color="#0b0d19"/>
+  </linearGradient>
+
+  <linearGradient id="glassTop" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0%" stop-color="#00f0ff" stop-opacity="0.8"/>
+    <stop offset="50%" stop-color="#7000ff" stop-opacity="0.8"/>
+    <stop offset="100%" stop-color="#ff007b" stop-opacity="0.8"/>
+  </linearGradient>
+
+  <!-- POS Terminal Gradients -->
+  <linearGradient id="posBody" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#1e2438"/>
+    <stop offset="100%" stop-color="#0f121d"/>
+  </linearGradient>
+
+  <linearGradient id="posScreen" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#05192e"/>
+    <stop offset="100%" stop-color="#0a2540"/>
+  </linearGradient>
+
+  <linearGradient id="accentCyan" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0%" stop-color="#00f0ff"/>
+    <stop offset="100%" stop-color="#0072ff"/>
+  </linearGradient>
+
+  <linearGradient id="accentPink" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0%" stop-color="#ff007b"/>
+    <stop offset="100%" stop-color="#9900ff"/>
+  </linearGradient>
+
+  <!-- Glow Filters -->
+  <filter id="glowCyan" x="-30%" y="-30%" width="160%" height="160%">
+    <feGaussianBlur stdDeviation="12" result="blur"/>
+    <feMerge>
+      <feMergeNode in="blur"/>
+      <feMergeNode in="SourceGraphic"/>
+    </feMerge>
+  </filter>
+
+  <filter id="glowPink" x="-30%" y="-30%" width="160%" height="160%">
+    <feGaussianBlur stdDeviation="14" result="blur"/>
+    <feMerge>
+      <feMergeNode in="blur"/>
+      <feMergeNode in="SourceGraphic"/>
+    </feMerge>
+  </filter>
+
+  <filter id="laserBeam" x="-50%" y="-50%" width="200%" height="200%">
+    <feGaussianBlur stdDeviation="8" result="blur"/>
+    <feMerge>
+      <feMergeNode in="blur"/>
+      <feMergeNode in="SourceGraphic"/>
+    </feMerge>
+  </filter>
+</defs>
+
+<!-- CAMERA ROOT GROUP -->
+<g id="cam" transform="translate(0, 0) scale(1)">
+
+  <!-- 1. BACKDROP & CYBER GRID -->
+  <rect x="-400" y="-200" width="2700" height="1500" fill="url(#bgGrad)"/>
+  
+  <!-- Cyber floor grid -->
+  <g id="cyberGrid" opacity="0.4">
+    <!-- Horizon Line -->
+    <line x1="-400" y1="650" x2="2300" y2="650" stroke="#00f0ff" stroke-width="3" filter="url(#glowCyan)"/>
+    <rect x="-400" y="650" width="2700" height="500" fill="url(#gridGrad)"/>
+  </g>
+
+  <!-- Floating Holographic Particles -->
+  <g id="particles"></g>
+
+  <!-- 2. SCENE BACKGROUND ELEMENTS -->
+  <!-- Neon Store Signs -->
+  <g id="storeSign" transform="translate(960, 180)">
+    <rect x="-350" y="-60" width="700" height="100" rx="20" fill="#0f1424" stroke="url(#accentCyan)" stroke-width="4" filter="url(#glowCyan)"/>
+    <text x="0" y="8" fill="#ffffff" font-size="44" font-weight="900" text-anchor="middle" letter-spacing="4">SUPERMARKET 2077</text>
+    <text id="signSub" x="0" y="32" fill="#00f0ff" font-size="18" font-weight="700" text-anchor="middle" letter-spacing="8">SMART KASSA TIZIMI</text>
+  </g>
+
+  <!-- 3. KASSA PESTAHTASI (COUNTER) -->
+  <g id="counterGroup" transform="translate(0, 680)">
+    <!-- Main desk body -->
+    <rect x="200" y="0" width="1520" height="320" rx="24" fill="url(#cyberCounter)" stroke="#1f2942" stroke-width="4"/>
+    <!-- Neon Top Stripe -->
+    <rect x="180" y="-15" width="1560" height="20" rx="10" fill="url(#glassTop)" filter="url(#glowCyan)"/>
+    <!-- Front Glass Panel -->
+    <rect x="300" y="40" width="1320" height="200" rx="16" fill="#0f172a" opacity="0.6" stroke="#00f0ff" stroke-width="1.5" stroke-dasharray="8 8"/>
+    <!-- LED Lights along counter -->
+    <circle cx="350" cy="140" r="6" fill="#00f0ff" filter="url(#glowCyan)"/>
+    <circle cx="390" cy="140" r="6" fill="#00f0ff" filter="url(#glowCyan)"/>
+    <circle cx="430" cy="140" r="6" fill="#00f0ff" filter="url(#glowCyan)"/>
+  </g>
+
+  <!-- 4. PERSONAJ 1: KASSIR (CHAPDA) -->
+  <g id="cashier" transform="translate(450, 480)">
+    <!-- Cashier Body -->
+    <path d="M -90 280 Q -100 120 -50 90 Q 0 80 50 90 Q 100 120 90 280 Z" fill="#1e1b4b" stroke="#6366f1" stroke-width="4"/>
+    <!-- Uniform Jacket / Cyber Vest -->
+    <path d="M -50 110 L 0 280 L 50 110 Z" fill="#4f46e5" opacity="0.8"/>
+    <!-- Cyber Badge -->
+    <rect x="-35" y="160" width="70" height="45" rx="6" fill="#090d16" stroke="#00f0ff" stroke-width="2"/>
+    <text x="0" y="188" fill="#00f0ff" font-size="14" font-weight="bold" text-anchor="middle">KASSIR</text>
+    
+    <!-- Neck -->
+    <rect x="-20" y="55" width="40" height="40" fill="#fbcfe8" rx="10"/>
+    
+    <!-- Head -->
+    <g id="cashierHead">
+      <ellipse cx="0" cy="20" rx="55" ry="65" fill="#fce7f3"/>
+      <!-- Cyber Visor / Hair -->
+      <path d="M -60 10 Q -65 -50 0 -55 Q 65 -50 60 10 Q 40 -20 0 -20 Q -40 -20 -60 10 Z" fill="#ec4899"/>
+      <!-- Visor glasses -->
+      <rect id="visor" x="-45" y="0" width="90" height="30" rx="8" fill="#00f0ff" opacity="0.9" filter="url(#glowCyan)"/>
+      <!-- Mouth -->
+      <path id="cashierMouth" d="M -20 50 Q 0 60 20 50" fill="none" stroke="#be185d" stroke-width="4" stroke-linecap="round"/>
+    </g>
+
+    <!-- Hands -->
+    <g id="cashierArmLeft">
+      <path d="M -70 120 Q -110 180 -80 230" fill="none" stroke="#4f46e5" stroke-width="26" stroke-linecap="round"/>
+      <circle cx="-80" cy="230" r="16" fill="#fce7f3"/>
+    </g>
+    <g id="cashierArmRight">
+      <path d="M 70 120 Q 110 170 60 210" fill="none" stroke="#4f46e5" stroke-width="26" stroke-linecap="round"/>
+      <circle cx="60" cy="210" r="16" fill="#fce7f3"/>
+    </g>
+  </g>
+
+
+  <!-- 5. PERSONAJ 2: XARIDOR (O'NGDA) -->
+  <g id="customer" transform="translate(1450, 470)">
+    <!-- Customer Body -->
+    <path d="M -90 290 Q -110 130 -60 95 Q 0 85 60 95 Q 110 130 90 290 Z" fill="#0f172a" stroke="#38bdf8" stroke-width="4"/>
+    <!-- Jacket -->
+    <path d="M -60 100 Q 0 120 60 100 L 70 290 L -70 290 Z" fill="#0284c7"/>
+    
+    <!-- Neck -->
+    <rect x="-22" y="55" width="44" height="40" fill="#fed7aa" rx="10"/>
+
+    <!-- Head -->
+    <g id="customerHead">
+      <ellipse cx="0" cy="15" rx="55" ry="65" fill="#ffedd5"/>
+      <!-- Hair -->
+      <path d="M -60 0 Q -70 -60 0 -65 Q 70 -60 60 0 Q 30 -40 -30 -40 Z" fill="#1e293b"/>
+      <!-- Eyes -->
+      <circle cx="-22" cy="10" r="7" fill="#0f172a"/>
+      <circle cx="22" cy="10" r="7" fill="#0f172a"/>
+      <circle cx="-20" cy="8" r="2.5" fill="#ffffff"/>
+      <circle cx="24" cy="8" r="2.5" fill="#ffffff"/>
+      <!-- Eyebrows -->
+      <path id="custEyebrowL" d="M -35 -5 L -10 -2" stroke="#0f172a" stroke-width="4" stroke-linecap="round"/>
+      <path id="custEyebrowR" d="M 10 -2 L 35 -5" stroke="#0f172a" stroke-width="4" stroke-linecap="round"/>
+      <!-- Mouth -->
+      <path id="custMouth" d="M -22 45 Q 0 35 22 45" fill="none" stroke="#9a3412" stroke-width="4" stroke-linecap="round"/>
+    </g>
+
+    <!-- Customer Arms -->
+    <g id="custArmL">
+      <path d="M -75 120 Q -120 180 -50 220" fill="none" stroke="#0284c7" stroke-width="26" stroke-linecap="round"/>
+      <circle cx="-50" cy="220" r="16" fill="#ffedd5"/>
+    </g>
+  </g>
+
+
+  <!-- 6. MUHASIB POS TERMINAL & HARDWARE (CENTER) -->
+  <g id="posHardware" transform="translate(960, 540)">
+    <!-- Base stand -->
+    <ellipse cx="0" cy="130" rx="140" ry="30" fill="#090d16" stroke="#00f0ff" stroke-width="3"/>
+    <path d="M -40 120 L -25 0 L 25 0 L 40 120 Z" fill="url(#posBody)" stroke="#1e293b" stroke-width="2"/>
+    
+    <!-- Main Screen Frame -->
+    <g id="posScreenGroup" transform="translate(0, -70)">
+      <rect x="-240" y="-160" width="480" height="300" rx="20" fill="url(#posBody)" stroke="#00f0ff" stroke-width="5" filter="url(#glowCyan)"/>
+      <!-- Display Monitor -->
+      <rect x="-220" y="-140" width="440" height="260" rx="12" fill="url(#posScreen)"/>
+      
+      <!-- SCREEN CONTENT (Holographic UI) -->
+      <g id="screenUI">
+        <!-- Header bar -->
+        <rect x="-220" y="-140" width="440" height="45" rx="10" fill="#00f0ff" opacity="0.2"/>
+        <text x="-200" y="-112" fill="#00f0ff" font-size="20" font-weight="bold">MUHASIB POS v4.0</text>
+        <circle cx="190" cy="-118" r="8" fill="#10b981" filter="url(#glowCyan)"/>
+
+        <!-- Cart Items List / Info -->
+        <g id="uiContent1">
+          <rect x="-200" y="-80" width="250" height="30" rx="6" fill="#1e293b" opacity="0.8"/>
+          <text x="-190" y="-60" fill="#ffffff" font-size="14">1. Energetik ichimlik  x2</text>
+          <text x="25" y="-60" fill="#00f0ff" font-size="14" font-weight="bold">50 000</text>
+
+          <rect x="-200" y="-40" width="250" height="30" rx="6" fill="#1e293b" opacity="0.8"/>
+          <text x="-190" y="-20" fill="#ffffff" font-size="14">2. Shokolad batoni    x1</text>
+          <text x="25" y="-20" fill="#00f0ff" font-size="14" font-weight="bold">15 000</text>
+
+          <line x1="-200" y1="5" x2="200" y2="5" stroke="#00f0ff" stroke-width="2" stroke-dasharray="4 4"/>
+          
+          <!-- Total Price Badge -->
+          <rect x="-200" y="20" width="400" height="70" rx="12" fill="url(#accentCyan)"/>
+          <text x="-180" y="62" fill="#051026" font-size="22" font-weight="900">JAMI:</text>
+          <text id="totalAmountText" x="180" y="65" fill="#051026" font-size="36" font-weight="900" text-anchor="end">65 000 SO'M</text>
+        </g>
+      </g>
+    </g>
+
+    <!-- Laser Scanner Device -->
+    <g id="scannerDevice" transform="translate(-280, 70)">
+      <rect x="-30" y="-40" width="60" height="80" rx="10" fill="#0f172a" stroke="#ff007b" stroke-width="3"/>
+      <circle cx="0" cy="-10" r="16" fill="#ff007b" filter="url(#glowPink)"/>
+      <!-- Laser Beam (Dinamik paydo bo'ladi) -->
+      <polygon id="laserCone" points="0,-10 250,-80 250,60" fill="url(#accentPink)" opacity="0" filter="url(#laserBeam)"/>
+    </g>
+
+    <!-- Receipt / Chek Output -->
+    <g id="receiptGroup" transform="translate(260, 40) scale(0)">
+      <path d="M -50 0 L 50 0 L 50 180 L 40 170 L 30 180 L 20 170 L 10 180 L 0 170 L -10 180 L -20 170 L -30 180 L -40 170 L -50 180 Z" fill="#ffffff"/>
+      <text x="0" y="30" fill="#000" font-size="14" font-weight="bold" text-anchor="middle">MUHASIB POS</text>
+      <line x1="-40" y1="42" x2="40" y2="42" stroke="#666" stroke-width="1.5" stroke-dasharray="3 3"/>
+      <text x="-40" y="65" fill="#333" font-size="11">TO'LOV QABUL QILINDI</text>
+      <text x="-40" y="85" fill="#000" font-size="13" font-weight="bold">65 000 SO'M</text>
+      <text x="0" y="125" fill="#10b981" font-size="15" font-weight="900" text-anchor="middle">✔ QABUL QILINDI</text>
+      <text x="0" y="150" fill="#888" font-size="10" text-anchor="middle">Rahmat! Yana keling!</text>
+    </g>
+  </g>
+
+
+  <!-- 7. DYNAMIC DIALOGUE SPEECH BUBBLES -->
+  <g id="bubbleCashier" transform="translate(480, 220)" opacity="0">
+    <path d="M -220 -80 L 220 -80 Q 240 -80 240 -60 L 240 40 Q 240 60 220 60 L 20 60 L -20 100 L -10 60 L -220 60 Q -240 60 -240 40 L -240 -60 Q -240 -80 -220 -80 Z" fill="#0f172a" stroke="#ff007b" stroke-width="4" filter="url(#glowPink)"/>
+    <text id="bubbleCashierText1" x="0" y="-25" fill="#ffffff" font-size="24" font-weight="bold" text-anchor="middle">Eski kassada navbat va xatolar-a?!</text>
+    <text id="bubbleCashierText2" x="0" y="20" fill="#ff007b" font-size="22" font-weight="900" text-anchor="middle">Yigirmanchi asrda qolib ketibsizku!</text>
+  </g>
+
+  <g id="bubbleCustomer" transform="translate(1400, 220)" opacity="0">
+    <path d="M -240 -80 L 240 -80 Q 260 -80 260 -60 L 260 40 Q 260 60 240 60 L 30 60 L -10 100 L 0 60 L -240 60 Q -260 60 -260 40 L -260 -60 Q -260 -80 -240 -80 Z" fill="#0f172a" stroke="#00f0ff" stroke-width="4" filter="url(#glowCyan)"/>
+    <text id="bubbleCustText1" x="0" y="-25" fill="#ffffff" font-size="24" font-weight="bold" text-anchor="middle">To'xtang! MUHASIB POS bilan</text>
+    <text id="bubbleCustText2" x="0" y="20" fill="#00f0ff" font-size="24" font-weight="900" text-anchor="middle">Kassa ishi 1 soniyada hal bo'ladi!</text>
+  </g>
+
+
+  <!-- 8. OVERLAY EFFECT: OLD / SLOW KASSA WARNING (PHASE 1) -->
+  <g id="oldKassaOverlay" opacity="0">
+    <rect x="0" y="0" width="1920" height="1080" fill="#dc2626" opacity="0.15"/>
+    <g transform="translate(960, 320)">
+      <rect x="-300" y="-60" width="600" height="120" rx="20" fill="#7f1d1d" stroke="#ef4444" stroke-width="6"/>
+      <text x="0" y="10" fill="#fca5a5" font-size="38" font-weight="900" text-anchor="middle">⚠️ SEKIN KASSA & XATOLIKLAR</text>
+      <text x="0" y="45" fill="#ffffff" font-size="20" font-weight="bold" text-anchor="middle">Mijozlar kutishdan charchamoqda!</text>
+    </g>
+  </g>
+
+  <!-- 9. OVERLAY EFFECT: 3X SPEED & REVENUE CHART (PHASE 3) -->
+  <g id="statsOverlay" transform="translate(960, 300)" opacity="0">
+    <!-- Chart Background Panel -->
+    <rect x="-420" y="-140" width="840" height="280" rx="24" fill="#090d16" opacity="0.95" stroke="#00f0ff" stroke-width="4" filter="url(#glowCyan)"/>
+    
+    <!-- Title -->
+    <text x="0" y="-90" fill="#00f0ff" font-size="32" font-weight="900" text-anchor="middle" letter-spacing="2">🚀 SAVDO VA DAROMAD 3X TEZLASHTI!</text>
+
+    <!-- Animated Bar Chart -->
+    <g transform="translate(-260, 70)">
+      <!-- Bar 1: Old kassa -->
+      <rect x="0" y="-60" width="70" height="60" rx="8" fill="#475569"/>
+      <text x="35" y="25" fill="#94a3b8" font-size="16" font-weight="bold" text-anchor="middle">Eski</text>
+      
+      <!-- Bar 2: Muhasib POS -->
+      <rect id="chartBar2" x="120" y="-180" width="90" height="180" rx="8" fill="url(#accentCyan)"/>
+      <text x="165" y="25" fill="#00f0ff" font-size="18" font-weight="bold" text-anchor="middle">MUHASIB</text>
+      
+      <!-- Bar 3: Daromad o'sishi -->
+      <rect id="chartBar3" x="270" y="-220" width="90" height="220" rx="8" fill="url(#accentPink)"/>
+      <text x="315" y="25" fill="#ff007b" font-size="18" font-weight="bold" text-anchor="middle">Daromad</text>
+    </g>
+
+    <!-- Floating Badge -->
+    <g transform="translate(240, -10)">
+      <circle cx="0" cy="0" r="65" fill="#10b981" filter="url(#glowCyan)"/>
+      <text x="0" y="-5" fill="#ffffff" font-size="28" font-weight="900" text-anchor="middle">100%</text>
+      <text x="0" y="22" fill="#ffffff" font-size="14" font-weight="bold" text-anchor="middle">NAZORAT</text>
+    </g>
+  </g>
+
+
+  <!-- 10. FINAL OUTRO CARD (PHASE 4) -->
+  <g id="outroCard" transform="translate(960, 540) scale(0)" opacity="0">
+    <rect x="-550" y="-320" width="1100" height="640" rx="36" fill="#090d16" stroke="url(#accentCyan)" stroke-width="8" filter="url(#glowCyan)"/>
+    
+    <!-- Big Logo Glow -->
+    <circle cx="0" cy="-120" r="90" fill="#00f0ff" opacity="0.1" filter="url(#glowCyan)"/>
+    
+    <!-- Title -->
+    <text x="0" y="-140" fill="#ffffff" font-size="64" font-weight="900" text-anchor="middle" letter-spacing="4">MUHASIB <tspan fill="#00f0ff">POS</tspan></text>
+    <text x="0" y="-70" fill="#ff007b" font-size="32" font-weight="bold" text-anchor="middle" letter-spacing="2">BIZNESINGIZ UCHUN ENG AQLI KASSA TIZIMI</text>
+    
+    <!-- Feature Pills -->
+    <g transform="translate(-360, 30)">
+      <rect x="0" y="0" width="220" height="60" rx="30" fill="#1e293b" stroke="#00f0ff" stroke-width="2"/>
+      <text x="110" y="37" fill="#ffffff" font-size="20" font-weight="bold" text-anchor="middle">⚡ 1s Skaner</text>
+    </g>
+    <g transform="translate(-110, 30)">
+      <rect x="0" y="0" width="220" height="60" rx="30" fill="#1e293b" stroke="#ff007b" stroke-width="2"/>
+      <text x="110" y="37" fill="#ffffff" font-size="20" font-weight="bold" text-anchor="middle">📊 Aniq Hisobot</text>
+    </g>
+    <g transform="translate(140, 30)">
+      <rect x="0" y="0" width="220" height="60" rx="30" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+      <text x="110" y="37" fill="#ffffff" font-size="20" font-weight="bold" text-anchor="middle">📱 Mobil Ilova</text>
+    </g>
+
+    <!-- Call To Action Button -->
+    <g transform="translate(0, 170)">
+      <rect x="-260" y="-45" width="520" height="90" rx="45" fill="url(#accentCyan)" filter="url(#glowCyan)"/>
+      <text x="0" y="12" fill="#040914" font-size="34" font-weight="900" text-anchor="middle" letter-spacing="1">HOZIROQ ULANING!</text>
+    </g>
+
+    <text x="0" y="270" fill="#94a3b8" font-size="22" font-weight="bold" text-anchor="middle">🌐 muhasib.uz | 📞 +998 71 200 00 00</text>
+  </g>
+
+</g>
+</svg>
+
+<script>
+  // Dynamic particle generator
+  const pGroup = document.getElementById('particles');
+  for (let i = 0; i < 35; i++) {
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('cx', Math.random() * 2400 - 300);
+    circle.setAttribute('cy', Math.random() * 1200 - 200);
+    circle.setAttribute('r', Math.random() * 4 + 2);
+    circle.setAttribute('fill', i % 2 === 0 ? '#00f0ff' : '#ff007b');
+    circle.setAttribute('opacity', (Math.random() * 0.6 + 0.2).toFixed(2));
+    pGroup.appendChild(circle);
+  }
+
+  // GLOBAL ANIMATION DURATION & SEEK ENGINE
+  let CONFIG = {
+    duration: 22.0,
+    starts: [1.0, 6.2, 13.7, 19.7],
+    durs: [4.5, 6.0, 4.5, 4.0]
+  };
+
+  window.loadConfig = function(cfg) {
+    if (cfg) {
+      CONFIG = Object.assign(CONFIG, cfg);
+      window.DURATION = CONFIG.duration;
+    }
+  };
+
+  window.DURATION = CONFIG.duration;
+
+  // Helper clamp
+  function clamp(val, min, max) {
+    return Math.max(min, Math.min(max, val));
+  }
+
+  // SEEK logic for frame-by-frame rendering
+  window.SEEK = function(t) {
+    const starts = CONFIG.starts || [1.0, 6.2, 13.7, 19.7];
+    const durs = CONFIG.durs || [4.5, 6.0, 4.5, 4.0];
+
+    const cam = document.getElementById('cam');
+    const oldKassaOverlay = document.getElementById('oldKassaOverlay');
+    const bubbleCashier = document.getElementById('bubbleCashier');
+    const bubbleCustomer = document.getElementById('bubbleCustomer');
+    const laserCone = document.getElementById('laserCone');
+    const receiptGroup = document.getElementById('receiptGroup');
+    const statsOverlay = document.getElementById('statsOverlay');
+    const outroCard = document.getElementById('outroCard');
+
+    const custEyebrowL = document.getElementById('custEyebrowL');
+    const custEyebrowR = document.getElementById('custEyebrowR');
+    const custMouth = document.getElementById('custMouth');
+    const cashierMouth = document.getElementById('cashierMouth');
+
+    // Default states
+    laserCone.setAttribute('opacity', '0');
+    receiptGroup.setAttribute('transform', 'translate(260, 40) scale(0)');
+    oldKassaOverlay.setAttribute('opacity', '0');
+    bubbleCashier.setAttribute('opacity', '0');
+    bubbleCustomer.setAttribute('opacity', '0');
+    statsOverlay.setAttribute('opacity', '0');
+    outroCard.setAttribute('opacity', '0');
+    outroCard.setAttribute('transform', 'translate(960, 540) scale(0)');
+
+    // ----------------------------------------------------
+    // PHASE 1: GAP 1 (0s -> starts[1]) - Eski kassa muammosi
+    // ----------------------------------------------------
+    if (t < starts[1]) {
+      const progress = clamp(t / starts[1], 0, 1);
+      
+      // Slow camera zoom to cashier
+      const zoom = 1 + progress * 0.15;
+      const panX = -progress * 100;
+      cam.setAttribute('transform', `translate(${panX}, 0) scale(${zoom})`);
+
+      // Red Alert Overlay
+      if (t >= starts[0]) {
+        const overlayAlpha = Math.min(1, (t - starts[0]) * 2);
+        oldKassaOverlay.setAttribute('opacity', (overlayAlpha * 0.85).toFixed(2));
+        bubbleCashier.setAttribute('opacity', overlayAlpha.toFixed(2));
+        
+        // Cashier mouth speaking animation
+        const mY = 50 + Math.sin(t * 15) * 8;
+        cashierMouth.setAttribute('d', `M -20 50 Q 0 ${mY} 20 50`);
+      }
+
+      // Customer upset expression
+      custEyebrowL.setAttribute('d', 'M -35 5 L -10 -8');
+      custEyebrowR.setAttribute('d', 'M 10 -8 L 35 5');
+      custMouth.setAttribute('d', 'M -20 50 Q 0 30 20 50');
+    }
+
+    // ----------------------------------------------------
+    // PHASE 2: GAP 2 (starts[1] -> starts[2]) - MUHASIB POS Power & Laser Scan
+    // ----------------------------------------------------
+    else if (t < starts[2]) {
+      const p2 = (t - starts[1]) / (starts[2] - starts[1]);
+      
+      // Camera focus on POS terminal
+      const zoom = 1.25 + Math.sin(p2 * Math.PI) * 0.1;
+      const panX = (960 - 960 * zoom);
+      const panY = (540 - 540 * zoom) + 40;
+      cam.setAttribute('transform', `translate(${panX}, ${panY}) scale(${zoom})`);
+
+      // Dialogue bubble
+      bubbleCustomer.setAttribute('opacity', '1');
+      
+      // Customer happy expression & speaking
+      custEyebrowL.setAttribute('d', 'M -35 -8 L -10 -3');
+      custEyebrowR.setAttribute('d', 'M 10 -3 L 35 -8');
+      const mY = 40 + Math.sin(t * 16) * 10;
+      custMouth.setAttribute('d', `M -22 40 Q 0 ${mY} 22 40`);
+
+      // Scanner laser pulse & Receipt print
+      if (p2 > 0.3 && p2 < 0.8) {
+        const laserOp = (Math.sin(t * 30) > 0 ? 0.9 : 0.2);
+        laserCone.setAttribute('opacity', laserOp.toString());
+      }
+
+      if (p2 > 0.5) {
+        const rProgress = Math.min(1, (p2 - 0.5) * 4);
+        receiptGroup.setAttribute('transform', `translate(260, 40) scale(${rProgress})`);
+      }
+    }
+
+    // ----------------------------------------------------
+    // PHASE 3: GAP 3 (starts[2] -> starts[3]) - 3X Speed & Stats
+    // ----------------------------------------------------
+    else if (t < starts[3]) {
+      const p3 = (t - starts[2]) / (starts[3] - starts[2]);
+
+      // Wide high-angle camera
+      cam.setAttribute('transform', `translate(0, 0) scale(1)`);
+
+      // Stats overlay popup
+      const sAlpha = Math.min(1, p3 * 3);
+      statsOverlay.setAttribute('opacity', sAlpha.toFixed(2));
+
+      // Bar chart height growth
+      const chartBar2 = document.getElementById('chartBar2');
+      const chartBar3 = document.getElementById('chartBar3');
+      if (chartBar2 && chartBar3) {
+        const h2 = Math.min(180, p3 * 220);
+        const h3 = Math.min(220, p3 * 260);
+        chartBar2.setAttribute('height', h2);
+        chartBar2.setAttribute('y', -h2);
+        chartBar3.setAttribute('height', h3);
+        chartBar3.setAttribute('y', -h3);
+      }
+
+      // Both Cashier & Customer super happy
+      cashierMouth.setAttribute('d', 'M -25 45 Q 0 70 25 45');
+      custMouth.setAttribute('d', 'M -25 40 Q 0 65 25 40');
+    }
+
+    // ----------------------------------------------------
+    // PHASE 4: GAP 4 (starts[3] -> End) - Outro Call to Action
+    // ----------------------------------------------------
+    else {
+      const p4 = Math.min(1, (t - starts[3]) / 1.5);
+      
+      // Zoom into Outro Card
+      cam.setAttribute('transform', `translate(0, 0) scale(1)`);
+      
+      outroCard.setAttribute('opacity', p4.toFixed(2));
+      const scaleVal = 0.5 + p4 * 0.5;
+      outroCard.setAttribute('transform', `translate(960, 540) scale(${scaleVal})`);
+    }
+  };
+</script>
+</body>
+</html>

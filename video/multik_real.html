@@ -1,0 +1,204 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>MUHASIB — real rasmdan animatsiya</title>
+<style>
+  html,body{margin:0;padding:0;width:100%;height:100%;background:#000;overflow:hidden}
+  #screen{position:relative;width:100vw;height:100vh;overflow:hidden;
+          font-family:'Helvetica Neue',Helvetica,Arial,sans-serif}
+  #world{position:absolute;left:50%;top:50%;transform-origin:50% 50%}
+  #world img.bg{position:absolute;left:0;top:0;display:block}
+  .part{position:absolute;left:0;top:0;background-repeat:no-repeat;will-change:transform}
+  #glow{position:absolute;border-radius:50%;pointer-events:none;
+        background:radial-gradient(circle,rgba(255,241,118,.85) 0%,rgba(255,200,0,.35) 45%,rgba(255,200,0,0) 70%)}
+  .ui{position:absolute;opacity:0}
+  /* o'lchamlar vh da — render qanday bo'lsa ham nisbatlar saqlanadi */
+  #card{left:0;top:0;width:46vh;background:rgba(12,18,28,.92);border-radius:2.4vh;
+        padding:2.4vh 2.8vh;box-shadow:0 2.2vh 5.5vh rgba(0,0,0,.5);backdrop-filter:blur(6px)}
+  #card .brand{display:flex;align-items:center;gap:1.3vh;margin-bottom:1.3vh}
+  #card .brand svg{width:4.3vh;height:4.3vh}
+  #card .brand b{color:#fff;font-size:2.8vh;letter-spacing:1px}
+  #card .row{display:flex;justify-content:space-between;align-items:baseline;
+             color:#cbd5e1;font-size:2vh;padding:0.75vh 0;border-bottom:1px solid rgba(255,255,255,.08)}
+  #card .row b{color:#fff;font-size:2.4vh}
+  #card .total{margin-top:1.3vh;display:flex;justify-content:space-between;align-items:center}
+  #card .total span{color:#9fb0c6;font-size:1.9vh}
+  #card .total b{color:#34a853;font-size:3.7vh}
+  #card .fast{margin-top:1.1vh;color:#4285f4;font-size:1.8vh;font-weight:600}
+  #scanline{position:absolute;height:0.5vh;border-radius:0.25vh;
+            background:linear-gradient(90deg,rgba(255,75,75,0),#ff4b4b,rgba(255,75,75,0));
+            box-shadow:0 0 1.7vh rgba(255,75,75,.9)}
+  #end{position:absolute;left:0;top:0;width:100%;height:100%;background:#080d16;
+       display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1vh}
+  #end svg{width:14vh;height:14vh}
+  #end .logo{font-size:9.6vh;font-weight:800;color:#fff;letter-spacing:0.6vh}
+  #end .sub{font-size:3.5vh;color:#9fb0c6}
+  #end .pts{margin-top:2.4vh;display:flex;gap:4vh;font-size:2.4vh}
+  #end .pts i{font-style:normal}
+  #fadeout{position:absolute;left:0;top:0;width:100%;height:100%;background:#000;opacity:0}
+</style>
+
+<div id="screen">
+  <div id="world">
+    <img class="bg" id="bg">
+    <div class="part" id="legB"></div>
+    <div class="part" id="legF"></div>
+    <div class="part" id="body"></div>
+    <div id="glow"></div>
+  </div>
+
+  <div class="ui" id="scanline"></div>
+
+  <div class="ui" id="card">
+    <div class="brand">
+      <svg viewBox="0 0 240 60" style="height:4vh;width:auto;"><text x="0" y="46" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="46"><tspan fill="#00AEEF" font-weight="900">/</tspan><tspan fill="#FFFFFF">muhasib</tspan><tspan fill="#00AEEF" font-weight="900">.</tspan></text></svg>
+    </div>
+    <div class="row"><span id="itemName">Turbo Spark energetik</span><b id="itemPrice">25 000</b></div>
+    <div class="row"><span>Skaner</span><b id="scanState">…</b></div>
+    <div class="total"><span>Jami</span><b id="totalPrice">25 000 so'm</b></div>
+    <div class="fast" id="fastLine">1 soniyada rasmiylashtirildi</div>
+  </div>
+
+  <div class="ui" id="end">
+    <svg viewBox="0 0 240 60" style="height:12vh;width:auto;margin-bottom:1.5vh;"><text x="0" y="46" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="46"><tspan fill="#00AEEF" font-weight="900">/</tspan><tspan fill="#FFFFFF">muhasib</tspan><tspan fill="#00AEEF" font-weight="900">.</tspan></text></svg>
+    <div class="sub">Zamonaviy POS kassa dasturi</div>
+    <div class="pts"><i style="color:#34a853">1 soniyada skanerlash</i><i style="color:#4285f4">Aniq hisob-kitob</i><i style="color:#fbbc05">Ombor nazorati</i></div>
+  </div>
+
+  <div id="fadeout"></div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════
+   REAL RASMDAN ANIMATSIYA
+   Personaj fondan ajratilgan PNG. U son chizig'idan pastda ikkita oyoqqa
+   bo'linadi (clip-path) va har biri son nuqtasi atrofida aylanadi —
+   shuning uchun rasm haqiqatan yuradi, shunchaki surilmaydi.
+   ═══════════════════════════════════════════════════════════════════ */
+const $ = id => document.getElementById(id);
+const clamp = (v,a,b) => v<a?a:(v>b?b:v);
+const lerp = (a,b,t) => a+(b-a)*t;
+const ease = t => t<0?0:t>1?1:t*t*(3-2*t);
+const seg = (t,t0,t1) => clamp((t-t0)/Math.max(1e-4,t1-t0),0,1);
+
+let C = {
+  w: 1376, h: 768,
+  bg: "layers/scene_1_bg.jpg",
+  subject: "layers/scene_1_subject.png",
+  bbox: [547,130,400,600],
+  hipY: 466,
+  splitX: 700,
+  legBackPivot: [662,466],
+  legFrontPivot: [719,466],
+  walkFrom: -470,          /* qayerdan kirib keladi (px, rasm koordinatasida) */
+  walkIn: [0.5, 4.3],
+  glow: [962, 345, 210],   /* energetik banka: x, y, diametr */
+  glowAt: [4.1, 5.3],
+  cardAt: [5.4, 12.0],
+  scanAt: [5.9, 7.1],
+  endAt: [9.6, 13.0],
+  duration: 13.0,
+  item: "Turbo Spark energetik",
+  price: "25 000",
+  total: "25 000 so'm"
+};
+window.DURATION = C.duration;
+
+function build(){
+  const S = `url("${C.subject}")`;
+  $('bg').src = C.bg;
+  $('world').style.width = C.w + 'px';
+  $('world').style.height = C.h + 'px';
+  for(const id of ['legB','legF','body']){
+    const e = $(id);
+    e.style.width = C.w + 'px';
+    e.style.height = C.h + 'px';
+    e.style.backgroundImage = S;
+    e.style.backgroundSize = C.w + 'px ' + C.h + 'px';
+  }
+  /* clip-path: inset(tepa o'ng past chap) */
+  $('legB').style.clipPath = `inset(${C.hipY}px ${C.w - C.splitX}px 0px 0px)`;
+  $('legF').style.clipPath = `inset(${C.hipY}px 0px 0px ${C.splitX}px)`;
+  $('body').style.clipPath = `inset(0px 0px ${C.h - C.hipY - 12}px 0px)`;
+  $('legB').style.transformOrigin = `${C.legBackPivot[0]}px ${C.legBackPivot[1]}px`;
+  $('legF').style.transformOrigin = `${C.legFrontPivot[0]}px ${C.legFrontPivot[1]}px`;
+  $('body').style.transformOrigin = `${(C.bbox[0]+C.bbox[2]/2)}px ${C.hipY}px`;
+
+  const g = $('glow');
+  g.style.width = C.glow[2] + 'px';
+  g.style.height = C.glow[2] + 'px';
+  g.style.left = (C.glow[0] - C.glow[2]/2) + 'px';
+  g.style.top  = (C.glow[1] - C.glow[2]/2) + 'px';
+
+  $('itemName').textContent = C.item;
+  $('itemPrice').textContent = C.price;
+  $('totalPrice').textContent = C.total;
+  window.DURATION = C.duration;
+}
+window.APPLY_CONFIG = function(){
+  if(window.CONFIG) C = Object.assign(C, window.CONFIG);
+  build();
+};
+build();
+
+window.SEEK = function(t){
+  const SW = window.innerWidth, SH = window.innerHeight;
+  const scale = SH / C.h;                       /* rasm balandligi bo'yicha to'ldiramiz */
+
+  /* ── personaj yo'li ── */
+  const wk = seg(t, C.walkIn[0], C.walkIn[1]);
+  const walking = t >= C.walkIn[0] && t <= C.walkIn[1];
+  const x = lerp(C.walkFrom, 0, ease(wk));
+
+  /* qadam fazasi bosib o'tilgan masofaga bog'liq → oyoq sirpanmaydi */
+  const phase = (x - C.walkFrom) * 0.052;
+  const swing = walking ? Math.sin(phase) : 0;
+  const bob = walking ? Math.abs(Math.sin(phase)) * 9
+                      : Math.sin(t*1.6) * 2.2;   /* turganda nafas olish */
+
+  $('legF').style.transform = `translate(${x}px, ${-bob}px) rotate(${(swing*13).toFixed(2)}deg)`;
+  $('legB').style.transform = `translate(${x}px, ${-bob}px) rotate(${(-swing*13).toFixed(2)}deg)`;
+  $('body').style.transform =
+    `translate(${x}px, ${(-bob*1.25).toFixed(2)}px) rotate(${(walking ? swing*1.6 : Math.sin(t*1.6)*0.5).toFixed(2)}deg)`;
+
+  /* ── kamera: yengil yaqinlashish ── */
+  const push = 1 + ease(seg(t, 0, C.duration)) * 0.05 + ease(seg(t, C.scanAt[0], C.scanAt[1]))*0.03;
+  $('world').style.transform =
+    `translate(-50%,-50%) scale(${(scale*push).toFixed(4)})`;
+
+  /* ── banka porlashi ── */
+  const gk = seg(t, C.glowAt[0], C.glowAt[1]);
+  $('glow').style.opacity = (gk * (0.55 + 0.45*Math.sin(t*9))).toFixed(3);
+
+  /* ── MUHASIB kartasi ── */
+  const ck = seg(t, C.cardAt[0], C.cardAt[0]+0.55) - seg(t, C.cardAt[1]-0.4, C.cardAt[1]);
+  const card = $('card');
+  card.style.opacity = clamp(ck,0,1).toFixed(3);
+  /* karta chapda — personajni to'smaydi (u kadrning o'ng yarmida turadi) */
+  card.style.transform = `translate(${lerp(-SH*0.10, SH*0.05, ease(clamp(ck,0,1)))}px, ${SH*0.22}px)`;
+  $('scanState').textContent = t > C.scanAt[1] ? '✓ o‘qildi' : (t > C.scanAt[0] ? '·  ·  ·' : '…');
+  $('scanState').style.color = t > C.scanAt[1] ? '#34a853' : '#fff';
+  $('fastLine').style.opacity = t > C.scanAt[1] + 0.2 ? 1 : 0;
+
+  /* ── skaner chizig'i bankaning ustidan o'tadi ── */
+  const sk = seg(t, C.scanAt[0], C.scanAt[1]);
+  const sl = $('scanline');
+  const inWorld = (ix, iy) => [ SW/2 + (ix - C.w/2)*scale*push, SH/2 + (iy - C.h/2)*scale*push ];
+  const [gx, gy] = inWorld(C.glow[0], C.glow[1]);
+  sl.style.opacity = (sk > 0 && sk < 1) ? 1 : 0;
+  sl.style.width = (C.glow[2]*1.5*scale*push) + 'px';
+  sl.style.left = (gx - C.glow[2]*0.75*scale*push) + 'px';
+  sl.style.top  = (gy - C.glow[2]*0.9*scale*push + sk*C.glow[2]*1.8*scale*push) + 'px';
+
+  /* ── yakuniy ekran ── */
+  const ek = ease(seg(t, C.endAt[0], C.endAt[0]+0.8));
+  $('end').style.opacity = ek.toFixed(3);
+  $('end').style.transform = `scale(${(0.97 + 0.03*ek).toFixed(3)})`;
+
+  /* ── boshi va oxiri qorayadi ── */
+  const fin = 1 - ease(seg(t, 0, 0.6));
+  const fout = ease(seg(t, C.duration-0.5, C.duration));
+  $('fadeout').style.opacity = Math.max(fin, fout).toFixed(3);
+};
+
+SEEK(0);
+</script>

@@ -1,0 +1,20 @@
+{
+  "duration": 30.13,
+  "lines": [
+    {
+      "who": "cashier",
+      "start": 1.0,
+      "dur": 9.17
+    },
+    {
+      "who": "owner",
+      "start": 10.97,
+      "dur": 6.94
+    },
+    {
+      "who": "cashier",
+      "start": 18.7,
+      "dur": 7.13
+    }
+  ]
+}

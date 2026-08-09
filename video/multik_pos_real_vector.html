@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <title>MUHASIB — POS Real Rasm + Real Qalam Qo'l + Vektor Doodle Animation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Kalam:wght@700&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      background: #f8fafc;
+      font-family: 'Kalam', cursive, sans-serif;
+      position: relative;
+      user-select: none;
+    }
+
+    /* Soft grid whiteboard background */
+    .board-bg {
+      position: absolute;
+      inset: 0;
+      background-image: 
+        radial-gradient(#cbd5e1 1.5px, transparent 1.5px),
+        radial-gradient(#cbd5e1 1.5px, #f8fafc 1.5px);
+      background-size: 36px 36px;
+      background-position: 0 0, 18px 18px;
+      opacity: 0.6;
+    }
+
+    /* SVG Canvas for Vector Drawings */
+    svg.canvas {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      z-index: 10;
+    }
+
+    /* Vector Path Stroke Styles */
+    .draw-stroke {
+      fill: none;
+      stroke: #1e293b;
+      stroke-width: 4.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .draw-blue {
+      fill: none;
+      stroke: #2563eb;
+      stroke-width: 5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .draw-red {
+      fill: none;
+      stroke: #dc2626;
+      stroke-width: 5.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .draw-green {
+      fill: none;
+      stroke: #16a34a;
+      stroke-width: 5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .draw-gold {
+      fill: none;
+      stroke: #d97706;
+      stroke-width: 5.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* Typography */
+    .wb-title {
+      font-family: 'Kalam', cursive;
+      font-size: 54px;
+      font-weight: 700;
+      fill: #1e3a8a;
+    }
+    .wb-subtitle {
+      font-family: 'Kalam', cursive;
+      font-size: 36px;
+      font-weight: 700;
+      fill: #1e293b;
+    }
+    .wb-text-red {
+      font-family: 'Kalam', cursive;
+      font-size: 38px;
+      font-weight: 700;
+      fill: #dc2626;
+    }
+    .wb-text-green {
+      font-family: 'Kalam', cursive;
+      font-size: 36px;
+      font-weight: 700;
+      fill: #15803d;
+    }
+
+    /* Real Photo POS Terminal Cutout Container */
+    #real-pos-wrapper {
+      position: absolute;
+      z-index: 8;
+      pointer-events: none;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      filter: drop-shadow(0 20px 35px rgba(0, 0, 0, 0.3));
+    }
+    #real-pos-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    /* Real Photo Hand with Pen Container */
+    #real-hand-wrapper {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 360px;
+      height: 258px;
+      z-index: 999;
+      pointer-events: none;
+      transform: translate(1920px, 1080px);
+      filter: drop-shadow(12px 20px 15px rgba(15, 23, 42, 0.35));
+    }
+    #real-hand-img {
+      width: 360px;
+      height: 258px;
+      object-fit: contain;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Whiteboard Grid Background -->
+  <div class="board-bg"></div>
+
+  <!-- Real Photo Cutout: Photorealistic POS Terminal -->
+  <div id="real-pos-wrapper" style="left: 1080px; top: 220px; width: 750px; height: 680px; opacity: 0; transform: scale(0.85) translateY(30px);">
+    <img id="real-pos-img" src="layers/real_pos_system.png" alt="Real POS Terminal">
+  </div>
+
+  <!-- Main SVG Vector Drawing Canvas -->
+  <svg class="canvas" viewBox="0 0 1920 1080">
+    <defs>
+      <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+        <feDropShadow dx="3" dy="4" stdDeviation="3" flood-color="#0f172a" flood-opacity="0.15" />
+      </filter>
+      <linearGradient id="vectorGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#3b82f6" />
+        <stop offset="100%" stop-color="#1d4ed8" />
+      </linearGradient>
+    </defs>
+
+    <!-- SCENE 1: Problem & Question -->
+    <g id="scene-1" style="opacity: 1;">
+      <!-- Title Box -->
+      <path id="s1-box" class="draw-blue" filter="url(#shadow)" d="M 100,100 L 1000,100 Q 1020,100 1020,120 L 1020,240 Q 1020,260 1000,260 L 100,260 Q 80,260 80,240 L 80,120 Q 80,100 100,100 Z" />
+      <text id="s1-t1" class="wb-title" x="120" y="170"></text>
+      <text id="s1-t2" class="wb-text-red" x="120" y="225"></text>
+
+      <!-- Problem Points Drawn by Real Pen -->
+      <g id="s1-p1-grp">
+        <path id="s1-cross-1" class="draw-red" d="M 120,380 L 170,430 M 170,380 L 120,430" />
+        <text id="s1-pt-1" class="wb-subtitle" x="200" y="415"></text>
+      </g>
+      <g id="s1-p2-grp">
+        <path id="s1-cross-2" class="draw-red" d="M 120,490 L 170,540 M 170,490 L 120,540" />
+        <text id="s1-pt-2" class="wb-subtitle" x="200" y="525"></text>
+      </g>
+      <g id="s1-p3-grp">
+        <path id="s1-cross-3" class="draw-red" d="M 120,600 L 170,650 M 170,600 L 120,650" />
+        <text id="s1-pt-3" class="wb-subtitle" x="200" y="635"></text>
+      </g>
+
+      <!-- Vector Question Mark Doodle -->
+      <path id="s1-qmark" class="draw-gold" stroke-width="7" d="M 940,380 C 940,320 1030,320 1030,390 C 1030,440 970,450 970,510 M 970,555 L 970,565" />
+    </g>
+
+    <!-- SCENE 2: Vector Solution Highlights around Real POS Terminal -->
+    <g id="scene-2" style="opacity: 0;">
+      <!-- Vector Banner Above POS -->
+      <path id="s2-banner" class="draw-green" filter="url(#shadow)" d="M 120,90 L 1800,90 Q 1820,90 1820,110 L 1820,200 Q 1820,220 1800,220 L 120,220 Q 100,220 100,200 L 100,110 Q 100,90 120,90 Z" />
+      <text id="s2-banner-text" class="wb-title" fill="#15803d" x="140" y="170"></text>
+
+      <!-- Vector Arrow pointing to Real POS -->
+      <path id="s2-arrow" class="draw-blue" stroke-width="6" d="M 750,450 Q 920,420 1050,450 M 1020,420 L 1055,453 L 1025,485" />
+      
+      <!-- Vector POS Features Highlights on Left Side -->
+      <path id="s2-card-1" class="draw-stroke" filter="url(#shadow)" d="M 100,280 L 980,280 L 980,480 L 100,480 Z" />
+      <path id="s2-chk-1" class="draw-green" stroke-width="6" d="M 130,370 L 165,405 L 220,330" />
+      <text id="s2-txt-1" class="wb-subtitle" x="240" y="365"></text>
+      <text id="s2-subtxt-1" class="wb-subtitle" fill="#475569" x="240" y="420"></text>
+
+      <path id="s2-card-2" class="draw-stroke" filter="url(#shadow)" d="M 100,520 L 980,520 L 980,720 L 100,720 Z" />
+      <path id="s2-chk-2" class="draw-green" stroke-width="6" d="M 130,610 L 165,645 L 220,570" />
+      <text id="s2-txt-2" class="wb-subtitle" x="240" y="605"></text>
+      <text id="s2-subtxt-2" class="wb-subtitle" fill="#475569" x="240" y="660"></text>
+
+      <path id="s2-card-3" class="draw-stroke" filter="url(#shadow)" d="M 100,760 L 980,760 L 980,960 L 100,960 Z" />
+      <path id="s2-chk-3" class="draw-green" stroke-width="6" d="M 130,850 L 165,885 L 220,810" />
+      <text id="s2-txt-3" class="wb-subtitle" x="240" y="845"></text>
+      <text id="s2-subtxt-3" class="wb-subtitle" fill="#475569" x="240" y="900"></text>
+
+      <!-- Laser Scanner Beam Vector effect -->
+      <path id="s2-laser" class="draw-red" stroke-dasharray="8 8" stroke-width="4" d="M 1150,550 L 1450,550" />
+    </g>
+
+    <!-- SCENE 3: Vector Analytics & Telegram Bot integration -->
+    <g id="scene-3" style="opacity: 0;">
+      <!-- Title -->
+      <path id="s3-title-line" class="draw-blue" d="M 450,110 L 1470,110" />
+      <text id="s3-title-text" class="wb-title" x="480" y="90"></text>
+
+      <!-- Card 1: Vector Profit Chart -->
+      <path id="s3-c1-box" class="draw-stroke" filter="url(#shadow)" d="M 100,160 L 920,160 L 920,580 L 100,580 Z" />
+      <text id="s3-c1-t1" class="wb-title" fill="#2563eb" x="140" y="230"></text>
+      <!-- Vector Chart Line -->
+      <path id="s3-c1-axis" class="draw-stroke" stroke-width="3" d="M 160,510 L 860,510 M 160,510 L 160,280" />
+      <path id="s3-c1-chart" class="draw-green" stroke-width="6" d="M 170,480 L 320,410 L 470,440 L 620,320 L 840,240" />
+      <text id="s3-c1-t2" class="wb-subtitle" x="160" y="555"></text>
+
+      <!-- Card 2: Vector Telegram Bot -->
+      <path id="s3-c2-box" class="draw-stroke" filter="url(#shadow)" d="M 1000,160 L 1820,160 L 1820,580 L 1000,580 Z" />
+      <text id="s3-c2-t1" class="wb-title" fill="#0284c7" x="1040" y="230"></text>
+      <!-- Vector Phone & Bot Icon -->
+      <path id="s3-c2-phone" class="draw-blue" stroke-width="5" d="M 1360,280 L 1460,280 Q 1480,280 1480,300 L 1480,500 Q 1480,520 1460,520 L 1360,520 Q 1340,520 1340,500 L 1340,300 Q 1340,280 1360,280 Z" />
+      <path id="s3-c2-paperplane" class="draw-blue" stroke-width="4" d="M 1370,390 L 1450,350 L 1410,430 L 1400,400 Z" />
+      <text id="s3-c2-t2" class="wb-subtitle" x="1040" y="555"></text>
+
+      <!-- Bottom Summary Box -->
+      <path id="s3-sum-box" class="draw-gold" filter="url(#shadow)" d="M 100,640 L 1820,640 L 1820,980 L 100,980 Z" />
+      <text id="s3-sum-t1" class="wb-title" fill="#d97706" x="150" y="730"></text>
+      <text id="s3-sum-t2" class="wb-subtitle" x="150" y="810"></text>
+      <text id="s3-sum-t3" class="wb-subtitle" fill="#16a34a" x="150" y="890"></text>
+    </g>
+
+    <!-- SCENE 4: Call to Action & Contact -->
+    <g id="scene-4" style="opacity: 0;">
+      <!-- Big Vector Badge -->
+      <path id="s4-badge" class="draw-green" stroke-width="7" filter="url(#shadow)" d="M 260,140 L 1660,140 Q 1700,140 1700,180 L 1700,440 Q 1700,480 1660,480 L 260,480 Q 220,480 220,440 L 220,180 Q 220,140 260,140 Z" />
+      <text id="s4-badge-t1" class="wb-title" fill="#15803d" font-size="64" x="300" y="250"></text>
+      <text id="s4-badge-t2" class="wb-subtitle" font-size="44" x="360" y="360"></text>
+
+      <path id="s4-star-1" class="draw-gold" d="M 300,320 L 320,380 L 380,380 L 330,410 L 350,470 L 300,430 L 250,470 L 270,410 L 220,380 L 280,380 Z" />
+      <path id="s4-star-2" class="draw-gold" d="M 1620,320 L 1640,380 L 1700,380 L 1650,410 L 1670,470 L 1620,430 L 1570,470 L 1590,410 L 1540,380 L 1600,380 Z" />
+
+      <!-- Contact Banner -->
+      <path id="s4-contact-box" class="draw-blue" filter="url(#shadow)" d="M 360,540 L 1560,540 Q 1600,540 1600,580 L 1600,920 Q 1600,960 1560,960 L 360,960 Q 320,960 320,920 L 320,580 Q 320,540 360,540 Z" />
+      <text id="s4-logo-text" class="wb-title" fill="#1e3a8a" font-size="68" x="550" y="660"></text>
+
+      <path id="s4-phone-icon" class="draw-green" stroke-width="5" d="M 450,750 Q 470,730 500,760 L 530,790 Q 550,810 530,830 L 510,850 Q 480,880 430,830 Q 380,780 410,750 Z" />
+      <text id="s4-phone-text" class="wb-subtitle" font-size="48" fill="#16a34a" x="560" y="800"></text>
+
+      <path id="s4-web-icon" class="draw-blue" stroke-width="5" d="M 1150,780 A 30 30 0 1 0 1150,780.1 M 1120,780 L 1180,780 M 1150,750 L 1150,810" />
+      <text id="s4-web-text" class="wb-subtitle" font-size="48" fill="#2563eb" x="1210" y="800"></text>
+
+      <path id="s4-final-check" class="draw-green" stroke-width="9" d="M 880,910 L 930,960 L 1050,840" />
+    </g>
+  </svg>
+
+  <!-- Real Photo Hand Cutout overlay with Black Pen -->
+  <div id="real-hand-wrapper">
+    <img id="real-hand-img" src="layers/real_hand_pen_tight.png" alt="Real Hand with Pen">
+  </div>
+
+  <script>
+    window.DURATION = 28.29;
+
+    const realHandWrapper = document.getElementById('real-hand-wrapper');
+    const realPosWrapper = document.getElementById('real-pos-wrapper');
+
+    const scene1 = document.getElementById('scene-1');
+    const scene2 = document.getElementById('scene-2');
+    const scene3 = document.getElementById('scene-3');
+    const scene4 = document.getElementById('scene-4');
+
+    // Register all stroke lengths
+    const strokeElements = document.querySelectorAll('.draw-stroke, .draw-blue, .draw-red, .draw-green, .draw-gold');
+    strokeElements.forEach(el => {
+      try {
+        const len = el.getTotalLength();
+        el.style.strokeDasharray = len;
+        el.style.strokeDashoffset = len;
+      } catch (e) {}
+    });
+
+    function seg(t, a, b) {
+      if (t <= a) return 0;
+      if (t >= b) return 1;
+      return (t - a) / (b - a);
+    }
+
+    function drawStroke(id, p) {
+      const el = document.getElementById(id);
+      if (!el) return null;
+      try {
+        const len = el.getTotalLength();
+        const offset = len * (1 - Math.max(0, Math.min(1, p)));
+        el.style.strokeDashoffset = offset;
+        if (p > 0 && p < 1) {
+          const pt = el.getPointAtLength(len * p);
+          return { x: pt.x, y: pt.y };
+        }
+      } catch (e) {}
+      return null;
+    }
+
+    function writeText(id, text, p, startX, startY, endX) {
+      const el = document.getElementById(id);
+      if (!el) return null;
+      const count = Math.floor(text.length * Math.max(0, Math.min(1, p)));
+      el.textContent = text.substring(0, count);
+      const currX = startX + (endX - startX) * (count / text.length);
+      return { x: currX, y: startY };
+    }
+
+    // Pen tip offset calibration for real_hand_pen_tight.png (tip is exactly at top-left corner (0,0))
+    const PEN_OFFSET_X = 0;
+    const PEN_OFFSET_Y = 0;
+
+    function setHandPos(x, y, opacity = 1) {
+      realHandWrapper.style.opacity = opacity;
+      const hx = x + PEN_OFFSET_X;
+      const hy = y + PEN_OFFSET_Y;
+      realHandWrapper.style.transform = `translate(${hx}px, ${hy}px)`;
+    }
+
+    window.SEEK = function(t) {
+      let handPt = null;
+
+      // ---------------- SCENE 1 (0s - 6.0s) ----------------
+      if (t >= 0 && t < 6.0) {
+        scene1.style.opacity = 1;
+        scene2.style.opacity = 0;
+        scene3.style.opacity = 0;
+        scene4.style.opacity = 0;
+
+        realPosWrapper.style.opacity = seg(t, 2.5, 3.5);
+        realPosWrapper.style.transform = `scale(${0.85 + seg(t, 2.5, 3.5)*0.15}) translateY(${(1 - seg(t, 2.5, 3.5))*30}px)`;
+
+        if (t >= 0.3 && t < 2.5) {
+          drawStroke('s1-box', seg(t, 0.3, 1.0));
+          writeText('s1-t1', "KASSA VA DO'KONINGIZDA", seg(t, 0.8, 1.6), 120, 170, 750);
+          handPt = writeText('s1-t2', "TARTIBSIZLIK BO'LYAPTIMI?", seg(t, 1.5, 2.4), 120, 225, 950);
+        } else if (t >= 2.5) {
+          drawStroke('s1-box', 1);
+          writeText('s1-t1', "KASSA VA DO'KONINGIZDA", 1, 120, 170, 750);
+          writeText('s1-t2', "TARTIBSIZLIK BO'LYAPTIMI?", 1, 120, 225, 950);
+        }
+
+        if (t >= 2.5 && t < 3.6) {
+          drawStroke('s1-cross-1', seg(t, 2.5, 2.8));
+          handPt = writeText('s1-pt-1', "❌ Navbatlar va hisob-kitobda xatolar", seg(t, 2.8, 3.6), 200, 415, 800);
+        } else if (t >= 3.6) {
+          drawStroke('s1-cross-1', 1);
+          writeText('s1-pt-1', "❌ Navbatlar va hisob-kitobda xatolar", 1, 200, 415, 800);
+        }
+
+        if (t >= 3.6 && t < 4.7) {
+          drawStroke('s1-cross-2', seg(t, 3.6, 3.9));
+          handPt = writeText('s1-pt-2', "❌ Ombor qoldig'i nomalum", seg(t, 3.9, 4.7), 200, 525, 700);
+        } else if (t >= 4.7) {
+          drawStroke('s1-cross-2', 1);
+          writeText('s1-pt-2', "❌ Ombor qoldig'i nomalum", 1, 200, 525, 700);
+        }
+
+        if (t >= 4.7 && t < 6.0) {
+          drawStroke('s1-cross-3', seg(t, 4.7, 5.0));
+          writeText('s1-pt-3', "❌ Kunlik sof foyda aniq emas", seg(t, 5.0, 5.6), 200, 635, 750);
+          handPt = drawStroke('s1-qmark', seg(t, 5.4, 6.0));
+        } else if (t >= 6.0) {
+          drawStroke('s1-cross-3', 1); drawStroke('s1-qmark', 1);
+          writeText('s1-pt-3', "❌ Kunlik sof foyda aniq emas", 1, 200, 635, 750);
+        }
+      }
+
+      // ---------------- SCENE 2 (6.0s - 11.5s) ----------------
+      else if (t >= 6.0 && t < 11.5) {
+        scene1.style.opacity = Math.max(0, 1 - seg(t, 6.0, 6.5));
+        scene2.style.opacity = seg(t, 6.0, 6.5);
+        scene3.style.opacity = 0;
+        scene4.style.opacity = 0;
+
+        // POS moves slightly left & expands
+        realPosWrapper.style.opacity = 1;
+        realPosWrapper.style.transform = `translate(${-250 * seg(t, 6.0, 6.8)}px, 0) scale(${1.0 + seg(t, 6.0, 6.8)*0.05})`;
+
+        if (t >= 6.2 && t < 7.5) {
+          drawStroke('s2-banner', seg(t, 6.2, 6.7));
+          handPt = writeText('s2-banner-text', "YECHIM: REAL POS KASSA — MUHASIB!", seg(t, 6.6, 7.5), 140, 170, 1700);
+        } else if (t >= 7.5) {
+          drawStroke('s2-banner', 1);
+          writeText('s2-banner-text', "YECHIM: REAL POS KASSA — MUHASIB!", 1, 140, 170, 1700);
+        }
+
+        if (t >= 7.5 && t < 8.8) {
+          drawStroke('s2-card-1', seg(t, 7.5, 7.8));
+          drawStroke('s2-chk-1', seg(t, 7.8, 8.0));
+          writeText('s2-txt-1', "⚡ 1-Soniyada Tezkor Skanerlash", seg(t, 8.0, 8.4), 240, 365, 850);
+          handPt = writeText('s2-subtxt-1', "Tovar va cheklarni bir zumda chiqarish", seg(t, 8.3, 8.8), 240, 420, 880);
+        } else if (t >= 8.8) {
+          ['s2-card-1', 's2-chk-1'].forEach(id => drawStroke(id, 1));
+          writeText('s2-txt-1', "⚡ 1-Soniyada Tezkor Skanerlash", 1, 240, 365, 850);
+          writeText('s2-subtxt-1', "Tovar va cheklarni bir zumda chiqarish", 1, 240, 420, 880);
+        }
+
+        if (t >= 8.8 && t < 10.1) {
+          drawStroke('s2-card-2', seg(t, 8.8, 9.1));
+          drawStroke('s2-chk-2', seg(t, 9.1, 9.3));
+          writeText('s2-txt-2', "📦 Avtomatik Ombor Nazorati", seg(t, 9.3, 9.7), 240, 605, 850);
+          handPt = writeText('s2-subtxt-2', "Qoldiq tovarlar va muddati ogohlantiriladi", seg(t, 9.6, 10.1), 240, 660, 900);
+        } else if (t >= 10.1) {
+          ['s2-card-2', 's2-chk-2'].forEach(id => drawStroke(id, 1));
+          writeText('s2-txt-2', "📦 Avtomatik Ombor Nazorati", 1, 240, 605, 850);
+          writeText('s2-subtxt-2', "Qoldiq tovarlar va muddati ogohlantiriladi", 1, 240, 660, 900);
+        }
+
+        if (t >= 10.1 && t < 11.5) {
+          drawStroke('s2-card-3', seg(t, 10.1, 10.4));
+          drawStroke('s2-chk-3', seg(t, 10.4, 10.6));
+          writeText('s2-txt-3', "📊 Telegram-Bot Orqali Nazorat", seg(t, 10.6, 11.0), 240, 845, 880);
+          writeText('s2-subtxt-3', "Qayerda bo'lsangiz ham savdo kaftingizda", seg(t, 10.9, 11.3), 240, 900, 900);
+          handPt = drawStroke('s2-laser', seg(t, 11.1, 11.5));
+        } else if (t >= 11.5) {
+          ['s2-card-3', 's2-chk-3', 's2-laser'].forEach(id => drawStroke(id, 1));
+          writeText('s2-txt-3', "📊 Telegram-Bot Orqali Nazorat", 1, 240, 845, 880);
+          writeText('s2-subtxt-3', "Qayerda bo'lsangiz ham savdo kaftingizda", 1, 240, 900, 900);
+        }
+      }
+
+      // ---------------- SCENE 3 (11.5s - 17.0s) ----------------
+      else if (t >= 11.5 && t < 17.0) {
+        scene1.style.opacity = 0;
+        scene2.style.opacity = Math.max(0, 1 - seg(t, 11.5, 12.0));
+        scene3.style.opacity = seg(t, 11.5, 12.0);
+        scene4.style.opacity = 0;
+
+        realPosWrapper.style.opacity = Math.max(0, 1 - seg(t, 11.5, 12.0));
+
+        if (t >= 11.7 && t < 12.5) {
+          drawStroke('s3-title-line', seg(t, 11.7, 12.1));
+          handPt = writeText('s3-title-text', "AQLLI TAHLIL VA TELEGRAM BOT INTEGRATSIYASI", seg(t, 12.0, 12.5), 480, 90, 1400);
+        } else if (t >= 12.5) {
+          drawStroke('s3-title-line', 1);
+          writeText('s3-title-text', "AQLLI TAHLIL VA TELEGRAM BOT INTEGRATSIYASI", 1, 480, 90, 1400);
+        }
+
+        // Card 1
+        if (t >= 12.5 && t < 14.2) {
+          drawStroke('s3-c1-box', seg(t, 12.5, 12.8));
+          writeText('s3-c1-t1', "📈 Aniq Foyda va Tahlil Grfigi", seg(t, 12.8, 13.3), 140, 230, 750);
+          drawStroke('s3-c1-axis', seg(t, 13.2, 13.5));
+          handPt = drawStroke('s3-c1-chart', seg(t, 13.5, 14.0));
+          writeText('s3-c1-t2', "Kunlik sof foyda va harajatlar 100% aniq", seg(t, 13.8, 14.2), 160, 555, 800);
+        } else if (t >= 14.2) {
+          ['s3-c1-box', 's3-c1-axis', 's3-c1-chart'].forEach(id => drawStroke(id, 1));
+          writeText('s3-c1-t1', "📈 Aniq Foyda va Tahlil Grfigi", 1, 140, 230, 750);
+          writeText('s3-c1-t2', "Kunlik sof foyda va harajatlar 100% aniq", 1, 160, 555, 800);
+        }
+
+        // Card 2
+        if (t >= 14.2 && t < 15.6) {
+          drawStroke('s3-c2-box', seg(t, 14.2, 14.5));
+          writeText('s3-c2-t1', "📱 Telegram-Bot Avto-Hisobot", seg(t, 14.5, 14.9), 1040, 230, 1650);
+          drawStroke('s3-c2-phone', seg(t, 14.8, 15.1));
+          drawStroke('s3-c2-paperplane', seg(t, 15.1, 15.3));
+          handPt = writeText('s3-c2-t2', "Xabarlar va savdo darhol telegramingizga", seg(t, 15.2, 15.6), 1040, 555, 1700);
+        } else if (t >= 15.6) {
+          ['s3-c2-box', 's3-c2-phone', 's3-c2-paperplane'].forEach(id => drawStroke(id, 1));
+          writeText('s3-c2-t1', "📱 Telegram-Bot Avto-Hisobot", 1, 1040, 230, 1650);
+          writeText('s3-c2-t2', "Xabarlar va savdo darhol telegramingizga", 1, 1040, 555, 1700);
+        }
+
+        // Summary Box
+        if (t >= 15.6 && t < 17.0) {
+          drawStroke('s3-sum-box', seg(t, 15.6, 15.9));
+          writeText('s3-sum-t1', "🎯 MUHASIB BILAN BIZNESINGIZNI YANA-DA RIVOJLANTIRING!", seg(t, 15.9, 16.4), 150, 730, 1750);
+          writeText('s3-sum-t2', "• Oson interfeys, tezkor ishlash va kamomatlarga chek qo'yish!", seg(t, 16.3, 16.7), 150, 810, 1650);
+          handPt = writeText('s3-sum-t3', "✅ 100% Ishonchli POS Kassa Yechimi!", seg(t, 16.6, 17.0), 150, 890, 1550);
+        } else if (t >= 17.0) {
+          drawStroke('s3-sum-box', 1);
+          writeText('s3-sum-t1', "🎯 MUHASIB BILAN BIZNESINGIZNI YANA-DA RIVOJLANTIRING!", 1, 150, 730, 1750);
+          writeText('s3-sum-t2', "• Oson interfeys, tezkor ishlash va kamomatlarga chek qo'yish!", 1, 150, 810, 1650);
+          writeText('s3-sum-t3', "✅ 100% Ishonchli POS Kassa Yechimi!", 1, 150, 890, 1550);
+        }
+      }
+
+      // ---------------- SCENE 4 (17.0s - 22.0s) ----------------
+      else if (t >= 17.0) {
+        scene1.style.opacity = 0; scene2.style.opacity = 0;
+        scene3.style.opacity = Math.max(0, 1 - seg(t, 17.0, 17.5));
+        scene4.style.opacity = seg(t, 17.0, 17.5);
+
+        realPosWrapper.style.opacity = 0;
+
+        if (t >= 17.3 && t < 19.2) {
+          drawStroke('s4-badge', seg(t, 17.3, 17.8));
+          writeText('s4-badge-t1', "🚀 SAVDONGIZNI 2 BARAVAR OSHIRING!", seg(t, 17.7, 18.4), 300, 250, 1650);
+          writeText('s4-badge-t2', "MUHASIB — POS KASSA DASTURI VA USKUNALARI", seg(t, 18.3, 18.9), 360, 360, 1600);
+          drawStroke('s4-star-1', seg(t, 18.7, 19.0));
+          handPt = drawStroke('s4-star-2', seg(t, 18.9, 19.2));
+        } else if (t >= 19.2) {
+          drawStroke('s4-badge', 1); drawStroke('s4-star-1', 1); drawStroke('s4-star-2', 1);
+          writeText('s4-badge-t1', "🚀 SAVDONGIZNI 2 BARAVAR OSHIRING!", 1, 300, 250, 1650);
+          writeText('s4-badge-t2', "MUHASIB — POS KASSA DASTURI VA USKUNALARI", 1, 360, 360, 1600);
+        }
+
+        if (t >= 19.2 && t < 22.0) {
+          drawStroke('s4-contact-box', seg(t, 19.2, 19.7));
+          writeText('s4-logo-text', "MUHASIB POS KASSA TIZIMI", seg(t, 19.6, 20.2), 550, 660, 1450);
+          drawStroke('s4-phone-icon', seg(t, 20.0, 20.3));
+          writeText('s4-phone-text', "+998 (90) 123-45-67", seg(t, 20.2, 20.8), 560, 800, 1050);
+          drawStroke('s4-web-icon', seg(t, 20.6, 20.9));
+          writeText('s4-web-text', "www.muhasib.uz", seg(t, 20.8, 21.4), 1210, 800, 1550);
+          handPt = drawStroke('s4-final-check', seg(t, 21.2, 21.8));
+        } else {
+          ['s4-contact-box', 's4-phone-icon', 's4-web-icon', 's4-final-check'].forEach(id => drawStroke(id, 1));
+          writeText('s4-logo-text', "MUHASIB POS KASSA TIZIMI", 1, 550, 660, 1450);
+          writeText('s4-phone-text', "+998 (90) 123-45-67", 1, 560, 800, 1050);
+          writeText('s4-web-text', "www.muhasib.uz", 1, 1210, 800, 1550);
+        }
+      }
+
+      if (handPt && handPt.x !== undefined && handPt.y !== undefined) {
+        setHandPos(handPt.x, handPt.y, 1);
+      } else {
+        setHandPos(1800, 950, 0.4);
+      }
+    };
+  </script>
+</body>
+</html>

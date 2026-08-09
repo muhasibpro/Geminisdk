@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MUHASIB Dasturi - Energetik Ichimlik Multik Video</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #060810;
+            color: #ffffff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .bg-glow {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: radial-gradient(circle at 50% 30%, rgba(0, 242, 254, 0.15), rgba(239, 68, 68, 0.12), rgba(6, 8, 16, 0.98));
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .tag-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 18px;
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.5);
+            border-radius: 999px;
+            color: #f87171;
+            font-size: 13px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 10px;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.25);
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ffffff 0%, #00f2fe 50%, #ef4444 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            font-size: 1rem;
+        }
+
+        /* Video Player Frame */
+        .video-box {
+            position: relative;
+            width: 100%;
+            max-width: 980px;
+            background: #0d121f;
+            border-radius: 24px;
+            border: 2px solid rgba(0, 242, 254, 0.35);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 40px rgba(0, 242, 254, 0.2);
+            overflow: hidden;
+        }
+
+        #animationCanvas {
+            width: 100%;
+            height: auto;
+            display: block;
+            background-color: #000;
+        }
+
+        .dialogue-overlay {
+            position: absolute;
+            bottom: 85px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            background: rgba(10, 15, 29, 0.94);
+            border: 2px solid rgba(0, 242, 254, 0.7);
+            border-radius: 20px;
+            padding: 18px 24px;
+            backdrop-filter: blur(14px);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.7), 0 0 25px rgba(0, 242, 254, 0.3);
+            z-index: 20;
+        }
+
+        .speaker-badge {
+            background: linear-gradient(135deg, #00f2fe, #0072ff);
+            color: #000;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-weight: 900;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            flex-shrink: 0;
+        }
+
+        .speaker-badge.boy {
+            background: linear-gradient(135deg, #ef4444, #f59e0b);
+            color: #fff;
+        }
+
+        .dialogue-content {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1.4;
+        }
+
+        .control-panel {
+            padding: 18px 24px;
+            background: #080c16;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .play-btn {
+            background: linear-gradient(135deg, #00f2fe 0%, #0072ff 100%);
+            border: none;
+            color: #000;
+            font-weight: 900;
+            font-size: 15px;
+            padding: 12px 28px;
+            border-radius: 14px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            box-shadow: 0 0 20px rgba(0, 242, 254, 0.4);
+        }
+
+        .play-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(0, 242, 254, 0.7);
+        }
+
+        .scene-nav {
+            display: flex;
+            gap: 8px;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #94a3b8;
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn.active, .nav-btn:hover {
+            background: rgba(0, 242, 254, 0.2);
+            border-color: #00f2fe;
+            color: #00f2fe;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-glow"></div>
+
+    <header>
+        <div class="tag-badge">🥤 Energetik & MUHASIB Story</div>
+        <h1>MUHASIB Dasturi - Energetik Multik Video</h1>
+        <p class="subtitle">"Vay! Nega sizlarda MUHASIB dasturi yo'q?!" — Real harakatlanuvchi O'zbekcha Multik</p>
+    </header>
+
+    <div class="video-box">
+        <canvas id="animationCanvas" width="960" height="540"></canvas>
+
+        <div class="dialogue-overlay" id="dialogueOverlay">
+            <div class="speaker-badge" id="speakerName">👩 Madina (Diktor)</div>
+            <div class="dialogue-content" id="dialogueText">Quvnoq bola do'konga kiradi, javondan energetik ichimlik oladi va kassa taraqqat boradi.</div>
+        </div>
+
+        <div class="control-panel">
+            <button class="play-btn" id="playBtn">
+                ▶ Multikni Boshlash
+            </button>
+
+            <div class="scene-nav">
+                <button class="nav-btn active" onclick="switchScene(0)">1. Kirish & Energetik</button>
+                <button class="nav-btn" onclick="switchScene(1)">2. Kassachi Narxi</button>
+                <button class="nav-btn" onclick="switchScene(2)">3. Vay! Muhasib Qani?!</button>
+                <button class="nav-btn" onclick="switchScene(3)">4. MUHASIB POS Solution</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('animationCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const img1 = new Image(); img1.src = 'images/scene_1.jpg';
+        const img2 = new Image(); img2.src = 'images/scene_2.jpg';
+        const img3 = new Image(); img3.src = 'images/scene_3.jpg';
+        const img4 = new Image(); img4.src = 'images/scene_4.jpg';
+
+        const sceneImages = [img1, img2, img3, img4];
+
+        const audioS1 = new Audio('real_s1.mp3');
+        const audioS2 = new Audio('real_s2.mp3');
+        const audioS3 = new Audio('real_s3.mp3');
+        const audioS4 = new Audio('real_s4.mp3');
+
+        const scenes = [
+            {
+                speaker: "👩 Madina (Diktor)",
+                isBoy: false,
+                text: "Quvnoq bola do'konga kiradi, javondan yaxshilab energetik ichimlik tanlab oladi va kassa taraqqat boradi.",
+                audio: audioS1,
+                duration: 6500
+            },
+            {
+                speaker: "👵 Madina (Kassachi Opa)",
+                isBoy: false,
+                text: "Uka, energetik ichimligingiz hammasi bo'lib 25,000 so'm bo'ldi.",
+                audio: audioS2,
+                duration: 6000
+            },
+            {
+                speaker: "👦 Sardor (Hayratlangan Bola)",
+                isBoy: true,
+                text: "Vay! Nega sizlarda MUHASIB dasturi yo'q?! Muhasib bo'lsa tezroq va qulayroq bo'lardi-ku!",
+                audio: audioS3,
+                duration: 6000
+            },
+            {
+                speaker: "🚀 Sardor (MUHASIB POS System)",
+                isBoy: true,
+                text: "MUHASIB dasturi o'rnatildi! Endi 1 soniyada skanerlash, aniq hisob-kitob va zamonaviy POS kassa!",
+                audio: audioS4,
+                duration: 7500
+            }
+        ];
+
+        let currentScene = 0;
+        let isPlaying = false;
+        let animFrame = null;
+        let frameCount = 0;
+
+        function stopAllAudio() {
+            scenes.forEach(s => {
+                s.audio.pause();
+                s.audio.currentTime = 0;
+            });
+        }
+
+        function renderAnimation() {
+            frameCount++;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const bgImg = sceneImages[currentScene];
+            
+            if (bgImg && bgImg.complete) {
+                // Dynamic camera pan & zoom
+                const zoom = 1 + Math.sin(frameCount * 0.02) * 0.04;
+                const shiftX = Math.cos(frameCount * 0.015) * 12;
+                const shiftY = Math.sin(frameCount * 0.015) * 8;
+
+                ctx.save();
+                ctx.translate(canvas.width / 2, canvas.height / 2);
+                ctx.scale(zoom, zoom);
+                ctx.drawImage(bgImg, -canvas.width / 2 + shiftX, -canvas.height / 2 + shiftY, canvas.width, canvas.height);
+                ctx.restore();
+            }
+
+            // Real dynamic overlay elements
+            if (currentScene === 0) {
+                // Energy Drink floating glow effect
+                const auraR = 30 + Math.sin(frameCount * 0.1) * 8;
+                ctx.save();
+                ctx.strokeStyle = 'rgba(0, 242, 254, 0.8)';
+                ctx.lineWidth = 3;
+                ctx.shadowColor = '#00f2fe';
+                ctx.shadowBlur = 20;
+                ctx.beginPath();
+                ctx.arc(670, 260, auraR, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.restore();
+            } else if (currentScene === 1) {
+                // Price tag bubble popup
+                ctx.save();
+                ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+                ctx.strokeStyle = '#f59e0b';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.roundRect(580, 140, 180, 50, 12);
+                ctx.fill();
+                ctx.stroke();
+                ctx.font = 'bold 22px Outfit';
+                ctx.fillStyle = '#f59e0b';
+                ctx.fillText('25,000 so\'m', 600, 173);
+                ctx.restore();
+            } else if (currentScene === 2) {
+                // Animated mouth speaking + Shock question marks floating
+                const mouthY = Math.abs(Math.sin(frameCount * 0.3)) * 16 + 4;
+                ctx.save();
+                ctx.fillStyle = '#b91c1c';
+                ctx.beginPath();
+                ctx.ellipse(480, 290, 10, mouthY / 2, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Shock question marks
+                ctx.font = '900 48px Outfit';
+                ctx.fillStyle = '#ef4444';
+                ctx.shadowColor = '#ef4444';
+                ctx.shadowBlur = 15;
+                ctx.fillText('!?', 530 + Math.sin(frameCount * 0.12) * 12, 180 + Math.cos(frameCount * 0.12) * 10);
+                ctx.restore();
+            } else if (currentScene === 3) {
+                // Moving red barcode laser beam
+                const laserY = 220 + Math.sin(frameCount * 0.08) * 140;
+                ctx.save();
+                ctx.strokeStyle = '#ef4444';
+                ctx.lineWidth = 5;
+                ctx.shadowColor = '#ef4444';
+                ctx.shadowBlur = 20;
+                ctx.beginPath();
+                ctx.moveTo(350, laserY);
+                ctx.lineTo(580, laserY);
+                ctx.stroke();
+
+                // POS Success Badge
+                ctx.fillStyle = 'rgba(16, 185, 129, 0.9)';
+                ctx.beginPath();
+                ctx.roundRect(180, 120, 220, 44, 10);
+                ctx.fill();
+                ctx.font = '900 16px Outfit';
+                ctx.fillStyle = '#ffffff';
+                ctx.fillText('✓ 1-SEC SCAN COMPLETE', 195, 148);
+                ctx.restore();
+            }
+
+            if (isPlaying) {
+                animFrame = requestAnimationFrame(renderAnimation);
+            }
+        }
+
+        function switchScene(index) {
+            stopAllAudio();
+            currentScene = index;
+
+            document.querySelectorAll('.nav-btn').forEach((btn, i) => {
+                btn.classList.toggle('active', i === index);
+            });
+
+            const speakerBadge = document.getElementById('speakerName');
+            speakerBadge.innerText = scenes[index].speaker;
+            speakerBadge.classList.toggle('boy', scenes[index].isBoy);
+
+            document.getElementById('dialogueText').innerText = scenes[index].text;
+
+            scenes[index].audio.play().catch(e => console.log('Audio info:', e));
+        }
+
+        function playNextSceneSequence() {
+            if (!isPlaying) return;
+
+            switchScene(currentScene);
+
+            setTimeout(() => {
+                if (isPlaying) {
+                    currentScene = (currentScene + 1) % scenes.length;
+                    playNextSceneSequence();
+                }
+            }, scenes[currentScene].duration);
+        }
+
+        document.getElementById('playBtn').addEventListener('click', () => {
+            if (isPlaying) {
+                isPlaying = false;
+                document.getElementById('playBtn').innerText = '▶ Multikni Boshlash';
+                cancelAnimationFrame(animFrame);
+                stopAllAudio();
+            } else {
+                isPlaying = true;
+                document.getElementById('playBtn').innerText = '⏸ To\'xtatish';
+                renderAnimation();
+                playNextSceneSequence();
+            }
+        });
+
+        renderAnimation();
+    </script>
+</body>
+</html>

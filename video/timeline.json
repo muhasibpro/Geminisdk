@@ -1,0 +1,28 @@
+{
+  "duration": 36.29,
+  "lines": [
+    {
+      "who": "cash",
+      "start": 10.0,
+      "dur": 7.32
+    },
+    {
+      "who": "boy",
+      "start": 18.32,
+      "dur": 5.45
+    },
+    {
+      "who": "cash",
+      "start": 24.77,
+      "dur": 8.52
+    }
+  ],
+  "cashText": [
+    "Eskicha daftardan charchadingizmi?",
+    "Muhasib POS sizga yordam beradi!"
+  ],
+  "boyText": [
+    "Bizga tez va ancha zamonaviy",
+    "kassa dasturi zarur!"
+  ]
+}

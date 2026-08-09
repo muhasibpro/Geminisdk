@@ -1,0 +1,204 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>MUHASIB — real rasmlardan to'liq rolik</title>
+<style>
+  html,body{margin:0;padding:0;width:100%;height:100%;background:#000;overflow:hidden}
+  #screen{position:relative;width:100vw;height:100vh;overflow:hidden;
+          font-family:'Helvetica Neue',Helvetica,Arial,sans-serif}
+  .scene{position:absolute;left:0;top:0;width:100%;height:100%;opacity:0;overflow:hidden}
+  .world{position:absolute;left:50%;top:50%;transform-origin:50% 50%}
+  .world img.bg{position:absolute;left:0;top:0;display:block}
+  .part{position:absolute;left:0;top:0;background-repeat:no-repeat}
+
+  .bubble{position:absolute;opacity:0;background:#fff;border-radius:2.2vh;
+          padding:1.8vh 2.6vh;box-shadow:0 2vh 5vh rgba(0,0,0,.35);
+          font-size:3vh;font-weight:600;color:#1f2937;max-width:52vh;line-height:1.35}
+  .bubble.warn{background:#fff3f2;color:#c62828;font-weight:800}
+  #vay{position:absolute;opacity:0;font-size:12vh;font-weight:900;color:#ea4335;
+       text-shadow:0 0.6vh 2vh rgba(0,0,0,.45);letter-spacing:0.4vh}
+  #card{position:absolute;opacity:0;width:44vh;background:rgba(10,16,26,.93);border-radius:2.4vh;
+        padding:2.2vh 2.6vh;box-shadow:0 2.2vh 5.5vh rgba(0,0,0,.55)}
+  #card .brand{display:flex;align-items:center;gap:1.2vh;margin-bottom:1.2vh}
+  #card .brand svg{width:4vh;height:4vh}
+  #card .brand b{color:#fff;font-size:2.6vh;letter-spacing:1px}
+  #card .row{display:flex;justify-content:space-between;color:#cbd5e1;font-size:1.9vh;
+             padding:0.7vh 0;border-bottom:1px solid rgba(255,255,255,.08)}
+  #card .row b{color:#fff}
+  #card .tot{margin-top:1.2vh;display:flex;justify-content:space-between;align-items:center}
+  #card .tot span{color:#9fb0c6;font-size:1.8vh}
+  #card .tot b{color:#34a853;font-size:3.4vh}
+  #card .fast{margin-top:1vh;color:#4285f4;font-size:1.7vh;font-weight:700;opacity:0}
+  #scanline{position:absolute;opacity:0;height:0.55vh;border-radius:0.3vh;
+            background:linear-gradient(90deg,rgba(255,75,75,0),#ff4b4b,rgba(255,75,75,0));
+            box-shadow:0 0 1.8vh rgba(255,75,75,.9)}
+  #end{position:absolute;left:0;top:0;width:100%;height:100%;background:#080d16;opacity:0;
+       display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1vh}
+  #end svg{width:13vh;height:13vh}
+  #end .logo{font-size:9vh;font-weight:800;color:#fff;letter-spacing:0.6vh}
+  #end .sub{font-size:3.2vh;color:#9fb0c6}
+  #end .pts{margin-top:2.2vh;display:flex;gap:4vh;font-size:2.3vh}
+  #fade{position:absolute;left:0;top:0;width:100%;height:100%;background:#000;opacity:1}
+</style>
+
+<div id="screen">
+  <div id="scenes"></div>
+
+  <div class="bubble" id="b1"></div>
+  <div class="bubble warn" id="b2"></div>
+  <div id="vay">VAY!</div>
+
+  <div id="card">
+    <div class="brand">
+      <svg viewBox="0 0 240 60" style="height:4vh;width:auto;"><text x="0" y="46" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="46"><tspan fill="#00AEEF" font-weight="900">/</tspan><tspan fill="#FFFFFF">muhasib</tspan><tspan fill="#00AEEF" font-weight="900">.</tspan></text></svg>
+      <b style="font-size:2.2vh;margin-left:0.5vh;">POS</b>
+    </div>
+    <div class="row"><span>Energetik ichimlik</span><b>25 000</b></div>
+    <div class="row"><span>Skaner</span><b id="scanState">…</b></div>
+    <div class="tot"><span>Jami</span><b>25 000 so'm</b></div>
+    <div class="fast" id="fastLine">1 soniyada rasmiylashtirildi</div>
+  </div>
+
+  <div id="scanline"></div>
+
+  <div id="end">
+    <svg viewBox="0 0 240 60" style="height:12vh;width:auto;margin-bottom:1.5vh;"><text x="0" y="46" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="46"><tspan fill="#00AEEF" font-weight="900">/</tspan><tspan fill="#FFFFFF">muhasib</tspan><tspan fill="#00AEEF" font-weight="900">.</tspan></text></svg>
+    <div class="sub">Zamonaviy POS kassa dasturi</div>
+    <div class="pts"><i style="color:#34a853;font-style:normal">1 soniyada skanerlash</i><i style="color:#4285f4;font-style:normal">Aniq hisob-kitob</i><i style="color:#fbbc05;font-style:normal">Ombor nazorati</i></div>
+  </div>
+
+  <div id="fade"></div>
+</div>
+
+<script>
+/* Real rasmlardan to'liq rolik. Har sahna: fon + fondan ajratilgan personaj.
+   Personaj alohida qatlam bo'lgani uchun u fonga nisbatan harakatlanadi
+   (yuradi, tebranadi, sakraydi) — bu shunchaki zoom emas. */
+const $ = id => document.getElementById(id);
+const clamp=(v,a,b)=>v<a?a:(v>b?b:v);
+const lerp=(a,b,t)=>a+(b-a)*t;
+const ease=t=>t<0?0:t>1?1:t*t*(3-2*t);
+const seg=(t,t0,t1)=>clamp((t-t0)/Math.max(1e-4,t1-t0),0,1);
+
+let C = { w:1376, h:768, duration:30, scenes:[], texts:{} };
+window.DURATION = 30;
+
+function build(){
+  const host = $('scenes');
+  host.innerHTML = '';
+  C.scenes.forEach((s, i) => {
+    const sc = document.createElement('div');
+    sc.className = 'scene'; sc.id = 'sc' + i;
+    const w = document.createElement('div');
+    w.className = 'world'; w.id = 'w' + i;
+    w.style.width = C.w + 'px'; w.style.height = C.h + 'px';
+    const img = document.createElement('img');
+    img.className = 'bg'; img.src = s.bg;
+    w.appendChild(img);
+
+    const mk = (id, clip, origin) => {
+      const d = document.createElement('div');
+      d.className = 'part'; d.id = id;
+      d.style.width = C.w + 'px'; d.style.height = C.h + 'px';
+      d.style.backgroundImage = `url("${s.subject}")`;
+      d.style.backgroundSize = C.w + 'px ' + C.h + 'px';
+      if(clip) d.style.clipPath = clip;
+      if(origin) d.style.transformOrigin = origin;
+      w.appendChild(d);
+      return d;
+    };
+    if(s.motion === 'walk'){
+      mk('legB'+i, `inset(${s.hipY}px ${C.w - s.splitX}px 0px 0px)`, `${s.legB[0]}px ${s.legB[1]}px`);
+      mk('legF'+i, `inset(${s.hipY}px 0px 0px ${s.splitX}px)`,       `${s.legF[0]}px ${s.legF[1]}px`);
+      mk('body'+i, `inset(0px 0px ${C.h - s.hipY - 12}px 0px)`,      `${s.bbox[0]+s.bbox[2]/2}px ${s.hipY}px`);
+    } else {
+      mk('subj'+i, null, `${s.bbox[0]+s.bbox[2]/2}px ${s.bbox[1]+s.bbox[3]}px`);
+    }
+    sc.appendChild(w);
+    host.appendChild(sc);
+  });
+  if(C.texts.price) $('b1').textContent = C.texts.price;
+  if(C.texts.shout) $('b2').textContent = C.texts.shout;
+  window.DURATION = C.duration;
+}
+window.APPLY_CONFIG = function(){ if(window.CONFIG) C = Object.assign(C, window.CONFIG); build(); };
+build();
+
+window.SEEK = function(t){
+  const SW = window.innerWidth, SH = window.innerHeight;
+  const base = SH / C.h;
+
+  C.scenes.forEach((s, i) => {
+    const el = $('sc'+i);
+    /* krossfeyd */
+    const k = seg(t, s.in, s.in + 0.55) - seg(t, s.out - 0.55, s.out);
+    el.style.opacity = clamp(k,0,1).toFixed(3);
+    if(k <= 0){ return; }
+
+    const p = seg(t, s.in, s.out);                 /* sahna ichidagi progress */
+    const push = 1 + p * (s.push || 0.06);
+    $('w'+i).style.transform = `translate(-50%,-50%) scale(${(base*push).toFixed(4)})`;
+
+    if(s.motion === 'walk'){
+      const wk = seg(t, s.in + 0.3, s.in + (s.walkDur || 3.6));
+      const walking = t < s.in + (s.walkDur || 3.6);
+      const x = lerp(s.from, 0, ease(wk));
+      const phase = (x - s.from) * 0.052;
+      const sw = walking ? Math.sin(phase) : 0;
+      const bob = walking ? Math.abs(Math.sin(phase))*9 : Math.sin(t*1.6)*2.2;
+      $('legF'+i).style.transform = `translate(${x}px,${-bob}px) rotate(${(sw*13).toFixed(2)}deg)`;
+      $('legB'+i).style.transform = `translate(${x}px,${-bob}px) rotate(${(-sw*13).toFixed(2)}deg)`;
+      $('body'+i).style.transform = `translate(${x}px,${(-bob*1.25).toFixed(2)}px) rotate(${(walking?sw*1.6:Math.sin(t*1.6)*0.5).toFixed(2)}deg)`;
+    } else {
+      const e = $('subj'+i);
+      const br = Math.sin(t*1.7)*0.9;                       /* nafas olish */
+      let sx = 0, sy = -Math.abs(Math.sin(t*1.7))*3, sc2 = 1 + p*0.03, rot = br*0.35;
+      if(s.motion === 'punch'){                             /* hayrat zarbasi */
+        const j = seg(t, s.hit, s.hit + 0.22);
+        const j2 = seg(t, s.hit + 0.22, s.hit + 1.1);
+        sc2 = 1 + ease(j)*0.14 - ease(j2)*0.09 + p*0.02;
+        const shake = (t < s.hit + 0.9) ? Math.sin(t*46)*(1-seg(t,s.hit,s.hit+0.9))*7 : 0;
+        sx = shake; sy -= ease(j)*22 - ease(j2)*14;
+        rot = shake*0.14;
+      }
+      if(s.motion === 'lean'){                              /* prilavkaga engashish */
+        const l = ease(seg(t, s.in+0.4, s.in+2.2));
+        sx = l*10; sy -= l*4; rot = br*0.3 + l*0.6;
+      }
+      e.style.transform = `translate(${sx.toFixed(2)}px,${sy.toFixed(2)}px) scale(${sc2.toFixed(4)}) rotate(${rot.toFixed(2)}deg)`;
+    }
+  });
+
+  /* ── ustki qatlam ── */
+  const T = C.texts;
+  const b1 = $('b1'), k1 = seg(t, T.priceAt[0], T.priceAt[0]+0.4) - seg(t, T.priceAt[1]-0.35, T.priceAt[1]);
+  b1.style.opacity = clamp(k1,0,1).toFixed(3);
+  b1.style.transform = `translate(${SW*0.06}px, ${SH*0.13}px) scale(${(0.9+0.1*ease(clamp(k1,0,1))).toFixed(3)})`;
+
+  const b2 = $('b2'), k2 = seg(t, T.shoutAt[0]+0.5, T.shoutAt[0]+0.9) - seg(t, T.shoutAt[1]-0.35, T.shoutAt[1]);
+  b2.style.opacity = clamp(k2,0,1).toFixed(3);
+  b2.style.transform = `translate(${SW*0.30}px, ${SH*0.70}px) scale(${(0.9+0.1*ease(clamp(k2,0,1))).toFixed(3)})`;
+
+  const v = $('vay'), kv = seg(t, T.shoutAt[0], T.shoutAt[0]+0.25) - seg(t, T.shoutAt[0]+1.5, T.shoutAt[0]+1.9);
+  v.style.opacity = clamp(kv,0,1).toFixed(3);
+  v.style.transform = `translate(${SW*0.06}px, ${SH*0.10}px) rotate(${(-7+Math.sin(t*22)*3).toFixed(1)}deg) scale(${(0.5+0.6*ease(clamp(kv,0,1))).toFixed(3)})`;
+
+  const c = $('card'), kc = seg(t, T.cardAt[0], T.cardAt[0]+0.5) - seg(t, T.cardAt[1]-0.4, T.cardAt[1]);
+  c.style.opacity = clamp(kc,0,1).toFixed(3);
+  c.style.transform = `translate(${lerp(SW*0.02, SW*0.05, ease(clamp(kc,0,1)))}px, ${SH*0.55}px)`;
+  $('scanState').textContent = t > T.scanAt[1] ? '✓ o‘qildi' : (t > T.scanAt[0] ? '·  ·  ·' : '…');
+  $('scanState').style.color = t > T.scanAt[1] ? '#34a853' : '#fff';
+  $('fastLine').style.opacity = t > T.scanAt[1] + 0.2 ? 1 : 0;
+
+  const sk = seg(t, T.scanAt[0], T.scanAt[1]), sl = $('scanline');
+  sl.style.opacity = (sk>0 && sk<1) ? 1 : 0;
+  sl.style.width = (SW*0.42) + 'px';
+  sl.style.left = (SW*0.40) + 'px';
+  sl.style.top = (SH*(0.28 + sk*0.42)) + 'px';
+
+  const ek = ease(seg(t, T.endAt, T.endAt+0.8));
+  $('end').style.opacity = ek.toFixed(3);
+
+  $('fade').style.opacity = Math.max(1-ease(seg(t,0,0.7)), ease(seg(t,C.duration-0.5,C.duration))).toFixed(3);
+};
+SEEK(0);
+</script>

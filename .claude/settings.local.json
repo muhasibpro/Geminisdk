@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(agy --version)",
+      "Bash(~/agv/bin/python -c \"import google_antigravity as g; print\\('google_antigravity', getattr\\(g,'__version__','?'\\)\\)\")",
+      "Bash(~/agv/bin/pip show *)",
+      "Bash(~/agv/bin/python -c \"import importlib.metadata as m; print\\([f for f in \\(m.files\\('google-antigravity'\\) or []\\) if str\\(f\\).endswith\\('__init__.py'\\)][:10]\\)\")",
+      "Bash(agy --help)",
+      "Read(//home/muhasib/**)",
+      "Read(//home/muhasib/.config/**)",
+      "Bash(timeout 10 agy models)",
+      "Bash(bash -x start.sh)",
+      "Bash(timeout 8 python3 agy_app.py)",
+      "Bash(echo \"EXIT:$?\")",
+      "Bash(.venv/bin/python -m pip list)",
+      "Bash(lsof -nP -iTCP:8777 -sTCP:LISTEN)"
+    ]
+  }
+}

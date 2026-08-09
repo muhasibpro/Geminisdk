@@ -1,0 +1,17 @@
+﻿id,sana,tur,kim,tovar,miqdor,birlik,izoh,tolov,kassa,valyuta,ozgarish,qoldiq
+78d5a46253,2026-08-03T17:43:23,kirim,Zayniddin,,0.0,dona,10000 USDT Zayniddin kassasiga kiritildi,naqd,Zayniddin,USDT,10000.0,10000.0
+8b05ad0f2c,2026-08-03T17:56:00,otkazma,,,0.0,dona,10 000 USDT sotildi — 10 135 USD tushdi (kurs 1.0135),naqd,Zayniddin,USDT,-10000.0,0.0
+8b05ad0f2c,2026-08-03T17:56:00,otkazma,,,0.0,dona,10 000 USDT sotildi — 10 135 USD tushdi (kurs 1.0135),naqd,Asosiy,USD,10135.0,10135.0
+a851162770,2026-08-03T18:38:30,xarid,FA,Macbook m4,1.0,dona,,naqd,Asosiy,USD,-1000.0,9135.0
+c8c0ece41b,2026-08-03T18:45:06,ombor_otkazma,,Macbook m4,1.0,dona,Kuryerga berildi,naqd,Asosiy,USD,0.0,9135.0
+4e0d6ddf37,2026-08-03T19:09:27,xarid,Abdurahim,iPhone 15 Pro Max 256GB,10.0,dona,Excel prixod: Abdurahim ombori,naqd,Asosiy,USD,-11000.0,-1865.0
+064ff527ce,2026-08-03T19:09:27,xarid,Abdurahim,Samsung Galaxy S24 Ultra,8.0,dona,Excel prixod: Abdurahim ombori,naqd,Asosiy,USD,-8400.0,-10265.0
+73130d700c,2026-08-03T19:09:27,xarid,Abdurahim,MacBook Air M3 15-inch,5.0,dona,Excel prixod: Abdurahim ombori,naqd,Asosiy,USD,-5750.0,-16015.0
+76f6361ab9,2026-08-03T19:09:27,xarid,Abdurahim,AirPods Pro 2 (USB-C),15.0,dona,Excel prixod: Abdurahim ombori,naqd,Asosiy,USD,-2850.0,-18865.0
+0a10db7147,2026-08-03T19:09:27,xarid,Abdurahim,Apple Watch Series 9 45mm,12.0,dona,Excel prixod: Abdurahim ombori,naqd,Asosiy,USD,-4200.0,-23065.0
+d0070d27b1,2026-08-03T19:09:27,xarid,Abdurahim,Sony WH-1000XM5 Headset,7.0,dona,Excel prixod: Abdurahim ombori,naqd,Asosiy,USD,-2170.0,-25235.0
+e3758477b2,2026-08-03T19:09:27,xarid,Abdurahim,iPad Air 5th Gen 64GB,6.0,dona,Excel prixod: Abdurahim ombori,naqd,Asosiy,USD,-3000.0,-28235.0
+ddad0f1a20,2026-08-03T19:09:27,xarid,Abdurahim,Xiaomi 14 Ultra 512GB,9.0,dona,Excel prixod: Abdurahim ombori,naqd,Asosiy,USD,-7650.0,-35885.0
+d3f93c6dcf,2026-08-03T19:09:27,xarid,Abdurahim,Dell XPS 15 9530 i9,4.0,dona,Excel prixod: Abdurahim ombori,naqd,Asosiy,USD,-7200.0,-43085.0
+fca44b0e27,2026-08-03T19:09:27,xarid,Abdurahim,LG OLED C3 55-inch TV,3.0,dona,Excel prixod: Abdurahim ombori,naqd,Asosiy,USD,-3600.0,-46685.0
+0d4dde6d20,2026-08-07T01:42:20,xarajat,,,0.0,dona,Jadval/Google Sheets uchun xarajat,naqd,Asosiy,USD,-10000.0,-56685.0

@@ -1,0 +1,32 @@
+{
+ "versiya": 2,
+ "biznes": {
+  "nom": "",
+  "valyuta": "USD",
+  "kassalar": [
+   {
+    "nom": "Asosiy",
+    "valyuta": "USD"
+   }
+  ],
+  "asosiy_kassa": "Asosiy"
+ },
+ "amallar": [
+  {
+   "id": "78d5a46253",
+   "sana": "2026-08-03T17:43:23",
+   "tur": "kirim",
+   "kim": "Zayniddin",
+   "tovar": "",
+   "miqdor": 0.0,
+   "birlik": "dona",
+   "narx": 0.0,
+   "summa": 10000.0,
+   "tan_narx": 0.0,
+   "tolov": "naqd",
+   "izoh": "10000 USDT kassaga kiritildi",
+   "kassa_nomi": "Asosiy",
+   "valyuta": "USDT"
+  }
+ ]
+}

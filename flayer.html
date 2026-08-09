@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MUHASIB PRO - POS Kassa Dasturi Flayeri (Real Photos)</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --accent: #10b981;
+      --accent-gold: #f59e0b;
+      --bg-dark: #0f172a;
+      --card-bg: #1e293b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: rgba(255, 255, 255, 0.12);
+      --gradient-brand: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 50%, #1e1b4b 100%);
+      --gradient-gold: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+      --gradient-accent: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    body {
+      background-color: #0b0f19;
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    /* Screen Toolbar */
+    .toolbar {
+      background: #1e293b;
+      border: 1px solid var(--border-color);
+      padding: 12px 24px;
+      border-radius: 16px;
+      margin-bottom: 24px;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+      z-index: 100;
+    }
+
+    .toolbar h3 {
+      font-size: 15px;
+      color: #94a3b8;
+      margin-right: 8px;
+    }
+
+    .btn {
+      background: #334155;
+      color: #fff;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .btn:hover {
+      background: #475569;
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      background: var(--gradient-accent);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-primary:hover {
+      background: #059669;
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.6);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    /* Flyer Page Container */
+    .flyer-wrapper {
+      width: 148mm;
+      min-height: 210mm;
+      background: #0f172a;
+      border-radius: 4px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    /* Size Variations */
+    .flyer-wrapper.size-a4 {
+      width: 210mm;
+      min-height: 297mm;
+    }
+
+    /* Themes */
+    .theme-light {
+      background: #ffffff !important;
+      color: #0f172a !important;
+    }
+    .theme-light .flyer-header {
+      background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%) !important;
+    }
+    .theme-light .feature-card {
+      background: #f8fafc !important;
+      border: 1px solid #e2e8f0 !important;
+      color: #0f172a !important;
+    }
+    .theme-light .feature-title {
+      color: #0f172a !important;
+    }
+    .theme-light .feature-desc {
+      color: #475569 !important;
+    }
+    .theme-light .target-item {
+      background: #eff6ff !important;
+      color: #1e40af !important;
+      border: 1px solid #bfdbfe !important;
+    }
+    .theme-light .promo-banner {
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%) !important;
+      border: 2px dashed #f59e0b !important;
+      color: #78350f !important;
+    }
+    .theme-light .promo-code {
+      background: #ffffff !important;
+      color: #b45309 !important;
+    }
+    .theme-light .contact-section {
+      background: #0f172a !important;
+      color: #fff !important;
+    }
+
+    /* Header Section */
+    .flyer-header {
+      background: var(--gradient-brand);
+      padding: 18px 24px 14px 24px;
+      position: relative;
+      color: #fff;
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-icon {
+      width: 38px;
+      height: 38px;
+      background: var(--gradient-gold);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 20px;
+      color: #0f172a;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+    }
+
+    .brand-name {
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      font-family: 'Space Grotesk', sans-serif;
+      text-transform: uppercase;
+      background: linear-gradient(to right, #ffffff, #93c5fd);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-tag {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: #fbbf24;
+    }
+
+    .main-title {
+      font-size: 20px;
+      font-weight: 800;
+      line-height: 1.25;
+      margin-bottom: 4px;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .main-subtitle {
+      font-size: 12.5px;
+      color: #cbd5e1;
+      font-weight: 500;
+      line-height: 1.4;
+    }
+
+    /* Dual Hero Real Photos Section */
+    .hero-gallery {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      height: 155px;
+      position: relative;
+      gap: 2px;
+      background: #090d16;
+    }
+
+    .hero-gallery .photo-box {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-gallery img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .badge-bar {
+      position: absolute;
+      bottom: 8px;
+      left: 10px;
+      background: rgba(15, 23, 42, 0.88);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 4px 10px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      font-weight: 700;
+      color: #38bdf8;
+    }
+
+    .real-tag {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(16, 185, 129, 0.9);
+      color: #fff;
+      font-size: 9px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Main Body Content */
+    .flyer-body {
+      padding: 14px 18px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Target Audience Chips */
+    .section-label {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #38bdf8;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .target-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+
+    .target-item {
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid var(--border-color);
+      padding: 5px 8px;
+      border-radius: 8px;
+      font-size: 10.5px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #e2e8f0;
+    }
+
+    .target-item span {
+      font-size: 13px;
+    }
+
+    /* Features Grid */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .feature-card {
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 8px 10px;
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      position: relative;
+    }
+
+    .feature-icon {
+      width: 30px;
+      height: 30px;
+      background: rgba(37, 99, 235, 0.2);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: #60a5fa;
+    }
+
+    .feature-icon svg {
+      width: 16px;
+      height: 16px;
+      stroke: currentColor;
+    }
+
+    .feature-card:nth-child(2) .feature-icon {
+      background: rgba(16, 185, 129, 0.2);
+      color: #34d399;
+    }
+    .feature-card:nth-child(3) .feature-icon {
+      background: rgba(245, 158, 11, 0.2);
+      color: #fbbf24;
+    }
+    .feature-card:nth-child(4) .feature-icon {
+      background: rgba(168, 85, 247, 0.2);
+      color: #c084fc;
+    }
+    .feature-card:nth-child(5) .feature-icon {
+      background: rgba(236, 72, 153, 0.2);
+      color: #f472b6;
+    }
+    .feature-card:nth-child(6) .feature-icon {
+      background: rgba(14, 165, 233, 0.2);
+      color: #38bdf8;
+    }
+
+    .feature-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .feature-title {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #f8fafc;
+      margin-bottom: 2px;
+    }
+
+    .feature-desc {
+      font-size: 10px;
+      color: #94a3b8;
+      line-height: 1.3;
+    }
+
+    /* Promo Offer Banner */
+    .promo-banner {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(217, 119, 6, 0.25) 100%);
+      border: 2px dashed #f59e0b;
+      border-radius: 10px;
+      padding: 10px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+    }
+
+    .promo-info h4 {
+      font-size: 12px;
+      font-weight: 800;
+      color: #fbbf24;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 2px;
+    }
+
+    .promo-info p {
+      font-size: 10.5px;
+      color: #cbd5e1;
+      font-weight: 500;
+    }
+
+    .promo-badge {
+      text-align: right;
+    }
+
+    .promo-code {
+      background: #f59e0b;
+      color: #0f172a;
+      font-size: 12px;
+      font-weight: 900;
+      padding: 4px 10px;
+      border-radius: 6px;
+      letter-spacing: 1px;
+      display: inline-block;
+      box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3);
+    }
+
+    /* Contact & Footer Section */
+    .contact-section {
+      background: #090d16;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 12px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .contact-details {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #f8fafc;
+    }
+
+    .contact-item svg {
+      width: 15px;
+      height: 15px;
+      color: #10b981;
+    }
+
+    .contact-highlight {
+      font-size: 14.5px;
+      font-weight: 800;
+      color: #38bdf8;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .qr-box {
+      background: #ffffff;
+      padding: 5px;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    .qr-box svg {
+      width: 60px;
+      height: 60px;
+    }
+
+    .qr-text {
+      font-size: 7.5px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-top: 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Print Optimizations */
+    @media print {
+      body {
+        background: none !important;
+        padding: 0 !important;
+      }
+      .toolbar {
+        display: none !important;
+      }
+      .flyer-wrapper {
+        box-shadow: none !important;
+        border: none !important;
+        width: 100% !important;
+        max-width: 148mm !important;
+        height: 210mm !important;
+        page-break-after: always;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Screen Control Toolbar -->
+  <div class="toolbar">
+    <h3>📄 MUHASIB PRO Flayer Boshqaruvi (Real Photos):</h3>
+    <button class="btn btn-primary" onclick="window.print()">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v8H6z"/></svg>
+      Chop etish / PDF saqlash
+    </button>
+    <button class="btn" onclick="toggleTheme()">
+      🎨 Rejim: Light / Dark
+    </button>
+    <button class="btn" onclick="toggleSize()">
+      📐 O'lcham: A5 / A4
+    </button>
+    <button class="btn btn-outline" onclick="toggleEditable()">
+      ✏️ Matnni tahrirlash (On/Off)
+    </button>
+  </div>
+
+  <!-- Flyer Main Document (A5 Printable) -->
+  <div class="flyer-wrapper" id="flyerDoc">
+    
+    <!-- Top Header -->
+    <div class="flyer-header">
+      <div class="header-top">
+        <div class="brand-logo">
+          <div class="logo-icon">M</div>
+          <div class="brand-name">MUHASIB PRO</div>
+        </div>
+        <div class="brand-tag">POS KASSA DASTURI</div>
+      </div>
+      <div class="main-title">SAVDONI 100% NAZORAT QILING VA DAROMADNI OSHIRING!</div>
+      <div class="main-subtitle">Do'kon va savdo nuqtalari uchun eng sodda va zamonaviy avtomatlashtirish tizimi</div>
+    </div>
+
+    <!-- Dual Photorealistic Images Gallery Banner -->
+    <div class="hero-gallery">
+      <div class="photo-box">
+        <img src="images/flyer_hero.jpg" alt="Muhasib Pro Real Supermarket">
+        <div class="real-tag">REAL DO'KON</div>
+        <div class="badge-bar">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+          1,500+ O'zbekiston Do'konlari
+        </div>
+      </div>
+      <div class="photo-box">
+        <img src="images/flyer_secondary.jpg" alt="Muhasib Pro Real Kassa Counter">
+        <div class="real-tag" style="background:#2563eb;">TEZ KASSA</div>
+      </div>
+    </div>
+
+    <!-- Main Content Body -->
+    <div class="flyer-body">
+      
+      <!-- Target Audience Section -->
+      <div>
+        <div class="section-label">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+          Qaysi do'konlar uchun mos?
+        </div>
+        <div class="target-grid">
+          <div class="target-item"><span>🛒</span> Supermarketlar</div>
+          <div class="target-item"><span>👗</span> Kiyim & Poyabzal</div>
+          <div class="target-item"><span>💊</span> Apteka & Parfyum</div>
+          <div class="target-item"><span>📱</span> Maishiy texnika</div>
+          <div class="target-item"><span>🔨</span> Qurilish mollari</div>
+          <div class="target-item"><span>🚗</span> Avto ehtiyot qismlar</div>
+        </div>
+      </div>
+
+      <!-- Core Features Grid -->
+      <div>
+        <div class="section-label">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          Asosiy Imkoniyatlar:
+        </div>
+        <div class="features-grid">
+          
+          <!-- Feature 1 -->
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 4v16m8-8H4"/></svg>
+            </div>
+            <div class="feature-text">
+              <div class="feature-title">Tezkor Kassa & Chek</div>
+              <div class="feature-desc">Shtrix-kod skaner va terminal bilan 1 soniyada sotuv.</div>
+            </div>
+          </div>
+
+          <!-- Feature 2 -->
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+            </div>
+            <div class="feature-text">
+              <div class="feature-title">Ombor & Qoldiq Nazorati</div>
+              <div class="feature-desc">Kamaygan tovarlar va muddati o'tgan mahsulotlar ogohlantirish.</div>
+            </div>
+          </div>
+
+          <!-- Feature 3 -->
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+            </div>
+            <div class="feature-text">
+              <div class="feature-title">Sof Foyda Analitikasi</div>
+              <div class="feature-desc">Telefon orqali kunlik tushum va sof foydani onlayn ko'ring.</div>
+            </div>
+          </div>
+
+          <!-- Feature 4 -->
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+            </div>
+            <div class="feature-text">
+              <div class="feature-title">Nasiya va Qarzdorlar</div>
+              <div class="feature-desc">Mijozlar qarzi, SMS-eslatmalar va to'lovlar tarixi.</div>
+            </div>
+          </div>
+
+          <!-- Feature 5 -->
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+            </div>
+            <div class="feature-text">
+              <div class="feature-title">Xodimlar & O'g'rilik Hujumi</div>
+              <div class="feature-desc">Kassir sirlari va kamomadni 100% yo'qotish.</div>
+            </div>
+          </div>
+
+          <!-- Feature 6 -->
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.829m2.829 2.829L21 21M15.536 8.464a5 5 0 010 7.072m0 0l-2.829-2.829m-4.243 2.829a5 5 0 010-7.072m0 0l2.829 2.829m-4.243-2.829L3 3"/></svg>
+            </div>
+            <div class="feature-text">
+              <div class="feature-title">Oflayn Ishlash Rejimi</div>
+              <div class="feature-desc">Internet o'chganda ham kassa to'xtamaydi!</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Promo Coupon Offer -->
+      <div class="promo-banner">
+        <div class="promo-info">
+          <h4>🎁 Maxsus Aksiya & Sinov</h4>
+          <p>14 kun bepul test + O'rnatish va o'rgatish mutlaqo bepul!</p>
+        </div>
+        <div class="promo-badge">
+          <div style="font-size: 8.5px; color: #fef08a; font-weight: 700; margin-bottom: 2px;">FLAYER KUPONI:</div>
+          <div class="promo-code">-20% CHEGIRMA</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Contact & QR Section -->
+    <div class="contact-section">
+      <div class="contact-details">
+        <div style="font-size: 9.5px; color: #94a3b8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">BIZ BILAN BOG'LANING:</div>
+        
+        <div class="contact-item">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+          <span class="contact-highlight">+998 (90) 123-45-67</span>
+        </div>
+
+        <div class="contact-item">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+          <span>Telegram: <strong>@muhasibpro_bot</strong></span>
+        </div>
+
+        <div class="contact-item">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/></svg>
+          <span>Sayt: <strong>www.muhasibpro.uz</strong></span>
+        </div>
+      </div>
+
+      <!-- Vector Crisp QR Code -->
+      <div class="qr-box">
+        <svg viewBox="0 0 100 100">
+          <rect x="0" y="0" width="100" height="100" fill="#ffffff" />
+          <rect x="10" y="10" width="25" height="25" fill="#0f172a" />
+          <rect x="15" y="15" width="15" height="15" fill="#ffffff" />
+          <rect x="18" y="18" width="9" height="9" fill="#0f172a" />
+
+          <rect x="65" y="10" width="25" height="25" fill="#0f172a" />
+          <rect x="70" y="15" width="15" height="15" fill="#ffffff" />
+          <rect x="73" y="18" width="9" height="9" fill="#0f172a" />
+
+          <rect x="10" y="65" width="25" height="25" fill="#0f172a" />
+          <rect x="15" y="70" width="15" height="15" fill="#ffffff" />
+          <rect x="18" y="73" width="9" height="9" fill="#0f172a" />
+
+          <rect x="40" y="10" width="6" height="6" fill="#0f172a"/>
+          <rect x="50" y="10" width="6" height="6" fill="#0f172a"/>
+          <rect x="45" y="20" width="6" height="6" fill="#0f172a"/>
+          <rect x="55" y="25" width="6" height="6" fill="#0f172a"/>
+          <rect x="10" y="40" width="6" height="6" fill="#0f172a"/>
+          <rect x="20" y="45" width="6" height="6" fill="#0f172a"/>
+          <rect x="30" y="40" width="6" height="6" fill="#0f172a"/>
+          <rect x="40" y="45" width="12" height="6" fill="#0f172a"/>
+          <rect x="60" y="40" width="6" height="12" fill="#0f172a"/>
+          <rect x="75" y="40" width="12" height="6" fill="#0f172a"/>
+          <rect x="40" y="60" width="6" height="6" fill="#0f172a"/>
+          <rect x="50" y="65" width="10" height="6" fill="#0f172a"/>
+          <rect x="65" y="65" width="6" height="6" fill="#0f172a"/>
+          <rect x="75" y="70" width="6" height="10" fill="#0f172a"/>
+          <rect x="40" y="75" width="12" height="6" fill="#0f172a"/>
+          <rect x="55" y="80" width="8" height="8" fill="#0f172a"/>
+          <rect x="70" y="85" width="12" height="6" fill="#0f172a"/>
+        </svg>
+        <div class="qr-text">SKANER QILING</div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function toggleTheme() {
+      document.getElementById('flyerDoc').classList.toggle('theme-light');
+    }
+
+    function toggleSize() {
+      document.getElementById('flyerDoc').classList.toggle('size-a4');
+    }
+
+    let isEditable = false;
+    function toggleEditable() {
+      isEditable = !isEditable;
+      document.getElementById('flyerDoc').contentEditable = isEditable;
+      alert(isEditable ? "Tahrirlash rejimi YONDI! Flayerdagi istalgan matn ustiga bosib o'zgartirishingiz mumkin." : "Tahrirlash rejimi O'CHDI.");
+    }
+  </script>
+</body>
+</html>

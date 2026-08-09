@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MUHASIB Dasturi - Multik Video Ro'lik</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Outfit:wght@500;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #07090e;
+            color: #ffffff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .background-glow {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80vw;
+            height: 80vh;
+            background: radial-gradient(circle, rgba(0, 242, 254, 0.15) 0%, rgba(121, 40, 202, 0.15) 50%, rgba(0, 0, 0, 0) 70%);
+            filter: blur(80px);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        header {
+            z-index: 10;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            border-radius: 999px;
+            background: rgba(0, 242, 254, 0.1);
+            border: 1px solid rgba(0, 242, 254, 0.3);
+            color: #00f2fe;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ffffff 0%, #00f2fe 50%, #4facfe 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        p.subtitle {
+            color: #94a3b8;
+            font-size: 1.1rem;
+        }
+
+        /* Video Container */
+        .video-wrapper {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 1000px;
+            background: rgba(18, 24, 38, 0.85);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 40px rgba(0, 242, 254, 0.15);
+            overflow: hidden;
+            backdrop-filter: blur(16px);
+        }
+
+        .screen-container {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%; /* 16:9 ratio */
+            background-color: #000;
+            overflow: hidden;
+        }
+
+        .scene-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .scene-slide.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .scene-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scale(1);
+            transition: transform 7s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .scene-slide.active .scene-img {
+            transform: scale(1.08) translate(-1%, -1%);
+        }
+
+        /* Speech / Dialogue Overlay */
+        .speech-bubble-wrapper {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 800px;
+            background: rgba(15, 23, 42, 0.88);
+            border: 2px solid rgba(0, 242, 254, 0.6);
+            border-radius: 20px;
+            padding: 20px 28px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 242, 254, 0.2);
+            backdrop-filter: blur(12px);
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            animation: floatBubble 3s ease-in-out infinite;
+        }
+
+        @keyframes floatBubble {
+            0%, 100% { transform: translate(-50%, 0); }
+            50% { transform: translate(-50%, -6px); }
+        }
+
+        .character-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: 3px solid #00f2fe;
+            background-size: cover;
+            background-position: center;
+            flex-shrink: 0;
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
+        }
+
+        .dialogue-box {
+            flex-grow: 1;
+        }
+
+        .character-name {
+            font-size: 13px;
+            font-weight: 800;
+            color: #00f2fe;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .dialogue-text {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: #ffffff;
+            line-height: 1.4;
+        }
+
+        .highlight-brand {
+            color: #fbbf24;
+            font-weight: 800;
+            text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+        }
+
+        /* Controls Bar */
+        .controls-bar {
+            padding: 16px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: rgba(10, 14, 23, 0.95);
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 999px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #00f2fe 0%, #4facfe 50%, #7928ca 100%);
+            border-radius: 999px;
+            transition: width 0.1s linear;
+            box-shadow: 0 0 12px rgba(0, 242, 254, 0.8);
+        }
+
+        .controls-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .btn-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .control-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #fff;
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .control-btn:hover {
+            background: rgba(0, 242, 254, 0.2);
+            border-color: #00f2fe;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3);
+        }
+
+        .control-btn.primary {
+            background: linear-gradient(135deg, #00f2fe 0%, #0072ff 100%);
+            border: none;
+            color: #000;
+            font-weight: 800;
+        }
+
+        .control-btn.primary:hover {
+            box-shadow: 0 0 25px rgba(0, 242, 254, 0.6);
+            transform: translateY(-2px) scale(1.03);
+        }
+
+        .scene-indicator {
+            display: flex;
+            gap: 8px;
+        }
+
+        .scene-dot {
+            padding: 6px 14px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 12px;
+            font-weight: 700;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .scene-dot.active {
+            background: rgba(0, 242, 254, 0.15);
+            border-color: #00f2fe;
+            color: #00f2fe;
+        }
+
+        /* Script / Storyboard Section */
+        .storyboard-section {
+            width: 100%;
+            max-width: 1000px;
+            margin-top: 32px;
+            z-index: 10;
+        }
+
+        .section-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .scene-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .scene-card {
+            background: rgba(18, 24, 38, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .scene-card:hover, .scene-card.selected {
+            border-color: #00f2fe;
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0, 242, 254, 0.2);
+        }
+
+        .scene-card img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+        }
+
+        .scene-card-info {
+            padding: 12px 14px;
+        }
+
+        .scene-card-num {
+            font-size: 11px;
+            font-weight: 800;
+            color: #00f2fe;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .scene-card-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin: 4px 0;
+            color: #f1f5f9;
+        }
+
+        .scene-card-desc {
+            font-size: 12px;
+            color: #94a3b8;
+            line-height: 1.3;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="background-glow"></div>
+
+    <header>
+        <div class="badge">🎬 Animatsion Video Ro'lik</div>
+        <h1>MUHASIB Dasturi Haqida Multik</h1>
+        <p class="subtitle">Magazinda sodir bo'lgan qiziqarli voqea va aqlli bolaning savoli!</p>
+    </header>
+
+    <div class="video-wrapper" id="videoWrapper">
+        <div class="screen-container">
+            <!-- Scene 1 -->
+            <div class="scene-slide active" id="slide1">
+                <img src="images/scene_1.jpg" alt="Sahna 1: Do'konga kirish" class="scene-img">
+                <div class="speech-bubble-wrapper">
+                    <div class="character-avatar" style="background-image: url('images/scene_1.jpg');"></div>
+                    <div class="dialogue-box">
+                        <div class="character-name">🎙 Roditel / Oviator</div>
+                        <div class="dialogue-text" id="text1">Quvnoq bola do'konga kiradi va o'ziga kerakli shirinliklar hamda mahsulotlarni tanlaydi...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scene 2 -->
+            <div class="scene-slide" id="slide2">
+                <img src="images/scene_2.jpg" alt="Sahna 2: Kassadagi holat" class="scene-img">
+                <div class="speech-bubble-wrapper">
+                    <div class="character-avatar" style="background-image: url('images/scene_2.jpg');"></div>
+                    <div class="dialogue-box">
+                        <div class="character-name">👵 Sotuvchi Opa</div>
+                        <div class="dialogue-text" id="text2">"Xo'sh, bolam... Mahsulotlaring hammasi bo'lib 45,000 so'm bo'ldi." (Kalkulyatorda qo'lda hisoblab)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scene 3 -->
+            <div class="scene-slide" id="slide3">
+                <img src="images/scene_3.jpg" alt="Sahna 3: Bolaning savoli" class="scene-img">
+                <div class="speech-bubble-wrapper">
+                    <div class="character-avatar" style="background-image: url('images/scene_3.jpg');"></div>
+                    <div class="dialogue-box">
+                        <div class="character-name">👦 Aqlli Bola</div>
+                        <div class="dialogue-text" id="text3">"Kechirasiz, nega sizda <span class="highlight-brand">MUHASIB</span> dasturi o'rnatilmagan? Shtrix-kod va avto-chek qani?"</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scene 4 -->
+            <div class="scene-slide" id="slide4">
+                <img src="images/scene_4.jpg" alt="Sahna 4: MUHASIB Yechimi" class="scene-img">
+                <div class="speech-bubble-wrapper">
+                    <div class="character-avatar" style="background-image: url('images/scene_4.jpg');"></div>
+                    <div class="dialogue-box">
+                        <div class="character-name">🚀 MUHASIB POS Sistemasi</div>
+                        <div class="dialogue-text" id="text4">"<span class="highlight-brand">MUHASIB</span> dasturi o'rnatildi! Endi 1 soniyada skanerlash, aniq hisob-kitob va qulay POS tizim!"</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls-bar">
+            <div class="progress-container" id="progressContainer">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+
+            <div class="controls-row">
+                <div class="btn-group">
+                    <button class="control-btn primary" id="playBtn">
+                        <span id="playIcon">▶ Play Video</span>
+                    </button>
+                    <button class="control-btn" id="audioToggleBtn">
+                        🔊 Ovoz: Yonik
+                    </button>
+                    <button class="control-btn" id="voiceoverBtn">
+                        🗣 Ovozli O'qish (TTS)
+                    </button>
+                </div>
+
+                <div class="scene-indicator">
+                    <div class="scene-dot active" onclick="goToScene(0)">1. Kirish</div>
+                    <div class="scene-dot" onclick="goToScene(1)">2. Kassa</div>
+                    <div class="scene-dot" onclick="goToScene(2)">3. Savol</div>
+                    <div class="scene-dot" onclick="goToScene(3)">4. MUHASIB</div>
+                </div>
+
+                <button class="control-btn" id="fullscreenBtn">
+                    ⛶ To'liq Ekranga
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Storyboard Breakdown -->
+    <div class="storyboard-section">
+        <h2 class="section-title">🎞 Multik Ssenariysi va Sahnasi</h2>
+        <div class="scene-cards-grid">
+            <div class="scene-card selected" onclick="goToScene(0)">
+                <img src="images/scene_1.jpg" alt="Sahna 1">
+                <div class="scene-card-info">
+                    <div class="scene-card-num">SAHNA 1</div>
+                    <div class="scene-card-title">Do'konga Kirish</div>
+                    <div class="scene-card-desc">Bola do'konga kirib maxsulot sotib oladi.</div>
+                </div>
+            </div>
+            <div class="scene-card" onclick="goToScene(1)">
+                <img src="images/scene_2.jpg" alt="Sahna 2">
+                <div class="scene-card-info">
+                    <div class="scene-card-num">SAHNA 2</div>
+                    <div class="scene-card-title">Kassa va Og'zaki Narx</div>
+                    <div class="scene-card-desc">Kassada faqat narxini og'zaki aytishadi.</div>
+                </div>
+            </div>
+            <div class="scene-card" onclick="goToScene(2)">
+                <img src="images/scene_3.jpg" alt="Sahna 3">
+                <div class="scene-card-info">
+                    <div class="scene-card-num">SAHNA 3</div>
+                    <div class="scene-card-title">Bolaning Savoli</div>
+                    <div class="scene-card-desc">"Nega sizda Muhasib dasturi o'rnatilmagan?"</div>
+                </div>
+            </div>
+            <div class="scene-card" onclick="goToScene(3)">
+                <img src="images/scene_4.jpg" alt="Sahna 4">
+                <div class="scene-card-info">
+                    <div class="scene-card-num">SAHNA 4</div>
+                    <div class="scene-card-title">MUHASIB Innovatsiyasi</div>
+                    <div class="scene-card-desc">Do'kon zamonaviy Muhasib dasturiga o'tadi!</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const scenes = [
+            {
+                id: 1,
+                duration: 6000,
+                text: "Quvnoq bola do'konga kiradi va o'ziga kerakli shirinliklar hamda mahsulotlarni tanlaydi...",
+                voiceText: "Quvnoq bola do'konga kiradi va o'ziga kerakli mahsulotlarni sotib oladi.",
+                soundFx: "bell"
+            },
+            {
+                id: 2,
+                duration: 6000,
+                text: "\"Xo'sh, bolam... Mahsulotlaring hammasi bo'lib 45,000 so'm bo'ldi.\" (Kassir faqat narxini aytadi)",
+                voiceText: "Kassaga keladi, kassir mahsulotlarni sanab, faqat narxini aytadi.",
+                soundFx: "cash"
+            },
+            {
+                id: 3,
+                duration: 6000,
+                text: "\"Kechirasiz, nega sizda MUHASIB dasturi o'rnatilmagan?\"",
+                voiceText: "Shunda bola so'raydi: Nega sizda Muhasib dasturi o'rnatilmagan?",
+                soundFx: "wonder"
+            },
+            {
+                id: 4,
+                duration: 7000,
+                text: "\"MUHASIB dasturi o'rnatildi! Endi 1 soniyada skanerlash, aniq hisob-kitob va qulay POS tizim!\"",
+                voiceText: "Muhasib dasturi bilan tezkor skanerlash va avtomatlashgan savdo!",
+                soundFx: "beep"
+            }
+        ];
+
+        let currentSceneIndex = 0;
+        let isPlaying = false;
+        let sceneTimer = null;
+        let progressInterval = null;
+        let soundEnabled = true;
+        let voiceoverEnabled = true;
+        let sceneStartTime = 0;
+
+        // Audio Synth Generator (Web Audio API)
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSoundFx(type) {
+            if (!soundEnabled) return;
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            const now = audioCtx.currentTime;
+
+            if (type === 'bell') {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(880, now); // A5
+                osc.frequency.exponentialRampToValueAtTime(1760, now + 0.3);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.8);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.8);
+            } else if (type === 'cash') {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(400, now);
+                osc.frequency.setValueAtTime(600, now + 0.1);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.4);
+            } else if (type === 'wonder') {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(300, now);
+                osc.frequency.linearRampToValueAtTime(700, now + 0.5);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.6);
+            } else if (type === 'beep') {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(2400, now);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.2);
+            }
+        }
+
+        function speakSceneText(text) {
+            if (!voiceoverEnabled || !('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 1.0;
+            utterance.pitch = 1.1;
+            
+            // Try finding uzbek or fallback to default
+            const voices = window.speechSynthesis.getVoices();
+            const uzVoice = voices.find(v => v.lang.includes('uz') || v.lang.includes('tr') || v.lang.includes('ru'));
+            if (uzVoice) utterance.voice = uzVoice;
+
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function updateSceneUI(index) {
+            currentSceneIndex = index;
+            
+            // Update Slides
+            document.querySelectorAll('.scene-slide').forEach((slide, i) => {
+                slide.classList.toggle('active', i === index);
+            });
+
+            // Update Dots
+            document.querySelectorAll('.scene-dot').forEach((dot, i) => {
+                dot.classList.toggle('active', i === index);
+            });
+
+            // Update Cards
+            document.querySelectorAll('.scene-card').forEach((card, i) => {
+                card.classList.toggle('selected', i === index);
+            });
+
+            // Sound FX & Speech
+            playSoundFx(scenes[index].soundFx);
+            speakSceneText(scenes[index].voiceText);
+        }
+
+        function startProgress() {
+            clearInterval(progressInterval);
+            sceneStartTime = Date.now();
+            const totalDuration = scenes.reduce((acc, s) => acc + s.duration, 0);
+
+            progressInterval = setInterval(() => {
+                if (!isPlaying) return;
+                
+                let elapsedBefore = 0;
+                for (let i = 0; i < currentSceneIndex; i++) {
+                    elapsedBefore += scenes[i].duration;
+                }
+
+                const sceneElapsed = Date.now() - sceneStartTime;
+                const currentTotalElapsed = elapsedBefore + sceneElapsed;
+                const percent = Math.min(100, (currentTotalElapsed / totalDuration) * 100);
+
+                document.getElementById('progressBar').style.width = percent + '%';
+            }, 50);
+        }
+
+        function playNextScene() {
+            if (!isPlaying) return;
+
+            sceneStartTime = Date.now();
+            updateSceneUI(currentSceneIndex);
+            startProgress();
+
+            sceneTimer = setTimeout(() => {
+                if (currentSceneIndex < scenes.length - 1) {
+                    currentSceneIndex++;
+                    playNextScene();
+                } else {
+                    // Loop or Finish
+                    pauseVideo();
+                    document.getElementById('progressBar').style.width = '100%';
+                }
+            }, scenes[currentSceneIndex].duration);
+        }
+
+        function togglePlay() {
+            if (isPlaying) {
+                pauseVideo();
+            } else {
+                playVideo();
+            }
+        }
+
+        function playVideo() {
+            isPlaying = true;
+            document.getElementById('playIcon').innerHTML = '⏸ Pausa';
+            if (currentSceneIndex >= scenes.length - 1 && document.getElementById('progressBar').style.width === '100%') {
+                currentSceneIndex = 0;
+            }
+            playNextScene();
+        }
+
+        function pauseVideo() {
+            isPlaying = false;
+            document.getElementById('playIcon').innerHTML = '▶ Play Video';
+            clearTimeout(sceneTimer);
+            clearInterval(progressInterval);
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+        }
+
+        function goToScene(index) {
+            clearTimeout(sceneTimer);
+            clearInterval(progressInterval);
+            currentSceneIndex = index;
+            updateSceneUI(index);
+
+            // Recalculate progress bar
+            const totalDuration = scenes.reduce((acc, s) => acc + s.duration, 0);
+            let elapsedBefore = 0;
+            for (let i = 0; i < index; i++) {
+                elapsedBefore += scenes[i].duration;
+            }
+            document.getElementById('progressBar').style.width = ((elapsedBefore / totalDuration) * 100) + '%';
+
+            if (isPlaying) {
+                playNextScene();
+            }
+        }
+
+        // Controls Event Listeners
+        document.getElementById('playBtn').addEventListener('click', togglePlay);
+
+        document.getElementById('audioToggleBtn').addEventListener('click', () => {
+            soundEnabled = !soundEnabled;
+            document.getElementById('audioToggleBtn').innerHTML = soundEnabled ? '🔊 Ovoz: Yonik' : '🔇 Ovoz: O'chirilgan';
+        });
+
+        document.getElementById('voiceoverBtn').addEventListener('click', () => {
+            voiceoverEnabled = !voiceoverEnabled;
+            document.getElementById('voiceoverBtn').innerHTML = voiceoverEnabled ? '🗣 Ovozli O\'qish (TTS)' : '🚫 Ovozli O\'qish: Off';
+            if (voiceoverEnabled) speakSceneText(scenes[currentSceneIndex].voiceText);
+        });
+
+        document.getElementById('fullscreenBtn').addEventListener('click', () => {
+            const wrapper = document.getElementById('videoWrapper');
+            if (!document.fullscreenElement) {
+                wrapper.requestFullscreen().catch(err => alert("To'liq ekranga o'tishda xatolik"));
+            } else {
+                document.exitFullscreen();
+            }
+        });
+
+        // Initialize first scene load
+        goToScene(0);
+    </script>
+</body>
+</html>

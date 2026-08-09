@@ -1,0 +1,32 @@
+<div class="karta" style="background: linear-gradient(135deg, #0f172a, #1e293b); color: white; padding: 18px; border-radius: 16px;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+    <span style="font-size: 13px; color: #94a3b8; font-weight: 600; text-transform: uppercase;">📈 Sof Nafa (Foyda) Vidjeti</span>
+    <span style="background: #16a34a; color: white; font-size: 11px; padding: 2px 8px; border-radius: 12px; font-weight: bold;">FAOL</span>
+  </div>
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+    <div>
+      <div style="font-size: 11px; color: #cbd5e1;">Jami Nafa:</div>
+      <div id="v-nafa-summa" style="font-size: 20px; font-weight: bold; color: #4ade80;">0 so'm</div>
+    </div>
+    <div>
+      <div style="font-size: 11px; color: #cbd5e1;">O'rtacha Marja:</div>
+      <div id="v-nafa-marja" style="font-size: 20px; font-weight: bold; color: #38bdf8;">0 %</div>
+    </div>
+  </div>
+</div>
+
+<script>
+async function yuklaNafaVidjet() {
+  const rows = await sql("SELECT * FROM nafa_hisob");
+  let totalTan = 0, totalNafa = 0;
+  for (let r of rows) {
+    totalTan += (r.tan_narxi || 0);
+    totalNafa += (r.nafa_summa || 0);
+  }
+  const avgMarja = totalTan > 0 ? ((totalNafa / totalTan) * 100).toFixed(1) : 0;
+
+  document.getElementById('v-nafa-summa').innerText = pul(totalNafa) + " so'm";
+  document.getElementById('v-nafa-marja').innerText = avgMarja + " %";
+}
+yuklaNafaVidjet();
+</script>

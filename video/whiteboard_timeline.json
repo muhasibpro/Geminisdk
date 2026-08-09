@@ -1,0 +1,25 @@
+{
+  "duration": 29.67,
+  "lines": [
+    {
+      "key": "wb_line1",
+      "start": 0.8,
+      "dur": 4.61
+    },
+    {
+      "key": "wb_line2",
+      "start": 6.31,
+      "dur": 6.98
+    },
+    {
+      "key": "wb_line3",
+      "start": 14.19,
+      "dur": 6.02
+    },
+    {
+      "key": "wb_line4",
+      "start": 21.12,
+      "dur": 5.35
+    }
+  ]
+}

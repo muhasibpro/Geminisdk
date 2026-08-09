@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <title>MUHASIB — Whiteboard Doodle Animation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Kalam:wght@700&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      background: #fbfbfe;
+      font-family: 'Kalam', 'Caveat', cursive, sans-serif;
+      position: relative;
+      user-select: none;
+    }
+
+    /* Whiteboard grid texture background */
+    .board-bg {
+      position: absolute;
+      inset: 0;
+      background-image: 
+        radial-gradient(#cbd5e1 1.2px, transparent 1.2px),
+        radial-gradient(#cbd5e1 1.2px, #fbfbfe 1.2px);
+      background-size: 40px 40px;
+      background-position: 0 0, 20px 20px;
+      opacity: 0.65;
+    }
+
+    /* Main SVG Drawing Canvas */
+    svg.canvas {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      z-index: 10;
+    }
+
+    /* Sketch Path Defaults */
+    .draw-stroke {
+      fill: none;
+      stroke: #1e293b;
+      stroke-width: 4;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .draw-blue {
+      fill: none;
+      stroke: #2563eb;
+      stroke-width: 4.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .draw-red {
+      fill: none;
+      stroke: #dc2626;
+      stroke-width: 5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .draw-green {
+      fill: none;
+      stroke: #16a34a;
+      stroke-width: 4.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .draw-gold {
+      fill: none;
+      stroke: #d97706;
+      stroke-width: 5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* Text elements drawn dynamically */
+    .wb-title {
+      font-family: 'Kalam', cursive;
+      font-size: 58px;
+      font-weight: 700;
+      fill: #1e3a8a;
+    }
+    .wb-subtitle {
+      font-family: 'Kalam', cursive;
+      font-size: 38px;
+      font-weight: 700;
+      fill: #1e293b;
+    }
+    .wb-text-red {
+      font-family: 'Kalam', cursive;
+      font-size: 36px;
+      font-weight: 700;
+      fill: #dc2626;
+    }
+    .wb-text-green {
+      font-family: 'Kalam', cursive;
+      font-size: 36px;
+      font-weight: 700;
+      fill: #15803d;
+    }
+
+    /* Fill shapes that expand */
+    .fill-shape {
+      transition: opacity 0.2s ease;
+    }
+
+    /* Hand & Pen Marker layer */
+    #hand-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 1920px;
+      height: 1080px;
+      pointer-events: none;
+      z-index: 1000;
+      transform: translate(1920px, 1080px);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Whiteboard Background -->
+  <div class="board-bg"></div>
+
+  <!-- SVG Drawing Canvas -->
+  <svg class="canvas" viewBox="0 0 1920 1080">
+    <defs>
+      <!-- Marker Shadow -->
+      <filter id="hand-shadow" x="-20%" y="-20%" width="150%" height="150%">
+        <feDropShadow dx="10" dy="18" stdDeviation="8" flood-color="#0f172a" flood-opacity="0.25"/>
+      </filter>
+      <!-- Glow filter for MUHASIB -->
+      <filter id="glow-gold" x="-20%" y="-20%" width="140%" height="140%">
+        <feGaussianBlur stdDeviation="6" result="blur"/>
+        <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+      </filter>
+    </defs>
+
+    <!-- ================= SCENE 1: KASSADAGI MUAMMO (0s - 5.5s) ================= -->
+    <g id="scene-1">
+      <!-- Title Box -->
+      <path id="s1-title-box" class="draw-red" d="M 600,60 L 1320,60 L 1310,130 L 610,130 Z" />
+      <text id="s1-title-text" x="650" y="112" class="wb-title" style="fill:#dc2626; font-size:48px;"></text>
+
+      <!-- Cashier / Merchant Figure -->
+      <g id="s1-cashier">
+        <!-- Head -->
+        <path id="s1-c-head" class="draw-stroke" d="M 320,300 C 320,240 400,240 400,300 C 400,360 320,360 320,300 Z" />
+        <!-- Worried Face (Eyes & Mouth) -->
+        <path id="s1-c-eyes" class="draw-stroke" d="M 340,290 L 352,298 M 352,290 L 340,298 M 368,290 L 380,298 M 380,290 L 368,298" />
+        <path id="s1-c-mouth" class="draw-red" d="M 345,335 C 360,320 375,340 385,325" />
+        <path id="s1-c-sweat" class="draw-blue" d="M 410,270 Q 420,285 410,295 Q 400,285 410,270 Z" />
+        <!-- Body & Arms -->
+        <path id="s1-c-body" class="draw-stroke" d="M 360,360 L 360,490 M 360,400 L 290,440 M 360,400 L 430,370 L 420,300" />
+        <!-- Table / Counter -->
+        <path id="s1-table" class="draw-stroke" d="M 200,490 L 650,490 M 220,490 L 220,620 M 630,490 L 630,620" />
+        <!-- Old Notebook & Calculator -->
+        <path id="s1-notebook" class="draw-stroke" d="M 250,430 L 330,420 L 350,480 L 270,490 Z M 290,425 L 310,485" />
+        <path id="s1-calc" class="draw-stroke" d="M 450,420 L 530,420 L 530,485 L 450,485 Z M 460,430 L 520,430 L 520,445 L 460,445 Z" />
+        <text id="s1-calc-err" x="468" y="443" font-family="sans-serif" font-weight="bold" font-size="12" fill="#dc2626">ERR 9999</text>
+      </g>
+
+      <!-- Customer Queue -->
+      <g id="s1-queue">
+        <!-- Customer 1 -->
+        <path id="s1-q1-head" class="draw-stroke" d="M 720,320 C 720,280 770,280 770,320 C 770,360 720,360 720,320 Z" />
+        <path id="s1-q1-body" class="draw-stroke" d="M 745,360 L 745,490 M 745,400 L 710,440 M 745,400 L 780,440 M 745,490 L 725,580 M 745,490 L 765,580" />
+        <!-- Customer 2 -->
+        <path id="s1-q2-head" class="draw-stroke" d="M 850,340 C 850,300 900,300 900,340 C 900,380 850,380 850,340 Z" />
+        <path id="s1-q2-body" class="draw-stroke" d="M 875,380 L 875,490 M 875,410 L 845,450 M 875,410 L 905,450 M 875,490 L 860,580 M 875,490 L 890,580" />
+        <!-- Waiting Clock -->
+        <path id="s1-clock" class="draw-red" d="M 980,300 C 980,260 1040,260 1040,300 C 1040,340 980,340 980,300 Z M 1010,300 L 1010,275 M 1010,300 L 1030,300" />
+        <path id="s1-clock-arrow" class="draw-red" d="M 1045,280 C 1060,260 1070,300 1055,320" />
+      </g>
+
+      <!-- Huge Red CROSS over old manual system -->
+      <path id="s1-cross-1" class="draw-red" stroke-width="8" d="M 220,240 L 580,590" />
+      <path id="s1-cross-2" class="draw-red" stroke-width="8" d="M 580,240 L 220,590" />
+
+      <!-- Subtitle Text -->
+      <text id="s1-subtext-1" x="250" y="670" class="wb-text-red" style="font-size:38px;"></text>
+      <text id="s1-subtext-2" x="250" y="720" class="wb-text-red" style="font-size:38px;"></text>
+    </g>
+
+
+    <!-- ================= SCENE 2: YECHIM - MUHASIB POS (5.5s - 12.5s) ================= -->
+    <g id="scene-2" opacity="0">
+      <!-- Big Solution Box -->
+      <path id="s2-box" class="draw-blue" stroke-width="6" d="M 100,50 L 1820,50 L 1810,980 L 110,980 Z" />
+
+      <!-- MUHASIB Header Banner -->
+      <path id="s2-banner" class="draw-gold" stroke-width="5" d="M 600,80 L 1320,80 L 1300,160 L 620,160 Z" />
+      <text id="s2-banner-text" x="650" y="138" class="wb-title" style="fill:#d97706; font-size:52px; font-weight:bold;"></text>
+
+      <!-- SALAM POS Terminal Drawing with REAL PHOTO -->
+      <g id="s2-terminal">
+        <!-- Base & Stand -->
+        <path id="s2-t-base" class="draw-stroke" stroke-width="5" d="M 450,650 L 750,650 L 710,550 L 490,550 Z" />
+        <!-- Screen Outer Frame -->
+        <path id="s2-t-screen" class="draw-blue" stroke-width="6" d="M 330,190 L 870,190 L 870,550 L 330,550 Z" />
+        
+        <!-- Real SALAM POS Photorealistic Image inside drawn frame -->
+        <g id="s2-real-img-wrap" opacity="0">
+          <image href="salam_pos_real.jpg" x="340" y="200" width="520" height="340" preserveAspectRatio="xMidYMid slice" style="clip-path: inset(0 round 12px); filter: drop-shadow(0 10px 15px rgba(0,0,0,0.3));" />
+        </g>
+
+        <!-- Vector UI Overlays & Price Badge -->
+        <path id="s2-t-ui3" class="draw-green" stroke-width="5" d="M 330,550 L 870,550" />
+      </g>
+
+      <!-- Barcode Scanner -->
+      <g id="s2-scanner">
+        <!-- Scanner Gun Handheld -->
+        <path id="s2-sc-gun" class="draw-stroke" stroke-width="5" d="M 980,360 C 1040,320 1080,360 1060,420 L 1020,520 L 980,500 L 1000,430 Z" />
+        <!-- Laser Red Beam -->
+        <path id="s2-sc-laser" class="draw-red" stroke-width="6" d="M 970,375 L 855,385 M 970,385 L 855,405" />
+      </g>
+
+      <!-- Receipt Printer & Paper -->
+      <g id="s2-printer">
+        <!-- Printer Box -->
+        <path id="s2-pr-box" class="draw-stroke" stroke-width="5" d="M 1150,450 L 1400,450 L 1380,580 L 1170,580 Z" />
+        <!-- Receipt Paper Roll coming out -->
+        <path id="s2-pr-paper" class="draw-stroke" stroke-dasharray="6,4" d="M 1210,450 L 1210,260 L 1340,260 L 1340,450 Z" />
+        <!-- Receipt lines -->
+        <path id="s2-pr-lines" class="draw-stroke" d="M 1230,280 L 1320,280 M 1230,310 L 1320,310 M 1230,340 L 1300,340 M 1230,380 L 1320,380" />
+        <path id="s2-pr-check" class="draw-green" stroke-width="6" d="M 1240,415 L 1265,435 L 1315,395" />
+      </g>
+
+      <!-- Golden Logo Shield & Stars -->
+      <g id="s2-logo">
+        <path id="s2-logo-shield" class="draw-gold" stroke-width="6" d="M 1520,240 L 1720,240 L 1740,380 C 1740,470 1620,530 1620,530 C 1620,530 1500,470 1500,380 Z" />
+        <path id="s2-logo-crown" class="draw-gold" stroke-width="5" d="M 1560,330 L 1580,280 L 1620,320 L 1660,280 L 1680,330 Z" />
+      </g>
+
+      <!-- Subtitle Text -->
+      <text id="s2-subtext" x="380" y="660" class="wb-subtitle" style="font-size:44px; fill:#1e3a8a;"></text>
+    </g>
+
+
+    <!-- ================= SCENE 3: 4 AFZALLIK (12.5s - 19.5s) ================= -->
+    <g id="scene-3" opacity="0">
+      <!-- Title -->
+      <path id="s3-title-line" class="draw-blue" stroke-width="5" d="M 500,70 L 1420,70" />
+      <text id="s3-title-text" x="540" y="55" class="wb-title" style="fill:#1e3a8a; font-size:46px;"></text>
+
+      <!-- Card 1: 1-Soniyada Skanerlash -->
+      <g id="s3-card-1">
+        <path id="s3-c1-box" class="draw-stroke" stroke-width="4" d="M 150,140 L 910,140 L 910,500 L 150,500 Z" />
+        <!-- Lightning Icon -->
+        <path id="s3-c1-icon" class="draw-gold" stroke-width="6" d="M 240,180 L 190,290 L 240,290 L 210,390 L 280,260 L 230,260 Z" />
+        <path id="s3-c1-check" class="draw-green" stroke-width="7" d="M 820,180 L 850,210 L 890,160" />
+        <text id="s3-c1-t1" x="300" y="220" class="wb-subtitle" style="font-size:38px; fill:#d97706;"></text>
+        <text id="s3-c1-t2" x="180" y="320" class="wb-subtitle" style="font-size:30px; fill:#334155;"></text>
+        <text id="s3-c1-t3" x="180" y="370" class="wb-subtitle" style="font-size:30px; fill:#334155;"></text>
+        <text id="s3-c1-t4" x="180" y="440" class="wb-text-green" style="font-size:32px;"></text>
+      </g>
+
+      <!-- Card 2: Ombor Nazorati -->
+      <g id="s3-card-2">
+        <path id="s3-c2-box" class="draw-stroke" stroke-width="4" d="M 1010,140 L 1770,140 L 1770,500 L 1010,500 Z" />
+        <!-- Box Icon -->
+        <path id="s3-c2-icon" class="draw-blue" stroke-width="5" d="M 1060,220 L 1130,180 L 1200,220 L 1200,300 L 1130,340 L 1060,300 Z M 1060,220 L 1130,260 L 1200,220 M 1130,260 L 1130,340" />
+        <path id="s3-c2-check" class="draw-green" stroke-width="7" d="M 1680,180 L 1710,210 L 1750,160" />
+        <text id="s3-c2-t1" x="1220" y="220" class="wb-subtitle" style="font-size:38px; fill:#2563eb;"></text>
+        <text id="s3-c2-t2" x="1050" y="320" class="wb-subtitle" style="font-size:30px; fill:#334155;"></text>
+        <text id="s3-c2-t3" x="1050" y="370" class="wb-subtitle" style="font-size:30px; fill:#334155;"></text>
+        <text id="s3-c2-t4" x="1050" y="440" class="wb-text-green" style="font-size:32px;"></text>
+      </g>
+
+      <!-- Card 3: Aniq Moliya va Foyda -->
+      <g id="s3-card-3">
+        <path id="s3-c3-box" class="draw-stroke" stroke-width="4" d="M 150,540 L 910,540 L 910,990 L 150,990 Z" />
+        <!-- Growth Chart Icon -->
+        <path id="s3-c3-icon" class="draw-green" stroke-width="6" d="M 180,720 L 180,600 M 180,720 L 320,720 M 200,700 L 230,660 L 260,680 L 310,610 M 290,610 L 310,610 L 310,630" />
+        <path id="s3-c3-check" class="draw-green" stroke-width="7" d="M 820,580 L 850,610 L 890,560" />
+        <text id="s3-c3-t1" x="330" y="620" class="wb-subtitle" style="font-size:38px; fill:#16a34a;"></text>
+        <text id="s3-c3-t2" x="180" y="780" class="wb-subtitle" style="font-size:30px; fill:#334155;"></text>
+        <text id="s3-c3-t3" x="180" y="830" class="wb-subtitle" style="font-size:30px; fill:#334155;"></text>
+        <text id="s3-c3-t4" x="180" y="910" class="wb-text-green" style="font-size:32px;"></text>
+      </g>
+
+      <!-- Card 4: Telegram-Bot Nazorati -->
+      <g id="s3-card-4">
+        <path id="s3-c4-box" class="draw-stroke" stroke-width="4" d="M 1010,540 L 1770,540 L 1770,990 L 1010,990 Z" />
+        <!-- Phone & Telegram Icon -->
+        <path id="s3-c4-icon" class="draw-blue" stroke-width="5" d="M 1060,600 L 1130,600 L 1130,730 L 1060,730 Z M 1085,715 C 1090,715 1095,715 1095,715 M 1080,620 L 1110,620 M 1100,650 L 1150,630 L 1135,680 L 1120,665 L 1100,650" />
+        <path id="s3-c4-check" class="draw-green" stroke-width="7" d="M 1680,580 L 1710,610 L 1750,560" />
+        <text id="s3-c4-t1" x="1160" y="620" class="wb-subtitle" style="font-size:38px; fill:#2563eb;"></text>
+        <text id="s3-c4-t2" x="1050" y="780" class="wb-subtitle" style="font-size:30px; fill:#334155;"></text>
+        <text id="s3-c4-t3" x="1050" y="830" class="wb-subtitle" style="font-size:30px; fill:#334155;"></text>
+        <text id="s3-c4-t4" x="1050" y="910" class="wb-text-green" style="font-size:32px;"></text>
+      </g>
+    </g>
+
+
+    <!-- ================= SCENE 4: YAKUN & ALOQA (19.5s - 24s) ================= -->
+    <g id="scene-4" opacity="0">
+      <!-- Huge Central 2X Badge -->
+      <path id="s4-badge" class="draw-gold" stroke-width="8" filter="url(#glow-gold)" d="M 300,100 L 1620,100 L 1650,480 L 270,480 Z" />
+      <text id="s4-badge-t1" x="380" y="230" class="wb-title" style="fill:#d97706; font-size:72px; font-weight:bold;"></text>
+      <text id="s4-badge-t2" x="420" y="360" class="wb-title" style="fill:#16a34a; font-size:64px; font-weight:bold;"></text>
+
+      <!-- Draw Sparkle Stars -->
+      <path id="s4-star-1" class="draw-gold" stroke-width="5" d="M 220,180 L 240,140 L 260,180 L 300,200 L 260,220 L 240,260 L 220,220 L 180,200 Z" />
+      <path id="s4-star-2" class="draw-gold" stroke-width="5" d="M 1680,220 L 1700,180 L 1720,220 L 1760,240 L 1720,260 L 1700,300 L 1680,260 L 1640,240 Z" />
+
+      <!-- Contact Banner -->
+      <path id="s4-contact-box" class="draw-blue" stroke-width="6" d="M 350,560 L 1570,560 L 1550,960 L 370,960 Z" />
+      
+      <!-- MUHASIB Logo Text in Call to Action -->
+      <text id="s4-logo-text" x="660" y="660" class="wb-title" style="fill:#1e3a8a; font-size:68px; font-weight:bold;"></text>
+
+      <!-- Phone & Web Icons & Text -->
+      <path id="s4-phone-icon" class="draw-green" stroke-width="6" d="M 450,780 C 450,740 500,740 500,780 C 500,830 440,860 480,890 C 520,910 560,860 590,890" />
+      <text id="s4-phone-text" x="540" y="810" class="wb-subtitle" style="font-size:48px; fill:#15803d; font-weight:bold;"></text>
+
+      <path id="s4-web-icon" class="draw-blue" stroke-width="6" d="M 1120,790 C 1120,740 1200,740 1200,790 C 1200,840 1120,840 1120,790 Z M 1120,790 L 1200,790 M 1160,740 L 1160,840" />
+      <text id="s4-web-text" x="1220" y="810" class="wb-subtitle" style="font-size:48px; fill:#1d4ed8; font-weight:bold;"></text>
+
+      <!-- Big Final Screen Frame Checkmark -->
+      <path id="s4-final-check" class="draw-green" stroke-width="12" d="M 150,500 L 320,680 L 750,220" />
+    </g>
+
+  </svg>
+
+  <!-- ================= HAND WITH MARKER PEN (SVG LAYER) ================= -->
+  <div id="hand-container">
+    <svg width="450" height="450" viewBox="0 0 450 450" style="overflow: visible;">
+      <g transform="translate(0, 0) rotate(-10)" filter="url(#hand-shadow)">
+        <!-- Marker Pen Body -->
+        <path d="M -5,-5 L 25,-120 L 55,-110 L 15,5 Z" fill="#1e293b" />
+        <path d="M 5,-120 L 45,-110 L 55,-220 L 15,-230 Z" fill="#2563eb" />
+        <path d="M 15,-230 L 55,-220 L 60,-270 L 20,-280 Z" fill="#0f172a" />
+        <!-- Pen Nib / Tip pointing at (0,0) -->
+        <polygon points="0,0 -8,-25 10,-22" fill="#020617" />
+
+        <!-- Hand Fingers & Sleeve -->
+        <!-- Wrist / Sleeve -->
+        <path d="M 40,-80 Q 120,-160 220,-120 L 260,-40 Q 160,-20 40,-80 Z" fill="#3b82f6" />
+        <!-- Hand Palm & Skin -->
+        <path d="M 15,-50 C 40,-90 90,-80 110,-50 C 130,-20 120,30 80,40 C 40,50 0,0 15,-50 Z" fill="#fbcfe8" />
+        <!-- Thumb wrapping marker -->
+        <path d="M 10,-35 C 25,-55 50,-40 40,-15 C 30,10 0,-15 10,-35 Z" fill="#f472b6" stroke="#db2777" stroke-width="2" />
+        <!-- Index Finger extending -->
+        <path d="M 20,-65 C 45,-85 65,-65 50,-45 C 35,-25 10,-45 20,-65 Z" fill="#f472b6" stroke="#db2777" stroke-width="2" />
+      </g>
+    </svg>
+  </div>
+
+  <script>
+    // ================= CONTRACT & SETUP =================
+    window.DURATION = 24.0;
+
+    // Helper: Clamped segment 0..1
+    function seg(t, t0, t1) {
+      if (t <= t0) return 0;
+      if (t >= t1) return 1;
+      return (t - t0) / (t1 - t0);
+    }
+
+    // Ease function
+    function easeInOut(p) {
+      return p < 0.5 ? 2 * p * p : -1 + (4 - 2 * p) * p;
+    }
+
+    // List of path elements to prepare for stroke-dasharray animation
+    const pathElements = [];
+    document.querySelectorAll('path[id]').forEach(path => {
+      try {
+        const len = path.getTotalLength();
+        path.style.strokeDasharray = len;
+        path.style.strokeDashoffset = len;
+        pathElements.push({ id: path.id, el: path, len: len });
+      } catch(e) {}
+    });
+
+    function drawStroke(id, progress) {
+      const item = pathElements.find(p => p.id === id);
+      if (!item) return { x: 960, y: 540 };
+      const pClamped = Math.max(0, Math.min(1, progress));
+      item.el.style.strokeDashoffset = item.len * (1 - pClamped);
+      
+      // Get point for hand tracking
+      try {
+        const pt = item.el.getPointAtLength(item.len * pClamped);
+        return { x: pt.x, y: pt.y };
+      } catch(e) {
+        return { x: 960, y: 540 };
+      }
+    }
+
+    function writeText(id, fullStr, progress, xStart, yStart, xEnd) {
+      const el = document.getElementById(id);
+      if (!el) return { x: xStart, y: yStart };
+      const pClamped = Math.max(0, Math.min(1, progress));
+      const chars = Math.floor(fullStr.length * pClamped);
+      el.textContent = fullStr.substring(0, chars);
+      
+      const currentX = xStart + (xEnd - xStart) * pClamped;
+      return { x: currentX, y: yStart };
+    }
+
+    const handContainer = document.getElementById('hand-container');
+    function setHandPos(x, y, opacity = 1) {
+      handContainer.style.transform = `translate(${x}px, ${y}px)`;
+      handContainer.style.opacity = opacity;
+    }
+
+    // DOM Scene Elements
+    const scene1 = document.getElementById('scene-1');
+    const scene2 = document.getElementById('scene-2');
+    const scene3 = document.getElementById('scene-3');
+    const scene4 = document.getElementById('scene-4');
+
+    // ================= SEEK FUNCTION (Deterministic Frame-by-Frame) =================
+    window.SEEK = function(t) {
+      let handPt = { x: 1700, y: 900, active: false };
+
+      // ---------------- SCENE 1 (0.0s - 5.5s) ----------------
+      if (t < 5.5) {
+        scene1.style.opacity = 1;
+        scene2.style.opacity = 0;
+        scene3.style.opacity = 0;
+        scene4.style.opacity = 0;
+
+        // Step 1.1: Draw Title Box & Text (0.2s - 1.2s)
+        if (t >= 0.2 && t < 1.2) {
+          const p = seg(t, 0.2, 0.8);
+          handPt = drawStroke('s1-title-box', p);
+          writeText('s1-title-text', "KASSADAGI MUAMMO?", seg(t, 0.5, 1.2), 650, 112, 1250);
+          if (t >= 0.5) handPt = writeText('s1-title-text', "KASSADAGI MUAMMO?", seg(t, 0.5, 1.2), 650, 112, 1250);
+        } else if (t >= 1.2) {
+          drawStroke('s1-title-box', 1);
+          writeText('s1-title-text', "KASSADAGI MUAMMO?", 1, 650, 112, 1250);
+        }
+
+        // Step 1.2: Draw Cashier & Table (1.2s - 2.8s)
+        if (t >= 1.2 && t < 2.8) {
+          drawStroke('s1-c-head', seg(t, 1.2, 1.5));
+          drawStroke('s1-c-eyes', seg(t, 1.5, 1.7));
+          drawStroke('s1-c-mouth', seg(t, 1.7, 1.9));
+          drawStroke('s1-c-sweat', seg(t, 1.9, 2.1));
+          drawStroke('s1-c-body', seg(t, 2.1, 2.4));
+          drawStroke('s1-table', seg(t, 2.4, 2.6));
+          drawStroke('s1-notebook', seg(t, 2.5, 2.7));
+          handPt = drawStroke('s1-calc', seg(t, 2.6, 2.8));
+        } else if (t >= 2.8) {
+          ['s1-c-head', 's1-c-eyes', 's1-c-mouth', 's1-c-sweat', 's1-c-body', 's1-table', 's1-notebook', 's1-calc'].forEach(id => drawStroke(id, 1));
+        }
+
+        // Step 1.3: Draw Queue & Clock (2.8s - 4.0s)
+        if (t >= 2.8 && t < 4.0) {
+          drawStroke('s1-q1-head', seg(t, 2.8, 3.0));
+          drawStroke('s1-q1-body', seg(t, 3.0, 3.2));
+          drawStroke('s1-q2-head', seg(t, 3.2, 3.4));
+          drawStroke('s1-q2-body', seg(t, 3.4, 3.6));
+          drawStroke('s1-clock', seg(t, 3.6, 3.8));
+          handPt = drawStroke('s1-clock-arrow', seg(t, 3.8, 4.0));
+        } else if (t >= 4.0) {
+          ['s1-q1-head', 's1-q1-body', 's1-q2-head', 's1-q2-body', 's1-clock', 's1-clock-arrow'].forEach(id => drawStroke(id, 1));
+        }
+
+        // Step 1.4: Draw Red Cross & Warning Text (4.0s - 5.5s)
+        if (t >= 4.0 && t < 5.5) {
+          drawStroke('s1-cross-1', seg(t, 4.0, 4.4));
+          handPt = drawStroke('s1-cross-2', seg(t, 4.4, 4.8));
+          writeText('s1-subtext-1', "❌ Uzun navbatlar, dasta-dasta daftarlar...", seg(t, 4.5, 5.0), 250, 670, 1100);
+          handPt = writeText('s1-subtext-2', "❌ Soliq va tushumda muntazam xatoliklar!", seg(t, 5.0, 5.5), 250, 720, 1100);
+        } else if (t >= 5.5) {
+          drawStroke('s1-cross-1', 1); drawStroke('s1-cross-2', 1);
+          writeText('s1-subtext-1', "❌ Uzun navbatlar, dasta-dasta daftarlar...", 1, 250, 670, 1100);
+          writeText('s1-subtext-2', "❌ Soliq va tushumda muntazam xatoliklar!", 1, 250, 720, 1100);
+        }
+      }
+
+      // ---------------- SCENE 2 (5.5s - 12.5s) ----------------
+      else if (t >= 5.5 && t < 12.5) {
+        scene1.style.opacity = Math.max(0, 1 - seg(t, 5.5, 6.0));
+        scene2.style.opacity = seg(t, 5.5, 6.0);
+        scene3.style.opacity = 0;
+        scene4.style.opacity = 0;
+
+        // Step 2.1: Draw Outer Box & Banner (5.8s - 7.2s)
+        if (t >= 5.8 && t < 7.2) {
+          drawStroke('s2-box', seg(t, 5.8, 6.5));
+          drawStroke('s2-banner', seg(t, 6.3, 6.8));
+          handPt = writeText('s2-banner-text', "YECHIM: SALAM POS KASSA", seg(t, 6.6, 7.2), 650, 138, 1280);
+        } else if (t >= 7.2) {
+          drawStroke('s2-box', 1); drawStroke('s2-banner', 1);
+          writeText('s2-banner-text', "YECHIM: SALAM POS KASSA", 1, 650, 138, 1280);
+        }
+
+        // Step 2.2: Draw Terminal, Frame & Real Photo (7.2s - 9.5s)
+        const imgWrap = document.getElementById('s2-real-img-wrap');
+        if (t >= 7.2 && t < 9.5) {
+          drawStroke('s2-t-base', seg(t, 7.2, 7.6));
+          handPt = drawStroke('s2-t-screen', seg(t, 7.6, 8.8));
+          if (imgWrap) imgWrap.style.opacity = seg(t, 8.0, 8.8);
+          handPt = drawStroke('s2-t-ui3', seg(t, 8.8, 9.5));
+        } else if (t >= 9.5) {
+          ['s2-t-base', 's2-t-screen', 's2-t-ui3'].forEach(id => drawStroke(id, 1));
+          if (imgWrap) imgWrap.style.opacity = 1;
+        }
+
+        // Step 2.3: Scanner & Receipt Printer (9.5s - 11.2s)
+        if (t >= 9.5 && t < 11.2) {
+          drawStroke('s2-sc-gun', seg(t, 9.5, 9.9));
+          drawStroke('s2-sc-laser', seg(t, 9.9, 10.2));
+          drawStroke('s2-pr-box', seg(t, 10.2, 10.5));
+          drawStroke('s2-pr-paper', seg(t, 10.5, 10.8));
+          drawStroke('s2-pr-lines', seg(t, 10.8, 11.0));
+          handPt = drawStroke('s2-pr-check', seg(t, 11.0, 11.2));
+        } else if (t >= 11.2) {
+          ['s2-sc-gun', 's2-sc-laser', 's2-pr-box', 's2-pr-paper', 's2-pr-lines', 's2-pr-check'].forEach(id => drawStroke(id, 1));
+        }
+
+        // Step 2.4: Logo Shield & Subtitle Text (11.2s - 12.5s)
+        if (t >= 11.2 && t < 12.5) {
+          drawStroke('s2-logo-shield', seg(t, 11.2, 11.6));
+          drawStroke('s2-logo-crown', seg(t, 11.6, 11.9));
+          handPt = writeText('s2-subtext', "✨ Savdoni 100% avtomatlashtiruvchi aqlli dastur!", seg(t, 11.8, 12.5), 380, 660, 1500);
+        } else if (t >= 12.5) {
+          drawStroke('s2-logo-shield', 1); drawStroke('s2-logo-crown', 1);
+          writeText('s2-subtext', "✨ Savdoni 100% avtomatlashtiruvchi aqlli dastur!", 1, 380, 660, 1500);
+        }
+      }
+
+      // ---------------- SCENE 3 (12.5s - 19.5s) ----------------
+      else if (t >= 12.5 && t < 19.5) {
+        scene1.style.opacity = 0;
+        scene2.style.opacity = Math.max(0, 1 - seg(t, 12.5, 13.0));
+        scene3.style.opacity = seg(t, 12.5, 13.0);
+        scene4.style.opacity = 0;
+
+        // Title Line & Text
+        if (t >= 12.6 && t < 13.5) {
+          drawStroke('s3-title-line', seg(t, 12.6, 13.0));
+          handPt = writeText('s3-title-text', "SALAM POS KASSANING 4 AFZALLIGI", seg(t, 12.8, 13.5), 540, 55, 1380);
+        } else if (t >= 13.5) {
+          drawStroke('s3-title-line', 1);
+          writeText('s3-title-text', "SALAM POS KASSANING 4 AFZALLIGI", 1, 540, 55, 1380);
+        }
+
+        // Card 1: 1-Soniyada Skanerlash (13.5s - 15.0s)
+        if (t >= 13.5 && t < 15.0) {
+          drawStroke('s3-c1-box', seg(t, 13.5, 13.8));
+          drawStroke('s3-c1-icon', seg(t, 13.8, 14.1));
+          drawStroke('s3-c1-check', seg(t, 14.1, 14.3));
+          writeText('s3-c1-t1', "⚡ 1-Soniyada Skanerlash", seg(t, 14.0, 14.4), 300, 220, 750);
+          writeText('s3-c1-t2', "• Shtrix-kod bilan tovarlarni", seg(t, 14.3, 14.7), 180, 320, 650);
+          writeText('s3-c1-t3', "  lahzada kassa chekiga urish", seg(t, 14.5, 14.9), 180, 370, 650);
+          handPt = writeText('s3-c1-t4', "✅ Navbatlar 3 baravar qisqaradi!", seg(t, 14.7, 15.0), 180, 440, 750);
+        } else if (t >= 15.0) {
+          ['s3-c1-box', 's3-c1-icon', 's3-c1-check'].forEach(id => drawStroke(id, 1));
+          writeText('s3-c1-t1', "⚡ 1-Soniyada Skanerlash", 1, 300, 220, 750);
+          writeText('s3-c1-t2', "• Shtrix-kod bilan tovarlarni", 1, 180, 320, 650);
+          writeText('s3-c1-t3', "  lahzada kassa chekiga urish", 1, 180, 370, 650);
+          writeText('s3-c1-t4', "✅ Navbatlar 3 baravar qisqaradi!", 1, 180, 440, 750);
+        }
+
+        // Card 2: Ombor Nazorati (15.0s - 16.5s)
+        if (t >= 15.0 && t < 16.5) {
+          drawStroke('s3-c2-box', seg(t, 15.0, 15.3));
+          drawStroke('s3-c2-icon', seg(t, 15.3, 15.6));
+          drawStroke('s3-c2-check', seg(t, 15.6, 15.8));
+          writeText('s3-c2-t1', "📦 Ombor Nazorati", seg(t, 15.5, 15.9), 1220, 220, 1600);
+          writeText('s3-c2-t2', "• Qolgan mahsulotlar soni va", seg(t, 15.8, 16.2), 1050, 320, 1550);
+          writeText('s3-c2-t3', "  muddati haqida avto-ogohlantirish", seg(t, 16.0, 16.4), 1050, 370, 1650);
+          handPt = writeText('s3-c2-t4', "✅ Kamomat va yo'qotishlarga barham!", seg(t, 16.2, 16.5), 1050, 440, 1700);
+        } else if (t >= 16.5) {
+          ['s3-c2-box', 's3-c2-icon', 's3-c2-check'].forEach(id => drawStroke(id, 1));
+          writeText('s3-c2-t1', "📦 Ombor Nazorati", 1, 1220, 220, 1600);
+          writeText('s3-c2-t2', "• Qolgan mahsulotlar soni va", 1, 1050, 320, 1550);
+          writeText('s3-c2-t3', "  muddati haqida avto-ogohlantirish", 1, 1050, 370, 1650);
+          writeText('s3-c2-t4', "✅ Kamomat va yo'qotishlarga barham!", 1, 1050, 440, 1700);
+        }
+
+        // Card 3: Aniq Moliya (16.5s - 18.0s)
+        if (t >= 16.5 && t < 18.0) {
+          drawStroke('s3-c3-box', seg(t, 16.5, 16.8));
+          drawStroke('s3-c3-icon', seg(t, 16.8, 17.1));
+          drawStroke('s3-c3-check', seg(t, 17.1, 17.3));
+          writeText('s3-c3-t1', "📊 Aniq Foyda Tahlili", seg(t, 17.0, 17.4), 330, 620, 750);
+          writeText('s3-c3-t2', "• Kunlik, haftalik va oylik", seg(t, 17.3, 17.7), 180, 780, 650);
+          writeText('s3-c3-t3', "  sof daromad va harajatlar", seg(t, 17.5, 17.9), 180, 830, 650);
+          handPt = writeText('s3-c3-t4', "✅ 100% Aniq moliya hisobi!", seg(t, 17.7, 18.0), 180, 910, 750);
+        } else if (t >= 18.0) {
+          ['s3-c3-box', 's3-c3-icon', 's3-c3-check'].forEach(id => drawStroke(id, 1));
+          writeText('s3-c3-t1', "📊 Aniq Foyda Tahlili", 1, 330, 620, 750);
+          writeText('s3-c3-t2', "• Kunlik, haftalik va oylik", 1, 180, 780, 650);
+          writeText('s3-c3-t3', "  sof daromad va harajatlar", 1, 180, 830, 650);
+          writeText('s3-c3-t4', "✅ 100% Aniq moliya hisobi!", 1, 180, 910, 750);
+        }
+
+        // Card 4: Masofaviy Telegram-Bot (18.0s - 19.5s)
+        if (t >= 18.0 && t < 19.5) {
+          drawStroke('s3-c4-box', seg(t, 18.0, 18.3));
+          drawStroke('s3-c4-icon', seg(t, 18.3, 18.6));
+          drawStroke('s3-c4-check', seg(t, 18.6, 18.8));
+          writeText('s3-c4-t1', "📱 Telegram-Bot Nazorati", seg(t, 18.5, 18.9), 1160, 620, 1650);
+          writeText('s3-c4-t2', "• Istalgan joydan savdoni", seg(t, 18.8, 19.2), 1050, 780, 1550);
+          writeText('s3-c4-t3', "  telefoningizda kuzating", seg(t, 19.0, 19.4), 1050, 830, 1550);
+          handPt = writeText('s3-c4-t4', "✅ Biznes kaftingizda!", seg(t, 19.2, 19.5), 1050, 910, 1600);
+        } else if (t >= 19.5) {
+          ['s3-c4-box', 's3-c4-icon', 's3-c4-check'].forEach(id => drawStroke(id, 1));
+          writeText('s3-c4-t1', "📱 Telegram-Bot Nazorati", 1, 1160, 620, 1650);
+          writeText('s3-c4-t2', "• Istalgan joydan savdoni", 1, 1050, 780, 1550);
+          writeText('s3-c4-t3', "  telefoningizda kuzating", 1, 1050, 830, 1550);
+          writeText('s3-c4-t4', "✅ Biznes kaftingizda!", 1, 1050, 910, 1600);
+        }
+      }
+
+      // ---------------- SCENE 4 (19.5s - 24.0s) ----------------
+      else if (t >= 19.5) {
+        scene1.style.opacity = 0;
+        scene2.style.opacity = 0;
+        scene3.style.opacity = Math.max(0, 1 - seg(t, 19.5, 20.0));
+        scene4.style.opacity = seg(t, 19.5, 20.0);
+
+        // Badge & 2X Boost Text
+        if (t >= 19.8 && t < 21.5) {
+          drawStroke('s4-badge', seg(t, 19.8, 20.4));
+          writeText('s4-badge-t1', "🚀 SAVDONGIZNI 2 BARAVAR OSHIRING!", seg(t, 20.2, 20.9), 380, 230, 1550);
+          writeText('s4-badge-t2', "100% Aniq Hisob va Zamonaviy Kassa", seg(t, 20.8, 21.4), 420, 360, 1500);
+          drawStroke('s4-star-1', seg(t, 21.0, 21.3));
+          handPt = drawStroke('s4-star-2', seg(t, 21.2, 21.5));
+        } else if (t >= 21.5) {
+          drawStroke('s4-badge', 1); drawStroke('s4-star-1', 1); drawStroke('s4-star-2', 1);
+          writeText('s4-badge-t1', "🚀 SAVDONGIZNI 2 BARAVAR OSHIRING!", 1, 380, 230, 1550);
+          writeText('s4-badge-t2', "100% Aniq Hisob va Zamonaviy Kassa", 1, 420, 360, 1500);
+        }
+
+        // Contact Box & Details
+        if (t >= 21.5 && t < 24.0) {
+          drawStroke('s4-contact-box', seg(t, 21.5, 22.0));
+          writeText('s4-logo-text', "SALAM POS & MUHASIB", seg(t, 21.9, 22.5), 620, 660, 1380);
+          drawStroke('s4-phone-icon', seg(t, 22.3, 22.6));
+          writeText('s4-phone-text', "+998 (90) 123-45-67", seg(t, 22.5, 23.0), 540, 810, 1000);
+          drawStroke('s4-web-icon', seg(t, 22.8, 23.1));
+          writeText('s4-web-text', "www.muhasib.uz", seg(t, 23.0, 23.5), 1220, 810, 1550);
+          handPt = drawStroke('s4-final-check', seg(t, 23.2, 23.8));
+        } else {
+          ['s4-contact-box', 's4-phone-icon', 's4-web-icon', 's4-final-check'].forEach(id => drawStroke(id, 1));
+          writeText('s4-logo-text', "SALAM POS & MUHASIB", 1, 620, 660, 1380);
+          writeText('s4-phone-text', "+998 (90) 123-45-67", 1, 540, 810, 1000);
+          writeText('s4-web-text', "www.muhasib.uz", 1, 1220, 810, 1550);
+        }
+      }
+
+      // Position hand with marker pen
+      if (handPt.x !== undefined && handPt.y !== undefined) {
+        setHandPos(handPt.x, handPt.y, 1);
+      } else {
+        setHandPos(1800, 950, 0.5);
+      }
+    };
+  </script>
+</body>
+</html>

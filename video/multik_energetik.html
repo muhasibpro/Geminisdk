@@ -1,0 +1,587 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>MUHASIB — energetik multfilm</title>
+<style>
+  html,body{margin:0;padding:0;width:100%;height:100%;background:#0d1117;overflow:hidden}
+  /* Sahna har qanday render o'lchamiga moslashadi (16:9 saqlanadi) */
+  svg{display:block;width:100vw;height:100vh}
+  text{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+</style>
+
+<svg id="stage" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <linearGradient id="gWall" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#1e293b"/><stop offset="100%" stop-color="#0f172a"/>
+  </linearGradient>
+  <linearGradient id="gFloor" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#334155"/><stop offset="100%" stop-color="#1e293b"/>
+  </linearGradient>
+  <linearGradient id="gCounter" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#2a3447"/><stop offset="100%" stop-color="#111827"/>
+  </linearGradient>
+  <linearGradient id="gFridge" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0%" stop-color="#1e293b"/><stop offset="50%" stop-color="#334155"/><stop offset="100%" stop-color="#0f172a"/>
+  </linearGradient>
+  <linearGradient id="gCan" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#2563eb"/><stop offset="55%" stop-color="#1d4ed8"/><stop offset="100%" stop-color="#1e40af"/>
+  </linearGradient>
+  <linearGradient id="gPos" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#1f2937"/><stop offset="100%" stop-color="#0f172a"/>
+  </linearGradient>
+  <linearGradient id="gScreen" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#0284c7"/><stop offset="100%" stop-color="#0369a1"/>
+  </linearGradient>
+  <linearGradient id="gLogo" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0%" stop-color="#3b82f6"/><stop offset="50%" stop-color="#6366f1"/>
+    <stop offset="100%" stop-color="#1d4ed8"/>
+  </linearGradient>
+  <radialGradient id="gBeam" cx="0.5" cy="0" r="1">
+    <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.85"/>
+    <stop offset="100%" stop-color="#38bdf8" stop-opacity="0"/>
+  </radialGradient>
+  <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+    <feGaussianBlur stdDeviation="9"/>
+  </filter>
+</defs>
+
+<!-- ══════════ KAMERA ══════════ -->
+<g id="cam">
+
+  <!-- devor va pol -->
+  <rect x="-400" y="0" width="3000" height="900" fill="url(#gWall)"/>
+  <rect x="-400" y="880" width="3000" height="400" fill="url(#gFloor)"/>
+  <g id="tiles" opacity="0.35"></g>
+
+  <!-- eshik (chapda) -->
+  <g id="door">
+    <rect x="-150" y="250" width="250" height="640" rx="10" fill="#cfe0ee" stroke="#8ba3bb" stroke-width="6"/>
+    <g id="doorPanel">
+      <rect x="-146" y="254" width="242" height="632" rx="8" fill="#e8f3fb" opacity="0.9"/>
+      <rect x="-30" y="540" width="14" height="60" rx="7" fill="#7d94aa"/>
+    </g>
+    <rect x="-160" y="230" width="270" height="30" rx="8" fill="#8ba3bb"/>
+  </g>
+
+  <!-- muzlatgich / javon -->
+  <g id="fridge">
+    <rect x="330" y="250" width="430" height="640" rx="18" fill="#8ba3bb"/>
+    <rect x="346" y="266" width="398" height="608" rx="12" fill="url(#gFridge)"/>
+    <g id="shelfCans"></g>
+    <rect x="346" y="266" width="398" height="608" rx="12" fill="#ffffff" opacity="0.14"/>
+    <rect x="538" y="266" width="8" height="608" fill="#9fb6c9" opacity="0.7"/>
+    <rect x="700" y="520" width="14" height="90" rx="7" fill="#7d94aa"/>
+  </g>
+
+  <!-- orqa javon -->
+  <g id="backShelf">
+    <rect x="880" y="330" width="620" height="26" rx="8" fill="#a9805a"/>
+    <rect x="880" y="520" width="620" height="26" rx="8" fill="#a9805a"/>
+    <g id="shelfBoxes"></g>
+  </g>
+
+  <!-- BOLA -->
+  <g id="boy">
+    <g id="boyLegB">
+      <line x1="0" y1="0" x2="0" y2="96" stroke="#3a4a63" stroke-width="30" stroke-linecap="round"/>
+      <g id="boyKneeB" transform="translate(0,96)">
+        <line x1="0" y1="0" x2="0" y2="96" stroke="#3a4a63" stroke-width="26" stroke-linecap="round"/>
+        <rect x="-16" y="86" width="56" height="24" rx="12" fill="#22303f"/>
+      </g>
+    </g>
+    <g id="boyArmB">
+      <line x1="0" y1="0" x2="0" y2="78" stroke="#e8a67d" stroke-width="24" stroke-linecap="round"/>
+      <g id="boyElbowB" transform="translate(0,78)">
+        <line x1="0" y1="0" x2="0" y2="76" stroke="#e8a67d" stroke-width="22" stroke-linecap="round"/>
+        <circle cx="0" cy="80" r="15" fill="#f0b48d"/>
+      </g>
+    </g>
+    <g id="boyBody">
+      <path d="M-46,0 q-8,-100 6,-140 q40,-16 80,0 q14,40 6,140 z" fill="#4285f4"/>
+      <path d="M-30,-118 q30,26 60,0 l0,18 q-30,26 -60,0 z" fill="#ffffff" opacity="0.85"/>
+    </g>
+    <g id="boyLegF">
+      <line x1="0" y1="0" x2="0" y2="96" stroke="#4d6180" stroke-width="30" stroke-linecap="round"/>
+      <g id="boyKneeF" transform="translate(0,96)">
+        <line x1="0" y1="0" x2="0" y2="96" stroke="#4d6180" stroke-width="26" stroke-linecap="round"/>
+        <rect x="-16" y="86" width="56" height="24" rx="12" fill="#2c3c50"/>
+      </g>
+    </g>
+    <g id="boyHead">
+      <path d="M-52,-6 q-6,-64 52,-64 q58,0 52,64 q-4,58 -52,58 q-48,0 -52,-58 z" fill="#f0b48d"/>
+      <path d="M-54,-18 q4,-62 54,-62 q50,0 54,62 q-16,-26 -54,-26 q-38,0 -54,26 z" fill="#2f2a26"/>
+      <g id="boyEyeL"><ellipse cx="-20" cy="0" rx="9" ry="11" fill="#22303f"/></g>
+      <g id="boyEyeR"><ellipse cx="20" cy="0" rx="9" ry="11" fill="#22303f"/></g>
+      <g id="boyBrows">
+        <rect id="boyBrowL" x="-32" y="-24" width="26" height="7" rx="3.5" fill="#2f2a26"/>
+        <rect id="boyBrowR" x="6" y="-24" width="26" height="7" rx="3.5" fill="#2f2a26"/>
+      </g>
+      <ellipse id="boyMouth" cx="0" cy="34" rx="15" ry="4" fill="#7c2f2f"/>
+      <path id="boySmile" d="M-16,30 q16,16 32,0" stroke="#7c2f2f" stroke-width="5" fill="none" stroke-linecap="round"/>
+    </g>
+    <g id="boyArmF">
+      <line x1="0" y1="0" x2="0" y2="78" stroke="#f0b48d" stroke-width="24" stroke-linecap="round"/>
+      <g id="boyElbowF" transform="translate(0,78)">
+        <line x1="0" y1="0" x2="0" y2="76" stroke="#f0b48d" stroke-width="22" stroke-linecap="round"/>
+        <circle id="boyHand" cx="0" cy="80" r="16" fill="#f6c39c"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- KASSIR -->
+  <g id="cashier">
+    <g id="cashArmB">
+      <line x1="0" y1="0" x2="0" y2="72" stroke="#e0a07a" stroke-width="22" stroke-linecap="round"/>
+      <g id="cashElbowB" transform="translate(0,72)">
+        <line x1="0" y1="0" x2="0" y2="70" stroke="#e0a07a" stroke-width="20" stroke-linecap="round"/>
+        <circle cx="0" cy="74" r="14" fill="#eeb18e"/>
+      </g>
+    </g>
+    <g id="cashBody">
+      <path d="M-52,0 q-8,-104 8,-146 q44,-18 88,0 q16,42 8,146 z" fill="#e94f4f"/>
+      <rect x="-16" y="-120" width="32" height="120" rx="8" fill="#ffffff" opacity="0.9"/>
+    </g>
+    <g id="cashHead">
+      <path d="M-50,-6 q-6,-62 50,-62 q56,0 50,62 q-4,56 -50,56 q-46,0 -50,-56 z" fill="#eeb18e"/>
+      <path d="M-52,-14 q6,-60 52,-60 q46,0 52,60 q-10,-34 -52,-34 q-42,0 -52,34 z" fill="#4a3a2c"/>
+      <g id="cashEyeL"><ellipse cx="-19" cy="2" rx="8" ry="10" fill="#22303f"/></g>
+      <g id="cashEyeR"><ellipse cx="19" cy="2" rx="8" ry="10" fill="#22303f"/></g>
+      <ellipse id="cashMouth" cx="0" cy="34" rx="14" ry="4" fill="#7c2f2f"/>
+      <path id="cashSmile" d="M-14,31 q14,14 28,0" stroke="#7c2f2f" stroke-width="5" fill="none" stroke-linecap="round"/>
+    </g>
+    <g id="cashArmF">
+      <line x1="0" y1="0" x2="0" y2="72" stroke="#eeb18e" stroke-width="22" stroke-linecap="round"/>
+      <g id="cashElbowF" transform="translate(0,72)">
+        <line x1="0" y1="0" x2="0" y2="70" stroke="#eeb18e" stroke-width="20" stroke-linecap="round"/>
+        <circle id="cashHand" cx="0" cy="74" r="15" fill="#f4bd9c"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- eski usul: qog'oz daftar + kalkulyator -->
+  <g id="oldWay">
+    <rect x="1230" y="686" width="120" height="86" rx="6" fill="#fdf6e3" stroke="#c9b98f" stroke-width="3"/>
+    <line x1="1244" y1="710" x2="1336" y2="710" stroke="#c9b98f" stroke-width="3"/>
+    <line x1="1244" y1="732" x2="1336" y2="732" stroke="#c9b98f" stroke-width="3"/>
+    <line x1="1244" y1="754" x2="1300" y2="754" stroke="#c9b98f" stroke-width="3"/>
+    <g>
+      <rect x="1380" y="700" width="104" height="72" rx="8" fill="#4b5563"/>
+      <rect x="1392" y="710" width="80" height="20" rx="4" fill="#a7f3d0"/>
+      <g fill="#9ca3af">
+        <rect x="1392" y="738" width="18" height="12" rx="3"/><rect x="1416" y="738" width="18" height="12" rx="3"/>
+        <rect x="1440" y="738" width="18" height="12" rx="3"/><rect x="1392" y="754" width="18" height="12" rx="3"/>
+        <rect x="1416" y="754" width="18" height="12" rx="3"/><rect x="1440" y="754" width="18" height="12" rx="3"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- MUHASIB POS (prilavka ustida turadi: stol yuzasi y=700) -->
+  <g id="pos" opacity="0">
+    <rect x="1290" y="680" width="270" height="26" rx="11" fill="#0f1620"/>
+    <rect x="1306" y="556" width="238" height="130" rx="14" fill="url(#gPos)"/>
+    <rect x="1319" y="568" width="212" height="96" rx="9" fill="url(#gScreen)"/>
+    <text id="posTitle" x="1425" y="600" font-size="23" font-weight="700" fill="#ffffff" text-anchor="middle">MUHASIB</text>
+    <text id="posPrice" x="1425" y="642" font-size="29" font-weight="800" fill="#ffffff" text-anchor="middle">—</text>
+    <g id="scanner">
+      <rect x="1150" y="662" width="118" height="44" rx="10" fill="#222b36"/>
+      <rect x="1164" y="672" width="90" height="10" rx="5" fill="#ff4b4b" opacity="0.9"/>
+    </g>
+    <g id="beam" opacity="0">
+      <path d="M1209,668 L1139,528 L1279,528 Z" fill="url(#gBeam)"/>
+    </g>
+    <g id="receipt" opacity="0">
+      <rect id="receiptPaper" x="1576" y="600" width="112" height="10" rx="3" fill="#ffffff" stroke="#d7dde6" stroke-width="2"/>
+      <g id="receiptLines" fill="#98a3b3"></g>
+    </g>
+  </g>
+
+  <!-- prilavka (personajlar oldida) -->
+  <g id="counter">
+    <rect x="1120" y="700" width="700" height="40" rx="10" fill="#c98a4b"/>
+    <rect x="1140" y="740" width="660" height="260" fill="url(#gCounter)"/>
+    <rect x="1140" y="740" width="660" height="260" fill="#000" opacity="0.06"/>
+    <rect x="1170" y="790" width="180" height="120" rx="8" fill="#7a4a22" opacity="0.55"/>
+    <rect x="1400" y="790" width="180" height="120" rx="8" fill="#7a4a22" opacity="0.55"/>
+  </g>
+
+  <!-- energetik banka -->
+  <g id="can" opacity="0">
+    <rect x="-19" y="-52" width="38" height="104" rx="9" fill="url(#gCan)"/>
+    <rect x="-19" y="-52" width="38" height="16" rx="8" fill="#cfd8dc"/>
+    <path d="M2,-34 L-9,-4 L1,-4 L-4,26 L12,-8 L2,-8 Z" fill="#f7ff5b"/>
+    <rect x="-19" y="-52" width="12" height="104" rx="9" fill="#ffffff" opacity="0.18"/>
+  </g>
+
+  <!-- hayrat belgisi (dunyo koordinatalarida — bolaning tepasida turadi) -->
+  <g id="shock" opacity="0">
+    <text x="0" y="0" font-size="96" font-weight="800" fill="#ea4335" text-anchor="middle">!</text>
+  </g>
+</g>
+
+<!-- ══════════ EKRAN USTIDAGI QATLAM ══════════ -->
+<g id="ui">
+  <g id="bubbleCash" opacity="0">
+    <path id="bcBox" d="M0,0 h520 a24,24 0 0 1 24,24 v150 a24,24 0 0 1 -24,24 h-380 l-46,52 l6,-52 h-100 a24,24 0 0 1 -24,-24 v-150 a24,24 0 0 1 24,-24 z"
+          fill="#ffffff" stroke="#c8d3e0" stroke-width="4"/>
+    <text id="bcT1" x="272" y="80" font-size="38" font-weight="600" fill="#1f2937" text-anchor="middle"></text>
+    <text id="bcT2" x="272" y="132" font-size="38" font-weight="600" fill="#1f2937" text-anchor="middle"></text>
+  </g>
+
+  <g id="bubbleBoy" opacity="0">
+    <path id="bbBox" d="M0,0 h560 a24,24 0 0 1 24,24 v160 a24,24 0 0 1 -24,24 h-120 l46,54 l-116,-54 h-370 a24,24 0 0 1 -24,-24 v-160 a24,24 0 0 1 24,-24 z"
+          fill="#ffffff" stroke="#c8d3e0" stroke-width="4"/>
+    <text id="bbT1" x="292" y="80" font-size="38" font-weight="700" fill="#c62828" text-anchor="middle"></text>
+    <text id="bbT2" x="292" y="134" font-size="38" font-weight="700" fill="#1f2937" text-anchor="middle"></text>
+    <text id="bbT3" x="292" y="186" font-size="34" font-weight="600" fill="#1f2937" text-anchor="middle"></text>
+  </g>
+
+  <g id="outro" opacity="0">
+    <rect x="0" y="0" width="1920" height="1080" fill="#0b1020" opacity="0.985"/>
+    <g id="outroLogo">
+      <g id="outroMark" transform="translate(770, 200) scale(0.75)">
+        <!-- M Left stem and barcode lines -->
+        <path d="M 100 130 L 100 380 L 145 380 L 145 200 L 100 130 Z" fill="url(#gLogo)" />
+        <rect x="60" y="275" width="65" height="12" rx="6" fill="url(#gLogo)" />
+        <circle cx="50" cy="281" r="7" fill="#38BDF8" />
+        <rect x="75" y="305" width="50" height="10" rx="5" fill="url(#gLogo)" opacity="0.85" />
+        <circle cx="65" cy="310" r="5" fill="#38BDF8" opacity="0.85" />
+
+        <!-- Center M -->
+        <path d="M 145 200 L 256 340 L 320 250 L 270 200 L 256 220 L 180 130 Z" fill="url(#gLogo)" />
+
+        <!-- Right Leg & Revenue Growth Arrow -->
+        <path d="M 367 250 L 367 380 L 412 380 L 412 180 Z" fill="#06B6D4" />
+        <path d="M 185 340 L 390 120 L 340 120 L 340 85 L 445 85 L 445 190 L 410 190 L 410 140 L 215 355 Z" fill="#06B6D4" />
+        <path d="M 230 315 L 390 155" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" opacity="0.75" />
+        <path d="M 435 70 L 440 55 L 455 50 L 440 45 L 435 30 L 430 45 L 415 50 L 430 55 Z" fill="#FACC15" />
+      </g>
+      <text x="960" y="580" font-size="96" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="6">MUHASIB POS</text>
+      <text id="outroSub" x="960" y="650" font-size="38" font-weight="600" fill="#9fb0c6" text-anchor="middle">Universal POS Kassa &amp; Biznes Tizimi</text>
+    </g>
+    <g id="outroBullets" opacity="0">
+      <text x="960" y="750" font-size="34" fill="#34a853" text-anchor="middle">1 soniyada skanerlash</text>
+      <text x="960" y="806" font-size="34" fill="#4285f4" text-anchor="middle">Aniq hisob-kitob</text>
+      <text x="960" y="862" font-size="34" fill="#fbbc05" text-anchor="middle">Sotuv va ombor nazorati</text>
+    </g>
+  </g>
+
+  <g id="sparks"></g>
+</g>
+</svg>
+
+<script>
+/* ══════════════════════════════════════════════════════════════════
+   MUHASIB multfilmi — barcha harakat SEEK(t) ichida hisoblanadi.
+   Brauzer soati ishlatilmaydi → render har safar bir xil chiqadi.
+   ══════════════════════════════════════════════════════════════════ */
+const $ = id => document.getElementById(id);
+const clamp = (v,a,b) => v<a?a:(v>b?b:v);
+const lerp  = (a,b,t) => a + (b-a)*t;
+const ease  = t => t<0 ? 0 : t>1 ? 1 : t*t*(3-2*t);
+const easeOut = t => 1-Math.pow(1-clamp(t,0,1),3);
+/* [t0,t1] oralig'idagi 0..1 progress */
+const seg = (t,t0,t1) => clamp((t-t0)/Math.max(0.0001,t1-t0),0,1);
+const T   = (g,tr) => g.setAttribute('transform',tr);
+
+/* ── vaqt jadvali (render vaqtida window.CONFIG bilan almashtiriladi) ── */
+let TL = {
+  duration: 32,
+  lines: [
+    {who:'cash', start:12.2, dur:3.6},
+    {who:'boy',  start:17.6, dur:4.4},
+    {who:'boy',  start:24.0, dur:4.8}
+  ],
+  price: "25 000 so'm",
+  cashText: ["Uka, energetik ichimligingiz", "25 000 so'm bo'ldi."],
+  boyText:  ["Vay!", "Nega sizlarda MUHASIB", "dasturi yo'q?!"]
+};
+window.DURATION = TL.duration;
+
+window.APPLY_CONFIG = function(){
+  if(!window.CONFIG) return;
+  TL = Object.assign(TL, window.CONFIG);
+  window.DURATION = TL.duration;
+  fillTexts();
+};
+
+function fillTexts(){
+  $('bcT1').textContent = TL.cashText[0] || '';
+  $('bcT2').textContent = TL.cashText[1] || '';
+  $('bbT1').textContent = TL.boyText[0] || '';
+  $('bbT2').textContent = TL.boyText[1] || '';
+  $('bbT3').textContent = TL.boyText[2] || '';
+  $('posPrice').textContent = TL.price;
+}
+
+/* ── bir marta chiziladigan bezaklar ── */
+(function decor(){
+  let s = '';
+  for(let x=-400; x<2600; x+=160)
+    s += `<path d="M${x},880 L${x+80},1080" stroke="#8aa0ba" stroke-width="3" fill="none"/>`;
+  for(let y=920; y<1080; y+=52)
+    s += `<line x1="-400" y1="${y}" x2="2600" y2="${y}" stroke="#8aa0ba" stroke-width="3"/>`;
+  $('tiles').innerHTML = s;
+
+  let c = '';                                   /* muzlatgichdagi bankalar */
+  const rows = [320, 470, 620, 760];
+  rows.forEach((y,ri) => {
+    c += `<rect x="356" y="${y+64}" width="378" height="10" rx="5" fill="#b9cddd"/>`;
+    for(let i=0;i<7;i++){
+      const x = 380 + i*52, hidden = (ri===1 && i===3);
+      c += `<g opacity="${hidden?0:1}" id="${hidden?'shelfGap':''}">
+              <rect x="${x-14}" y="${y}" width="28" height="64" rx="6" fill="${ri%2?'#12a45c':'#1d63d8'}"/>
+              <rect x="${x-14}" y="${y}" width="28" height="10" rx="5" fill="#cfd8dc"/>
+            </g>`;
+    }
+  });
+  $('shelfCans').innerHTML = c;
+
+  let b = '';                                   /* orqa javondagi qutilar */
+  for(let i=0;i<8;i++){
+    const x = 900 + i*72, h = 60 + (i%3)*18;
+    b += `<rect x="${x}" y="${330-h}" width="52" height="${h}" rx="6" fill="${['#f0b48d','#9fc6e8','#f6d365','#c8e6c9'][i%4]}"/>`;
+    b += `<rect x="${x}" y="${520-h+10}" width="52" height="${h-10}" rx="6" fill="${['#e8a67d','#b0d4f1','#f7e08a','#b7ddb9'][i%4]}"/>`;
+  }
+  $('shelfBoxes').innerHTML = b;
+
+  let sp = '';                                  /* yakundagi uchqunlar */
+  for(let i=0;i<26;i++)
+    sp += `<circle class="spark" cx="0" cy="0" r="${3+ (i%4)}" fill="${['#4285f4','#ea4335','#fbbc05','#34a853'][i%4]}" opacity="0"/>`;
+  $('sparks').innerHTML = sp;
+  fillTexts();
+})();
+const SPARKS = Array.from(document.querySelectorAll('.spark'));
+
+/* ── personaj rigi ── */
+function poseLeg(hip, knee, a1, a2, up){ T(hip,`translate(0,${up}) rotate(${a1})`); T(knee,`translate(0,96) rotate(${a2})`); }
+function poseArm(sh, el, a1, a2, up){ T(sh,`translate(0,${up}) rotate(${a1})`); T(el,`translate(0,78) rotate(${a2})`); }
+
+/* Qo'l uchining (kaftning) haqiqiy koordinatasi — banka aynan kaftda tursin.
+   SVG rotate(θ): (0,L) → (-L·sinθ, L·cosθ) */
+function armTip(sx, sy, a1, a2, l1, l2){
+  const r1 = a1*Math.PI/180, r2 = a2*Math.PI/180;
+  const ex = sx - l1*Math.sin(r1), ey = sy + l1*Math.cos(r1);
+  const fx = -l2*Math.sin(r2),    fy = l2*Math.cos(r2);
+  return [ ex + fx*Math.cos(r1) - fy*Math.sin(r1),
+           ey + fx*Math.sin(r1) + fy*Math.cos(r1) ];
+}
+
+function mouthTalk(mouthEl, smileEl, on, t, speed){
+  if(on){
+    const o = 0.5 + 0.5*Math.sin(t*(speed||24));
+    mouthEl.setAttribute('ry', (3 + o*11).toFixed(2));
+    mouthEl.setAttribute('rx', (16 - o*4).toFixed(2));
+    mouthEl.setAttribute('opacity', 1);
+    smileEl.setAttribute('opacity', 0);
+  } else {
+    mouthEl.setAttribute('opacity', 0);
+    smileEl.setAttribute('opacity', 1);
+  }
+}
+function blink(eyeL, eyeR, t, phase){
+  const p = ((t + (phase||0)) % 3.4);
+  const k = p < 0.13 ? Math.abs(Math.cos(p/0.13*Math.PI/2)) : 1;
+  const sy = clamp(k, 0.06, 1);
+  T(eyeL, `translate(0,${(1-sy)*2}) scale(1,${sy})`);
+  T(eyeR, `translate(0,${(1-sy)*2}) scale(1,${sy})`);
+}
+
+/* ── sahna vaqtlari ── */
+function beats(){
+  const L = TL.lines;
+  return {
+    walkIn:  [0.4, 3.6],          /* eshikdan kiradi */
+    toFridge:[3.6, 6.2],          /* muzlatgich oldiga */
+    grab:    [6.2, 8.4],          /* bankani oladi */
+    toDesk:  [8.4, L[0].start-0.6],
+    cashLine:[L[0].start, L[0].start + L[0].dur],
+    boyLine: [L[1].start, L[1].start + L[1].dur],
+    posIn:   [L[2].start - 1.2, L[2].start + 0.6],
+    scan:    [L[2].start + 0.8, L[2].start + 2.2],
+    outro:   [L[2].start + TL.lines[2].dur - 0.4, TL.duration]
+  };
+}
+
+/* ══════════════ ASOSIY: t soniyaga mos kadrni chizadi ══════════════ */
+window.SEEK = function(t){
+  const B = beats();
+  const FLOOR = 880;
+
+  /* ── BOLA yo'li ── */
+  let bx, walking = false;
+  if(t < B.walkIn[0]){ bx = -180; }
+  else if(t <= B.walkIn[1]){ bx = lerp(-180, 300, ease(seg(t,B.walkIn[0],B.walkIn[1]))); walking = true; }
+  else if(t <= B.toFridge[1]){ bx = lerp(300, 640, ease(seg(t,B.toFridge[0],B.toFridge[1]))); walking = true; }
+  else if(t <= B.grab[1]){ bx = 640; }
+  else if(t <= B.toDesk[1]){ bx = lerp(640, 1130, ease(seg(t,B.toDesk[0],B.toDesk[1]))); walking = true; }
+  else { bx = 1130; }
+
+  /* qadam fazasi — bosilgan masofaga bog'liq (sirpanmaydi) */
+  const phase = bx * 0.055;
+  const stepA = walking ? Math.sin(phase) : 0;
+  const bob   = walking ? Math.abs(Math.sin(phase))*7 : 0;
+
+  /* hayajon sakrashi */
+  const jump = (t>=B.boyLine[0]-0.25 && t<=B.boyLine[0]+0.85)
+    ? Math.abs(Math.sin((t-(B.boyLine[0]-0.25))*7.5))*46*(1-seg(t,B.boyLine[0]+0.35,B.boyLine[0]+0.85)) : 0;
+
+  T($('boy'), `translate(${bx.toFixed(1)},${(FLOOR - bob - jump).toFixed(1)})`);
+
+  /* turganda oyoqlar ustma-ust tushmasligi uchun kichik stoyka beriladi */
+  const kneeF = walking ? Math.max(0,-Math.sin(phase+0.7))*46 : 4;
+  const kneeB = walking ? Math.max(0,-Math.sin(phase+0.7+Math.PI))*46 : 0;
+  const hipF  = walking ?  stepA*26 :  7;
+  const hipB  = walking ? -stepA*26 : -9;
+  poseLeg($('boyLegF'), $('boyKneeF'), hipF, kneeF, -190);
+  poseLeg($('boyLegB'), $('boyKneeB'), hipB, kneeB, -190);
+  T($('boyBody'), `translate(0,-190)`);
+  T($('boyHead'), `translate(0,-352) rotate(${(walking? stepA*2 : Math.sin(t*1.3)*1.5).toFixed(2)})`);
+
+  /* qo'llar: yurishda tebranadi, olayotganda cho'ziladi, gapirganda ko'tariladi */
+  let armF1 = -stepA*30, armF2 = 22, armB1 = stepA*30, armB2 = 22;
+  const gp = seg(t, B.grab[0], B.grab[0]+1.0);            /* cho'zilish */
+  const gb = seg(t, B.grab[0]+1.0, B.grab[1]);            /* qaytarish */
+  if(t >= B.grab[0] && t <= B.grab[1]){
+    /* muzlatgich chapda: qo'l yuqori-chapga cho'ziladi, so'ng ko'krakka qaytadi */
+    armF1 = lerp(0, 140, ease(gp)) + lerp(0, -174, ease(gb));
+    armF2 = lerp(20, -40, ease(gp)) + lerp(0, 100, ease(gb));
+  } else if(t > B.grab[1]){
+    armF1 = -34 + (walking ? -stepA*16 : 0); armF2 = 60;   /* bankani ushlab turadi */
+  }
+  if(t >= B.boyLine[0] && t <= B.boyLine[1]){
+    const w = Math.sin((t-B.boyLine[0])*5.5);
+    armB1 = -104 + w*22; armB2 = 34 - w*16;                /* qo'l silkitib gapiradi */
+    armF1 = -40 + w*8;   armF2 = 62;
+  }
+  poseArm($('boyArmF'), $('boyElbowF'), armF1, armF2, -318);
+  poseArm($('boyArmB'), $('boyElbowB'), armB1, armB2, -318);
+
+  const boyTalking = (t >= B.boyLine[0] && t <= B.boyLine[1]);
+  mouthTalk($('boyMouth'), $('boySmile'), boyTalking, t, 26);
+  blink($('boyEyeL'), $('boyEyeR'), t, 0.0);
+  const browUp = boyTalking ? -10 : 0;
+  $('boyBrowL').setAttribute('y', -24 + browUp);
+  $('boyBrowR').setAttribute('y', -24 + browUp);
+
+  /* ── BANKA: javonda → qo'lda → prilavkada → skanerda ── */
+  const canG = $('can');
+  const gapCan = $('shelfGap');
+  if(gapCan) gapCan.setAttribute('opacity', t >= B.grab[0]+0.55 ? 0 : 1);
+
+  let cx, cy, crot = 0, cop = 0;
+  const shY = FLOOR - bob - jump - 318;                    /* yelka nuqtasi */
+  const [hX, hY] = armTip(bx, shY, armF1, armF2, 78, 80);  /* kaftning aniq joyi */
+  const SHELF = [536, 502];                               /* javondagi bo'sh joy */
+  if(t < B.grab[0]+0.55){ cop = 0; cx = SHELF[0]; cy = SHELF[1]; }
+  else if(t <= B.grab[1]){
+    const k = ease(seg(t, B.grab[0]+0.55, B.grab[1]));
+    cop = 1;
+    cx = lerp(SHELF[0], hX, k);
+    cy = lerp(SHELF[1], hY, k);
+    crot = lerp(0, -8, k);
+  } else if(t < B.cashLine[0]+0.4){
+    cop = 1; cx = hX; cy = hY; crot = -8 + (walking? stepA*5 : 0);
+  } else {
+    const k = ease(seg(t, B.cashLine[0]+0.4, B.cashLine[0]+1.2));
+    cop = 1;
+    cx = lerp(hX, 1300, k);                               /* prilavkaga qo'yiladi */
+    cy = lerp(hY, 648, k);
+    crot = lerp(-8, 0, k);
+    if(t >= B.scan[0]){                                   /* skaner ustidan o'tkaziladi */
+      const s = seg(t, B.scan[0], B.scan[1]);
+      cx = lerp(1300, 1120, ease(s));
+      cy = 648 - Math.sin(s*Math.PI)*46;
+      crot = Math.sin(s*Math.PI*2)*12;
+    }
+  }
+  canG.setAttribute('opacity', cop);
+  T(canG, `translate(${cx.toFixed(1)},${cy.toFixed(1)}) rotate(${crot.toFixed(1)})`);
+
+  /* ── KASSIR ── */
+  T($('cashier'), `translate(1500,${(FLOOR - Math.sin(t*1.1)*2).toFixed(1)})`);
+  T($('cashBody'), `translate(0,-190)`);
+  T($('cashHead'), `translate(0,-352) rotate(${(Math.sin(t*0.9)*2).toFixed(2)})`);
+  const cashTalking = (t >= B.cashLine[0] && t <= B.cashLine[1]);
+  let cA1 = 16, cA2 = 26, cB1 = -14, cB2 = 30;
+  if(cashTalking){
+    const w = Math.sin((t-B.cashLine[0])*5);
+    cA1 = -70 + w*18; cA2 = 44 - w*12;
+  }
+  if(t >= B.scan[0]-0.3 && t <= B.scan[1]+0.3){
+    const s = seg(t, B.scan[0]-0.3, B.scan[1]+0.3);
+    cA1 = lerp(-30, -86, Math.sin(s*Math.PI)); cA2 = 50;
+  }
+  poseArm($('cashArmF'), $('cashElbowF'), cA1, cA2, -318);
+  poseArm($('cashArmB'), $('cashElbowB'), cB1, cB2, -318);
+  mouthTalk($('cashMouth'), $('cashSmile'), cashTalking, t, 22);
+  blink($('cashEyeL'), $('cashEyeR'), t, 1.7);
+
+  /* ── kamera ── */
+  const camK = clamp((bx + 180) / 1310, 0, 1);
+  const camX = -lerp(0, 340, ease(camK));
+  const zoomIn = seg(t, B.cashLine[0]-0.8, B.cashLine[0]+0.4) * 0.10
+               - seg(t, B.outro[0]-0.6, B.outro[0]) * 0.10;
+  const sc = 1 + zoomIn;
+  const camY = -lerp(0, 60, ease(camK)) - zoomIn*120;
+  T($('cam'), `translate(${(960 + camX*sc - 960*sc).toFixed(1)},${(camY).toFixed(1)}) scale(${sc.toFixed(4)})`);
+
+  /* ── eshik ochiladi ── */
+  const dk = seg(t, 0.0, 1.1) - seg(t, 2.6, 3.6);
+  T($('doorPanel'), `translate(${(-clamp(dk,0,1)*150).toFixed(1)},0) scale(${(1-clamp(dk,0,1)*0.35).toFixed(3)},1)`);
+
+  /* ── gap puffaklari ── */
+  const bc = $('bubbleCash');
+  const bcK = seg(t, B.cashLine[0]-0.25, B.cashLine[0]+0.2) - seg(t, B.cashLine[1]-0.1, B.cashLine[1]+0.35);
+  bc.setAttribute('opacity', clamp(bcK,0,1).toFixed(3));
+  T(bc, `translate(1080,190) scale(${(0.86 + 0.14*easeOut(clamp(bcK,0,1))).toFixed(3)})`);
+
+  const bb = $('bubbleBoy');
+  const bbK = seg(t, B.boyLine[0]-0.2, B.boyLine[0]+0.25) - seg(t, B.boyLine[1]-0.1, B.boyLine[1]+0.35);
+  bb.setAttribute('opacity', clamp(bbK,0,1).toFixed(3));
+  T(bb, `translate(400,150) scale(${(0.86 + 0.14*easeOut(clamp(bbK,0,1))).toFixed(3)})`);
+
+  const sh = $('shock');
+  const shK = seg(t, B.boyLine[0]-0.3, B.boyLine[0]) - seg(t, B.boyLine[0]+0.7, B.boyLine[0]+1.1);
+  sh.setAttribute('opacity', clamp(shK,0,1).toFixed(3));
+  T(sh, `translate(${(bx + 215).toFixed(1)},${(FLOOR - 372 - jump).toFixed(1)}) scale(${(0.6+0.6*easeOut(clamp(shK,0,1))).toFixed(3)})`);
+
+  /* ── eski usul yo'qoladi, POS paydo bo'ladi ── */
+  const posK = ease(seg(t, B.posIn[0], B.posIn[1]));
+  $('oldWay').setAttribute('opacity', (1-posK).toFixed(3));
+  $('pos').setAttribute('opacity', posK.toFixed(3));
+  T($('pos'), `translate(0,${((1-posK)*60).toFixed(1)}) scale(1)`);
+
+  const scanK = (t >= B.scan[0] && t <= B.scan[1]) ? 1 : 0;
+  $('beam').setAttribute('opacity', scanK ? (0.55 + 0.45*Math.abs(Math.sin(t*18))).toFixed(3) : 0);
+  $('posPrice').textContent = (t > B.scan[0]+0.7) ? TL.price : (posK>0.5 ? '···' : '—');
+
+  const rk = seg(t, B.scan[1], B.scan[1]+1.4);            /* chek chiqadi */
+  $('receipt').setAttribute('opacity', rk>0?1:0);
+  $('receiptPaper').setAttribute('height', (10 + rk*120).toFixed(1));
+  let rl = '';
+  for(let i=0;i<6;i++){
+    const yy = 578 + i*18;
+    if(rk*120 > (i+1)*18) rl += `<rect x="1572" y="${yy}" width="${i%2?70:96}" height="6" rx="3"/>`;
+  }
+  $('receiptLines').innerHTML = rl;
+
+  /* ── yakuniy ekran ── */
+  const ok = ease(seg(t, B.outro[0], B.outro[0]+0.7));
+  $('outro').setAttribute('opacity', ok.toFixed(3));
+  T($('outroLogo'), `translate(0,${((1-ok)*40).toFixed(1)}) scale(1)`);
+  const obk = seg(t, B.outro[0]+0.6, B.outro[0]+1.5);
+  $('outroBullets').setAttribute('opacity', obk.toFixed(3));
+
+  SPARKS.forEach((s,i) => {
+    const st = B.outro[0] + 0.3 + (i%13)*0.055;
+    const k = seg(t, st, st+1.6);
+    if(k<=0 || k>=1 || ok<0.2){ s.setAttribute('opacity',0); return; }
+    const ang = (i/SPARKS.length)*Math.PI*2 + (i%3);
+    const rad = 90 + k*420;
+    s.setAttribute('cx', (960 + Math.cos(ang)*rad*1.25).toFixed(1));
+    s.setAttribute('cy', (420 + Math.sin(ang)*rad*0.75).toFixed(1));
+    s.setAttribute('opacity', ((1-k)*0.9).toFixed(3));
+  });
+};
+
+SEEK(0);
+</script>

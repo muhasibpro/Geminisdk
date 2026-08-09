@@ -1,0 +1,593 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>MUHASIB — Kung Fu Panda Energetik Multfilm</title>
+<style>
+  html,body{margin:0;padding:0;width:100%;height:100%;background:#0d1117;overflow:hidden}
+  svg{display:block;width:100vw;height:100vh}
+  text{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+</style>
+
+<svg id="stage" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <linearGradient id="gWall" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#f4f7fb"/><stop offset="100%" stop-color="#dde5f0"/>
+  </linearGradient>
+  <linearGradient id="gFloor" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#c9d3e2"/><stop offset="100%" stop-color="#9fb0c6"/>
+  </linearGradient>
+  <linearGradient id="gCounter" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#b4763f"/><stop offset="100%" stop-color="#8a5628"/>
+  </linearGradient>
+  <linearGradient id="gFridge" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0%" stop-color="#dbe9f5"/><stop offset="50%" stop-color="#eef7ff"/><stop offset="100%" stop-color="#c7dcec"/>
+  </linearGradient>
+  <linearGradient id="gCan" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#2bd07c"/><stop offset="55%" stop-color="#12a45c"/><stop offset="100%" stop-color="#0b7a44"/>
+  </linearGradient>
+  <linearGradient id="gPos" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#2b3340"/><stop offset="100%" stop-color="#171d26"/>
+  </linearGradient>
+  <linearGradient id="gScreen" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#1d63d8"/><stop offset="100%" stop-color="#12a45c"/>
+  </linearGradient>
+  <linearGradient id="gLogo" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0%" stop-color="#4285f4"/><stop offset="35%" stop-color="#ea4335"/>
+    <stop offset="70%" stop-color="#fbbc05"/><stop offset="100%" stop-color="#34a853"/>
+  </linearGradient>
+  <radialGradient id="gBeam" cx="0.5" cy="0" r="1">
+    <stop offset="0%" stop-color="#ff4b4b" stop-opacity="0.85"/>
+    <stop offset="100%" stop-color="#ff4b4b" stop-opacity="0"/>
+  </radialGradient>
+  <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+    <feGaussianBlur stdDeviation="9"/>
+  </filter>
+</defs>
+
+<!-- ══════════ KAMERA ══════════ -->
+<g id="cam">
+  <!-- Devor va pol -->
+  <rect x="-400" y="0" width="3000" height="900" fill="url(#gWall)"/>
+  <rect x="-400" y="880" width="3000" height="400" fill="url(#gFloor)"/>
+  <g id="tiles" opacity="0.35"></g>
+
+  <!-- Eshik (chapda) -->
+  <g id="door">
+    <rect x="-150" y="250" width="250" height="640" rx="10" fill="#cfe0ee" stroke="#8ba3bb" stroke-width="6"/>
+    <g id="doorPanel">
+      <rect x="-146" y="254" width="242" height="632" rx="8" fill="#e8f3fb" opacity="0.9"/>
+      <rect x="-30" y="540" width="14" height="60" rx="7" fill="#7d94aa"/>
+    </g>
+    <rect x="-160" y="230" width="270" height="30" rx="8" fill="#8ba3bb"/>
+  </g>
+
+  <!-- Muzlatgich / Javon -->
+  <g id="fridge">
+    <rect x="330" y="250" width="430" height="640" rx="18" fill="#8ba3bb"/>
+    <rect x="346" y="266" width="398" height="608" rx="12" fill="url(#gFridge)"/>
+    <g id="shelfCans"></g>
+    <rect x="346" y="266" width="398" height="608" rx="12" fill="#ffffff" opacity="0.14"/>
+    <rect x="538" y="266" width="8" height="608" fill="#9fb6c9" opacity="0.7"/>
+    <rect x="700" y="520" width="14" height="90" rx="7" fill="#7d94aa"/>
+  </g>
+
+  <!-- Orqa javon -->
+  <g id="backShelf">
+    <rect x="880" y="330" width="620" height="26" rx="8" fill="#a9805a"/>
+    <rect x="880" y="520" width="620" height="26" rx="8" fill="#a9805a"/>
+    <g id="shelfBoxes"></g>
+  </g>
+
+  <!-- KUNG FU PANDA (PO) -->
+  <g id="boy">
+    <g id="boyLegB">
+      <line x1="0" y1="0" x2="0" y2="90" stroke="#1c1c1e" stroke-width="44" stroke-linecap="round"/>
+      <g id="boyKneeB" transform="translate(0,90)">
+        <line x1="0" y1="0" x2="0" y2="85" stroke="#1c1c1e" stroke-width="40" stroke-linecap="round"/>
+        <rect x="-24" y="70" width="70" height="30" rx="15" fill="#111113"/>
+      </g>
+    </g>
+    <g id="boyArmB">
+      <line x1="0" y1="0" x2="0" y2="76" stroke="#1c1c1e" stroke-width="36" stroke-linecap="round"/>
+      <g id="boyElbowB" transform="translate(0,76)">
+        <line x1="0" y1="0" x2="0" y2="70" stroke="#1c1c1e" stroke-width="32" stroke-linecap="round"/>
+        <circle cx="0" cy="74" r="20" fill="#111113"/>
+      </g>
+    </g>
+    <g id="boyBody">
+      <path d="M-65,0 q-12,-110 8,-150 q55,-22 114,0 q20,40 8,150 z" fill="#1c1c1e"/>
+      <path d="M-45,0 q-10,-85 10,-115 q35,-15 70,0 q20,30 10,115 z" fill="#fcfcfc"/>
+      <path d="M-60,0 L60,0 L50,-45 L-50,-45 Z" fill="#d4af37"/>
+      <rect x="-56" y="-55" width="112" height="15" rx="5" fill="#c62828"/>
+      <rect x="-8" y="-55" width="16" height="15" fill="#fbc02d"/>
+    </g>
+    <g id="boyLegF">
+      <line x1="0" y1="0" x2="0" y2="90" stroke="#2c2c2e" stroke-width="44" stroke-linecap="round"/>
+      <g id="boyKneeF" transform="translate(0,90)">
+        <line x1="0" y1="0" x2="0" y2="85" stroke="#2c2c2e" stroke-width="40" stroke-linecap="round"/>
+        <rect x="-24" y="70" width="70" height="30" rx="15" fill="#18181a"/>
+      </g>
+    </g>
+    <g id="boyHead">
+      <circle cx="-55" cy="-55" r="24" fill="#1c1c1e"/>
+      <circle cx="-55" cy="-55" r="14" fill="#2c2c2e"/>
+      <circle cx="55" cy="-55" r="24" fill="#1c1c1e"/>
+      <circle cx="55" cy="-55" r="14" fill="#2c2c2e"/>
+      <path d="M-68,-10 q-8,-75 68,-75 q76,0 68,75 q-6,68 -68,68 q-62,0 -68,-68 z" fill="#fcfcfc"/>
+      <ellipse cx="-26" cy="-14" rx="20" ry="24" fill="#1c1c1e" transform="rotate(-15 -26 -14)"/>
+      <ellipse cx="26" cy="-14" rx="20" ry="24" fill="#1c1c1e" transform="rotate(15 26 -14)"/>
+      <g id="boyEyeL"><circle cx="-24" cy="-14" r="8" fill="#ffffff"/><circle cx="-23" cy="-14" r="4.5" fill="#2e7d32"/><circle cx="-22" cy="-15" r="1.5" fill="#ffffff"/></g>
+      <g id="boyEyeR"><circle cx="24" cy="-14" r="8" fill="#ffffff"/><circle cx="25" cy="-14" r="4.5" fill="#2e7d32"/><circle cx="26" cy="-15" r="1.5" fill="#ffffff"/></g>
+      <ellipse cx="0" cy="18" rx="22" ry="14" fill="#f5f5f5"/>
+      <path d="M-10,12 q10,-8 20,0 q-4,12 -10,12 q-6,0 -10,-12 z" fill="#1c1c1e"/>
+      <g id="boyBrows">
+        <rect id="boyBrowL" x="-40" y="-44" width="30" height="9" rx="4.5" fill="#1c1c1e"/>
+        <rect id="boyBrowR" x="10" y="-44" width="30" height="9" rx="4.5" fill="#1c1c1e"/>
+      </g>
+      <ellipse id="boyMouth" cx="0" cy="38" rx="16" ry="4" fill="#7c2f2f"/>
+      <path id="boySmile" d="M-18,32 q18,18 36,0" stroke="#1c1c1e" stroke-width="5" fill="none" stroke-linecap="round"/>
+    </g>
+    <g id="boyArmF">
+      <line x1="0" y1="0" x2="0" y2="76" stroke="#2c2c2e" stroke-width="36" stroke-linecap="round"/>
+      <g id="boyElbowF" transform="translate(0,76)">
+        <line x1="0" y1="0" x2="0" y2="70" stroke="#2c2c2e" stroke-width="32" stroke-linecap="round"/>
+        <circle id="boyHand" cx="0" cy="74" r="22" fill="#18181a"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- KASSIR (MASTER SHIFU) -->
+  <g id="cashier">
+    <g id="cashArmB">
+      <line x1="0" y1="0" x2="0" y2="60" stroke="#a0522d" stroke-width="24" stroke-linecap="round"/>
+      <g id="cashElbowB" transform="translate(0,60)">
+        <line x1="0" y1="0" x2="0" y2="58" stroke="#a0522d" stroke-width="20" stroke-linecap="round"/>
+        <circle cx="0" cy="62" r="14" fill="#8b4513"/>
+      </g>
+    </g>
+    <g id="cashBody">
+      <path d="M-45,0 q-6,-90 6,-120 q38,-15 76,0 q12,30 6,120 z" fill="#8b4513"/>
+      <path d="M-20,-110 L20,-110 L30,0 L-30,0 Z" fill="#d2b48c"/>
+      <rect x="-40" y="-45" width="80" height="12" fill="#4a2c11"/>
+    </g>
+    <g id="cashHead">
+      <path d="M-40,-40 L-85,-90 L-25,-60 Z" fill="#d2b48c" stroke="#8b4513" stroke-width="4"/>
+      <path d="M40,-40 L85,-90 L25,-60 Z" fill="#d2b48c" stroke="#8b4513" stroke-width="4"/>
+      <path d="M-48,-5 q-6,-55 48,-55 q54,0 48,55 q-4,50 -48,50 q-44,0 -48,-50 z" fill="#d2b48c"/>
+      <path d="M-46,10 q15,-20 30,-5 q-10,35 -30,5 z" fill="#ffffff"/>
+      <path d="M46,10 q-15,-20 -30,-5 q10,35 30,5 z" fill="#ffffff"/>
+      <g id="cashEyeL"><circle cx="-18" cy="-5" r="7" fill="#3e2723"/><circle cx="-16" cy="-6" r="2" fill="#ffffff"/></g>
+      <g id="cashEyeR"><circle cx="18" cy="-5" r="7" fill="#3e2723"/><circle cx="20" cy="-6" r="2" fill="#ffffff"/></g>
+      <path d="M-6,8 L6,8 L0,14 Z" fill="#2c1a0e"/>
+      <path d="M-28,16 q20,8 28,2" stroke="#ffffff" stroke-width="4" fill="none"/>
+      <path d="M28,16 q-20,8 -28,2" stroke="#ffffff" stroke-width="4" fill="none"/>
+      <ellipse id="cashMouth" cx="0" cy="28" rx="12" ry="3" fill="#5d4037"/>
+      <path id="cashSmile" d="M-12,25 q12,12 24,0" stroke="#5d4037" stroke-width="4" fill="none" stroke-linecap="round"/>
+    </g>
+    <g id="cashArmF">
+      <line x1="0" y1="0" x2="0" y2="60" stroke="#d2b48c" stroke-width="24" stroke-linecap="round"/>
+      <g id="cashElbowF" transform="translate(0,60)">
+        <line x1="0" y1="0" x2="0" y2="58" stroke="#d2b48c" stroke-width="20" stroke-linecap="round"/>
+        <circle id="cashHand" cx="0" cy="62" r="15" fill="#a0522d"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- Eski usul daftar + kalkulyator -->
+  <g id="oldWay">
+    <rect x="1230" y="686" width="120" height="86" rx="6" fill="#fdf6e3" stroke="#c9b98f" stroke-width="3"/>
+    <line x1="1244" y1="710" x2="1336" y2="710" stroke="#c9b98f" stroke-width="3"/>
+    <line x1="1244" y1="732" x2="1336" y2="732" stroke="#c9b98f" stroke-width="3"/>
+    <line x1="1244" y1="754" x2="1300" y2="754" stroke="#c9b98f" stroke-width="3"/>
+    <g>
+      <rect x="1380" y="700" width="104" height="72" rx="8" fill="#4b5563"/>
+      <rect x="1392" y="710" width="80" height="20" rx="4" fill="#a7f3d0"/>
+      <g fill="#9ca3af">
+        <rect x="1392" y="738" width="18" height="12" rx="3"/><rect x="1416" y="738" width="18" height="12" rx="3"/>
+        <rect x="1440" y="738" width="18" height="12" rx="3"/><rect x="1392" y="754" width="18" height="12" rx="3"/>
+        <rect x="1416" y="754" width="18" height="12" rx="3"/><rect x="1440" y="754" width="18" height="12" rx="3"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- MUHASIB POS -->
+  <g id="pos" opacity="0">
+    <rect x="1290" y="680" width="270" height="26" rx="11" fill="#0f1620"/>
+    <rect x="1306" y="556" width="238" height="130" rx="14" fill="url(#gPos)"/>
+    <rect x="1319" y="568" width="212" height="96" rx="9" fill="url(#gScreen)"/>
+    <text id="posTitle" x="1425" y="600" font-size="23" font-weight="700" fill="#ffffff" text-anchor="middle">MUHASIB</text>
+    <text id="posPrice" x="1425" y="642" font-size="29" font-weight="800" fill="#ffffff" text-anchor="middle">—</text>
+    <g id="scanner">
+      <rect x="1150" y="662" width="118" height="44" rx="10" fill="#222b36"/>
+      <rect x="1164" y="672" width="90" height="10" rx="5" fill="#ff4b4b" opacity="0.9"/>
+    </g>
+    <g id="beam" opacity="0">
+      <path d="M1209,668 L1139,528 L1279,528 Z" fill="url(#gBeam)"/>
+    </g>
+    <g id="receipt" opacity="0">
+      <rect id="receiptPaper" x="1576" y="600" width="112" height="10" rx="3" fill="#ffffff" stroke="#d7dde6" stroke-width="2"/>
+      <g id="receiptLines" fill="#98a3b3"></g>
+    </g>
+  </g>
+
+  <!-- Prilavka -->
+  <g id="counter">
+    <rect x="1120" y="700" width="700" height="40" rx="10" fill="#c98a4b"/>
+    <rect x="1140" y="740" width="660" height="260" fill="url(#gCounter)"/>
+    <rect x="1140" y="740" width="660" height="260" fill="#000" opacity="0.06"/>
+    <rect x="1170" y="790" width="180" height="120" rx="8" fill="#7a4a22" opacity="0.55"/>
+    <rect x="1400" y="790" width="180" height="120" rx="8" fill="#7a4a22" opacity="0.55"/>
+  </g>
+
+  <!-- Energetik banka -->
+  <g id="can" opacity="0">
+    <rect x="-19" y="-52" width="38" height="104" rx="9" fill="url(#gCan)"/>
+    <rect x="-19" y="-52" width="38" height="16" rx="8" fill="#cfd8dc"/>
+    <path d="M2,-34 L-9,-4 L1,-4 L-4,26 L12,-8 L2,-8 Z" fill="#f7ff5b"/>
+    <rect x="-19" y="-52" width="12" height="104" rx="9" fill="#ffffff" opacity="0.18"/>
+  </g>
+
+  <!-- Hayrat belgisi -->
+  <g id="shock" opacity="0">
+    <text x="0" y="0" font-size="96" font-weight="800" fill="#ea4335" text-anchor="middle">!</text>
+  </g>
+</g>
+
+<!-- ══════════ EKRAN USTIDAGI QATLAM ══════════ -->
+<g id="ui">
+  <g id="bubbleCash" opacity="0">
+    <path id="bcBox" d="M0,0 h520 a24,24 0 0 1 24,24 v150 a24,24 0 0 1 -24,24 h-380 l-46,52 l6,-52 h-100 a24,24 0 0 1 -24,-24 v-150 a24,24 0 0 1 24,-24 z"
+          fill="#ffffff" stroke="#c8d3e0" stroke-width="4"/>
+    <text id="bcT1" x="272" y="80" font-size="38" font-weight="600" fill="#1f2937" text-anchor="middle"></text>
+    <text id="bcT2" x="272" y="132" font-size="38" font-weight="600" fill="#1f2937" text-anchor="middle"></text>
+  </g>
+
+  <g id="bubbleBoy" opacity="0">
+    <path id="bbBox" d="M0,0 h560 a24,24 0 0 1 24,24 v160 a24,24 0 0 1 -24,24 h-120 l46,54 l-116,-54 h-370 a24,24 0 0 1 -24,-24 v-160 a24,24 0 0 1 24,-24 z"
+          fill="#ffffff" stroke="#c8d3e0" stroke-width="4"/>
+    <text id="bbT1" x="292" y="80" font-size="38" font-weight="700" fill="#c62828" text-anchor="middle"></text>
+    <text id="bbT2" x="292" y="134" font-size="38" font-weight="700" fill="#1f2937" text-anchor="middle"></text>
+    <text id="bbT3" x="292" y="186" font-size="34" font-weight="600" fill="#1f2937" text-anchor="middle"></text>
+  </g>
+
+  <g id="outro" opacity="0">
+    <rect x="0" y="0" width="1920" height="1080" fill="#0b1020" opacity="0.985"/>
+    <g id="outroLogo">
+      <path id="outroMark" d="M960,300 L1050,470 L1010,470 L960,372 L910,470 L870,470 Z" fill="url(#gLogo)"/>
+      <text x="960" y="580" font-size="96" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="4">MUHASIB</text>
+      <text id="outroSub" x="960" y="650" font-size="40" font-weight="500" fill="#9fb0c6" text-anchor="middle">Zamonaviy POS kassa dasturi</text>
+    </g>
+    <g id="outroBullets" opacity="0">
+      <text x="960" y="750" font-size="34" fill="#34a853" text-anchor="middle">1 soniyada skanerlash</text>
+      <text x="960" y="806" font-size="34" fill="#4285f4" text-anchor="middle">Aniq hisob-kitob</text>
+      <text x="960" y="862" font-size="34" fill="#fbbc05" text-anchor="middle">Sotuv va ombor nazorati</text>
+    </g>
+  </g>
+
+  <g id="sparks"></g>
+</g>
+</svg>
+
+<script>
+const $ = id => document.getElementById(id);
+const clamp = (v,a,b) => v<a?a:(v>b?b:v);
+const lerp  = (a,b,t) => a + (b-a)*t;
+const ease  = t => t<0 ? 0 : t>1 ? 1 : t*t*(3-2*t);
+const easeOut = t => 1-Math.pow(1-clamp(t,0,1),3);
+const seg = (t,t0,t1) => clamp((t-t0)/Math.max(0.0001,t1-t0),0,1);
+const T   = (g,tr) => g.setAttribute('transform',tr);
+
+let TL = {
+  duration: 32,
+  lines: [
+    {who:'cash', start:12.2, dur:3.6},
+    {who:'boy',  start:17.6, dur:4.4},
+    {who:'boy',  start:24.0, dur:4.8}
+  ],
+  price: "25 000 so'm",
+  cashText: ["Uka, energetik ichimligingiz", "25 000 so'm bo'ldi."],
+  boyText:  ["Vay!", "Nega sizlarda MUHASIB", "dasturi yo'q?!"]
+};
+window.DURATION = TL.duration;
+
+window.APPLY_CONFIG = function(){
+  if(!window.CONFIG) return;
+  TL = Object.assign(TL, window.CONFIG);
+  window.DURATION = TL.duration;
+  fillTexts();
+};
+
+function fillTexts(){
+  $('bcT1').textContent = TL.cashText[0] || '';
+  $('bcT2').textContent = TL.cashText[1] || '';
+  $('bbT1').textContent = TL.boyText[0] || '';
+  $('bbT2').textContent = TL.boyText[1] || '';
+  $('bbT3').textContent = TL.boyText[2] || '';
+  $('posPrice').textContent = TL.price;
+}
+
+(function decor(){
+  let s = '';
+  for(let x=-400; x<2600; x+=160)
+    s += `<path d="M${x},880 L${x+80},1080" stroke="#8aa0ba" stroke-width="3" fill="none"/>`;
+  for(let y=920; y<1080; y+=52)
+    s += `<line x1="-400" y1="${y}" x2="2600" y2="${y}" stroke="#8aa0ba" stroke-width="3"/>`;
+  $('tiles').innerHTML = s;
+
+  let c = '';
+  const rows = [320, 470, 620, 760];
+  rows.forEach((y,ri) => {
+    c += `<rect x="356" y="${y+64}" width="378" height="10" rx="5" fill="#b9cddd"/>`;
+    for(let i=0;i<7;i++){
+      const x = 380 + i*52, hidden = (ri===1 && i===3);
+      c += `<g opacity="${hidden?0:1}" id="${hidden?'shelfGap':''}">
+              <rect x="${x-14}" y="${y}" width="28" height="64" rx="6" fill="${ri%2?'#12a45c':'#1d63d8'}"/>
+              <rect x="${x-14}" y="${y}" width="28" height="10" rx="5" fill="#cfd8dc"/>
+            </g>`;
+    }
+  });
+  $('shelfCans').innerHTML = c;
+
+  let b = '';
+  for(let i=0;i<8;i++){
+    const x = 900 + i*72, h = 60 + (i%3)*18;
+    b += `<rect x="${x}" y="${330-h}" width="52" height="${h}" rx="6" fill="${['#f0b48d','#9fc6e8','#f6d365','#c8e6c9'][i%4]}"/>`;
+    b += `<rect x="${x}" y="${520-h+10}" width="52" height="${h-10}" rx="6" fill="${['#e8a67d','#b0d4f1','#f7e08a','#b7ddb9'][i%4]}"/>`;
+  }
+  $('shelfBoxes').innerHTML = b;
+
+  let sp = '';
+  for(let i=0;i<26;i++)
+    sp += `<circle class="spark" cx="0" cy="0" r="${3+ (i%4)}" fill="${['#4285f4','#ea4335','#fbbc05','#34a853'][i%4]}" opacity="0"/>`;
+  $('sparks').innerHTML = sp;
+  fillTexts();
+})();
+const SPARKS = Array.from(document.querySelectorAll('.spark'));
+
+function poseLeg(hip, knee, a1, a2, up){ T(hip,`translate(0,${up}) rotate(${a1})`); T(knee,`translate(0,90) rotate(${a2})`); }
+function poseArm(sh, el, a1, a2, up){ T(sh,`translate(0,${up}) rotate(${a1})`); T(el,`translate(0,76) rotate(${a2})`); }
+
+function armTip(sx, sy, a1, a2, l1, l2){
+  const r1 = a1*Math.PI/180, r2 = a2*Math.PI/180;
+  const ex = sx - l1*Math.sin(r1), ey = sy + l1*Math.cos(r1);
+  const fx = -l2*Math.sin(r2),    fy = l2*Math.cos(r2);
+  return [ ex + fx*Math.cos(r1) - fy*Math.sin(r1),
+           ey + fx*Math.sin(r1) + fy*Math.cos(r1) ];
+}
+
+function mouthTalk(mouthEl, smileEl, on, t, speed){
+  if(on){
+    const o = 0.5 + 0.5*Math.sin(t*(speed||24));
+    mouthEl.setAttribute('ry', (3 + o*11).toFixed(2));
+    mouthEl.setAttribute('rx', (16 - o*4).toFixed(2));
+    mouthEl.setAttribute('opacity', 1);
+    smileEl.setAttribute('opacity', 0);
+  } else {
+    mouthEl.setAttribute('opacity', 0);
+    smileEl.setAttribute('opacity', 1);
+  }
+}
+function blink(eyeL, eyeR, t, phase){
+  const p = ((t + (phase||0)) % 3.4);
+  const k = p < 0.13 ? Math.abs(Math.cos(p/0.13*Math.PI/2)) : 1;
+  const sy = clamp(k, 0.06, 1);
+  T(eyeL, `translate(0,${(1-sy)*2}) scale(1,${sy})`);
+  T(eyeR, `translate(0,${(1-sy)*2}) scale(1,${sy})`);
+}
+
+function beats(){
+  const L = TL.lines;
+  return {
+    walkIn:  [0.4, 3.6],
+    toFridge:[3.6, 6.2],
+    grab:    [6.2, 8.4],
+    toDesk:  [8.4, L[0].start-0.6],
+    cashLine:[L[0].start, L[0].start + L[0].dur],
+    boyLine: [L[1].start, L[1].start + L[1].dur],
+    posIn:   [L[2].start - 1.2, L[2].start + 0.6],
+    scan:    [L[2].start + 0.8, L[2].start + 2.2],
+    outro:   [L[2].start + TL.lines[2].dur - 0.4, TL.duration]
+  };
+}
+
+window.SEEK = function(t){
+  const B = beats();
+  const FLOOR = 880;
+
+  let bx, walking = false;
+  if(t < B.walkIn[0]){ bx = -180; }
+  else if(t <= B.walkIn[1]){ bx = lerp(-180, 300, ease(seg(t,B.walkIn[0],B.walkIn[1]))); walking = true; }
+  else if(t <= B.toFridge[1]){ bx = lerp(300, 640, ease(seg(t,B.toFridge[0],B.toFridge[1]))); walking = true; }
+  else if(t <= B.grab[1]){ bx = 640; }
+  else if(t <= B.toDesk[1]){ bx = lerp(640, 1130, ease(seg(t,B.toDesk[0],B.toDesk[1]))); walking = true; }
+  else { bx = 1130; }
+
+  const boyH = 340;
+  const hipY = FLOOR - boyH + 155;
+  const stride = walking ? Math.sin(t * 11) : 0;
+  const bob    = walking ? Math.abs(Math.sin(t * 11)) * 14 : Math.sin(t * 2) * 3;
+
+  T($('boy'), `translate(${bx.toFixed(1)}, ${(hipY - bob).toFixed(1)})`);
+
+  let lF1 = stride * 34, lF2 = Math.max(0, -stride) * 38;
+  let lB1 = -stride * 34, lB2 = Math.max(0, stride) * 38;
+  poseLeg($('boyLegF'), $('boyKneeF'), lF1, lF2, 0);
+  poseLeg($('boyLegB'), $('boyKneeB'), lB1, lB2, -4);
+
+  const headRot = walking ? stride * 3 : (t >= B.boyLine[0] && t <= B.boyLine[1] ? Math.sin(t*14)*4 : 0);
+  T($('boyHead'), `translate(0, -145) rotate(${headRot.toFixed(1)})`);
+
+  let aF1 = -stride * 28, aF2 = 18;
+  let aB1 = stride * 28, aB2 = 14;
+
+  const inGrab = seg(t, B.grab[0], B.grab[1]);
+  if(inGrab > 0 && t < B.toDesk[0]){
+    const g = ease(seg(t, B.grab[0], B.grab[0]+0.8));
+    const g2 = ease(seg(t, B.grab[0]+1.1, B.grab[1]));
+    aF1 = lerp(aF1, -78, g) - lerp(0, 15, g2);
+    aF2 = lerp(aF2, -28, g) + lerp(0, 48, g2);
+  }
+  if(t >= B.toDesk[0]){
+    aF1 = -45 + Math.sin(t*2)*2;
+    aF2 = 55;
+  }
+  const shouting = t >= B.boyLine[0] && t <= B.boyLine[1];
+  if(shouting){
+    aF1 = -110 + Math.sin(t*18)*12; aF2 = -20;
+    aB1 = 80 + Math.sin(t*18)*10; aB2 = 30;
+  }
+
+  poseArm($('boyArmF'), $('boyElbowF'), aF1, aF2, -135);
+  poseArm($('boyArmB'), $('boyElbowB'), aB1, aB2, -135);
+
+  blink($('boyEyeL'), $('boyEyeR'), t, 0);
+  const boySpeaking = (t >= B.boyLine[0] && t <= B.boyLine[1]) || (t >= TL.lines[2].start && t <= TL.lines[2].start + TL.lines[2].dur);
+  mouthTalk($('boyMouth'), $('boySmile'), boySpeaking, t, 26);
+
+  if(shouting){
+    T($('boyBrowL'), `translate(0,-5) rotate(14)`);
+    T($('boyBrowR'), `translate(0,-5) rotate(-14)`);
+  } else {
+    T($('boyBrowL'), `translate(0,0) rotate(0)`);
+    T($('boyBrowR'), `translate(0,0) rotate(0)`);
+  }
+
+  /* ── KASSIR (MASTER SHIFU) ── */
+  const cashX = 1620, cashH = 300;
+  const cashHipY = FLOOR - cashH + 130;
+  T($('cashier'), `translate(${cashX}, ${cashHipY})`);
+
+  let cAF1 = 18 + Math.sin(t*1.8)*4, cAF2 = 35;
+  let cAB1 = -12, cAB2 = 25;
+  const cashSpeaking = t >= B.cashLine[0] && t <= B.cashLine[1];
+  if(cashSpeaking){
+    cAF1 = -35 + Math.sin(t*12)*14; cAF2 = 45;
+  }
+  poseArm($('cashArmF'), $('cashElbowF'), cAF1, cAF2, -110);
+  poseArm($('cashArmB'), $('cashElbowB'), cAB1, cAB2, -110);
+  T($('cashHead'), `translate(0, -120) rotate(${cashSpeaking ? Math.sin(t*10)*3 : 0})`);
+  blink($('cashEyeL'), $('cashEyeR'), t, 1.2);
+  mouthTalk($('cashMouth'), $('cashSmile'), cashSpeaking, t, 22);
+
+  /* ── BANKA (Energetik) ── */
+  const can = $('can');
+  if(t < B.grab[0] + 0.6){
+    can.setAttribute('opacity', 0);
+  } else {
+    can.setAttribute('opacity', 1);
+    const handWorld = armTip(bx, hipY - bob - 135, aF1, aF2, 76, 70);
+    let canX = handWorld[0] + 8, canY = handWorld[1] + 20;
+    if(t >= B.toDesk[1]){
+      const deskProgress = ease(seg(t, B.toDesk[1], B.toDesk[1] + 0.5));
+      canX = lerp(canX, 1209, deskProgress);
+      canY = lerp(canY, 650, deskProgress);
+    }
+    T(can, `translate(${canX.toFixed(1)}, ${canY.toFixed(1)})`);
+  }
+
+  /* ── MUHASIB POS terminal ── */
+  const inPos = seg(t, B.posIn[0], B.posIn[1]);
+  const posEl = $('pos'), oldEl = $('oldWay');
+  if(inPos > 0){
+    posEl.setAttribute('opacity', ease(inPos));
+    oldEl.setAttribute('opacity', 1 - ease(inPos));
+  } else if(t >= B.posIn[1]){
+    posEl.setAttribute('opacity', 1); oldEl.setAttribute('opacity', 0);
+  } else {
+    posEl.setAttribute('opacity', 0); oldEl.setAttribute('opacity', 1);
+  }
+
+  const inScan = seg(t, B.scan[0], B.scan[1]);
+  $('beam').setAttribute('opacity', (inScan > 0 && inScan < 1) ? 1 : 0);
+  if(t >= B.scan[1]){
+    $('posPrice').textContent = TL.price;
+    $('posPrice').setAttribute('fill', '#ffffff');
+  } else {
+    $('posPrice').textContent = '—';
+  }
+
+  const recP = seg(t, B.scan[1] + 0.2, B.scan[1] + 1.2);
+  const recEl = $('receipt');
+  if(recP > 0){
+    recEl.setAttribute('opacity', 1);
+    const h = lerp(10, 110, ease(recP));
+    $('receiptPaper').setAttribute('height', h.toFixed(0));
+    let rl = '';
+    if(h > 35) rl += `<rect x="1586" y="614" width="70" height="6" rx="2"/>`;
+    if(h > 60) rl += `<rect x="1586" y="630" width="92" height="6" rx="2"/>`;
+    if(h > 85) rl += `<rect x="1586" y="646" width="50" height="6" rx="2"/>`;
+    $('receiptLines').innerHTML = rl;
+  } else {
+    recEl.setAttribute('opacity', 0);
+  }
+
+  /* ── MULOQOT PUFACSI VA SHOK ── */
+  const shock = $('shock');
+  if(shouting){
+    shock.setAttribute('opacity', 1);
+    const sk = 1 + Math.sin(t*22)*0.15;
+    T(shock, `translate(${bx}, ${hipY - bob - 360}) scale(${sk})`);
+  } else {
+    shock.setAttribute('opacity', 0);
+  }
+
+  const bc = $('bubbleCash');
+  if(cashSpeaking){
+    bc.setAttribute('opacity', 1);
+    T(bc, `translate(1120, 240)`);
+  } else { bc.setAttribute('opacity', 0); }
+
+  const bb = $('bubbleBoy');
+  if(shouting){
+    bb.setAttribute('opacity', 1);
+    T(bb, `translate(${clamp(bx - 260, 40, 1200)}, 210)`);
+  } else { bb.setAttribute('opacity', 0); }
+
+  /* ── ESHIK VA MUZLATGICH DOIRASI ── */
+  const doorAngle = (t >= B.walkIn[0]-0.2 && t <= B.walkIn[0]+1.2) ? Math.sin(seg(t, B.walkIn[0]-0.2, B.walkIn[0]+1.2)*Math.PI)*55 : 0;
+  T($('doorPanel'), `translate(-146, 254) rotate(${-doorAngle}, 0, 300)`);
+
+  /* ── KAMERA (ZOOM VA PAN) ── */
+  let camX = 0, camY = 0, camScale = 1;
+  if(t >= B.walkIn[0] && t <= B.walkIn[1]){
+    camX = lerp(0, -100, ease(seg(t, B.walkIn[0], B.walkIn[1])));
+  } else if(t >= B.toFridge[0] && t <= B.grab[1]){
+    camX = lerp(-100, -220, ease(seg(t, B.toFridge[0], B.grab[1])));
+    camY = -40; camScale = 1.12;
+  } else if(t >= B.toDesk[0] && t <= B.toDesk[1]){
+    camX = lerp(-220, -320, ease(seg(t, B.toDesk[0], B.toDesk[1])));
+    camY = lerp(-40, -20, ease(seg(t, B.toDesk[0], B.toDesk[1])));
+    camScale = lerp(1.12, 1.08, ease(seg(t, B.toDesk[0], B.toDesk[1])));
+  } else if(t > B.toDesk[1] && t < B.outro[0]){
+    camX = -360; camY = -30; camScale = 1.14;
+  }
+  T($('cam'), `translate(${(960 + camX*camScale).toFixed(1)}, ${(540 + camY*camScale).toFixed(1)}) scale(${camScale.toFixed(3)}) translate(-960, -540)`);
+
+  /* ── YAKUNIY BRAND EKRANI (OUTRO) ── */
+  const outro = $('outro');
+  const inOutro = seg(t, B.outro[0], B.outro[0] + 0.8);
+  if(inOutro > 0){
+    outro.setAttribute('opacity', ease(inOutro));
+    const sc = lerp(0.8, 1, ease(inOutro));
+    T($('outroLogo'), `translate(0, ${(1-ease(inOutro))*-40}) scale(${sc})`);
+
+    const bP = seg(t, B.outro[0] + 0.5, B.outro[0] + 1.2);
+    $('outroBullets').setAttribute('opacity', ease(bP));
+
+    /* Uchqunlar portlashi */
+    const spP = seg(t, B.outro[0], B.outro[0] + 1.4);
+    SPARKS.forEach((sp, i) => {
+      const angle = (i / SPARKS.length) * Math.PI * 2;
+      const dist = spP * (280 + (i % 5) * 80);
+      const x = 960 + Math.cos(angle) * dist;
+      const y = 390 + Math.sin(angle) * dist;
+      sp.setAttribute('cx', x.toFixed(1));
+      sp.setAttribute('cy', y.toFixed(1));
+      sp.setAttribute('opacity', (1 - spP).toFixed(2));
+    });
+  } else {
+    outro.setAttribute('opacity', 0);
+  }
+};
+
+SEEK(0);
+</script>

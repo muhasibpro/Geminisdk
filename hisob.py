@@ -1,0 +1,1016 @@
+#!/usr/bin/env python3
+"""MUHASIB hisob-kitob yadrosi — bitta jurnal, hammasi shundan hisoblanadi.
+
+Falsafa: hech qanday alohida "ombor jadvali" yoki "qarzlar jadvali" yo'q.
+Faqat AMALLAR jurnali bor. Kassa, ombor qoldig'i, qarzlarim, qarzdorlar va
+foyda — har safar shu jurnaldan qaytadan hisoblanadi. Shuning uchun ular
+hech qachon bir-biriga zid bo'lib qolmaydi va xato amalni o'chirish yetarli.
+
+Har qanday biznesga mos: tovar nomi, o'lchov birligi va shaxs nomi — erkin
+matn. Non ham, oltin ham, soat ham, xizmat ham bir xil ishlaydi.
+"""
+import hashlib
+import json
+import os
+import threading
+import time
+import uuid
+
+# Standart joy — loyiha ildizidagi hisob.json. Sinov uchun MUHASIB_HISOB_PATH
+# bilan boshqa faylga yo'naltirish mumkin (haqiqiy daftar tegilmaydi).
+HISOB_PATH = os.environ.get("MUHASIB_HISOB_PATH") or os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "hisob.json")
+_LOCK = threading.RLock()
+
+# Amal turlari va ularning ta'siri.
+#   kassa      : naqd/karta to'lovda pul harakati (+1 kirim, -1 chiqim, 0 ta'sirsiz)
+#   ombor      : tovar qoldig'i (+1 kirim, -1 chiqim)
+#   qarzdor    : menga qarzdor bo'lganlar (mijoz nasiyasi)
+#   qarzim     : men qarzdor bo'lgan odamlar
+TURLAR = {
+    "sotuv":            {"kassa": +1, "ombor": -1, "qarzdor": +1, "qarzim":  0},
+    "xarid":            {"kassa": -1, "ombor": +1, "qarzdor":  0, "qarzim": +1},
+    "qarz_berdim":      {"kassa": -1, "ombor":  0, "qarzdor": +1, "qarzim":  0},
+    "qarz_oldim":       {"kassa": +1, "ombor":  0, "qarzdor":  0, "qarzim": +1},
+    "qarz_qaytardim":   {"kassa": -1, "ombor":  0, "qarzdor":  0, "qarzim": -1},
+    "qarz_qaytarildi":  {"kassa": +1, "ombor":  0, "qarzdor": -1, "qarzim":  0},
+    "xarajat":          {"kassa": -1, "ombor":  0, "qarzdor":  0, "qarzim":  0},
+    "kirim":            {"kassa": +1, "ombor":  0, "qarzdor":  0, "qarzim":  0},
+    "boshlangich":      {"kassa":  0, "ombor":  0, "qarzdor":  0, "qarzim":  0},
+    # Ikki tomonlama: chiqim kassadan ayriladi, kirim kassaga qo'shiladi.
+    # Generik qoida ishlatilmaydi (kassa: 0) — hisobot/_taqsimot maxsus ishlaydi.
+    "otkazma":          {"kassa":  0, "ombor":  0, "qarzdor":  0, "qarzim":  0},
+    # Omborlararo / xodimlarga tovar o'tkazish (kuryer, filial va h.k.)
+    "ombor_otkazma":    {"kassa":  0, "ombor":  0, "qarzdor":  0, "qarzim":  0},
+}
+
+TUR_NOMI = {
+    "sotuv": "Sotuv",
+    "xarid": "Xarid",
+    "qarz_berdim": "Qarz berdim",
+    "qarz_oldim": "Qarz oldim",
+    "qarz_qaytardim": "Qarzimni qaytardim",
+    "qarz_qaytarildi": "Qarzdor qaytardi",
+    "xarajat": "Xarajat",
+    "kirim": "Boshqa kirim",
+    "boshlangich": "Boshlang'ich qoldiq",
+    "otkazma": "Kassalararo o'tkazma",
+    "ombor_otkazma": "Omborlararo tovar o'tkazma",
+}
+
+
+ASOSIY_KASSA = "Asosiy"
+
+
+def _bosh():
+    return {
+        "versiya": 2,
+        "biznes": {
+            "nom": "",
+            "valyuta": "UZS",
+            "kassalar": [{"nom": ASOSIY_KASSA, "valyuta": "UZS"}],
+            "asosiy_kassa": ASOSIY_KASSA,
+        },
+        "amallar": [],
+        # Tovar nomi -> barkod. Alohida saqlanadi, chunki ombor jurnaldan
+        # hisoblanadi — tovar "obyekt" emas, shuning uchun barkod shu yerda turadi.
+        "barkodlar": {},
+        # Tovar nomi -> rasm manzili (fayl yo'li yoki URL). Barkod kabi
+        # alohida saqlanadi, chunki tovar jurnaldan hisoblanadi.
+        "rasmlar": {},
+    }
+
+
+def _kassalarni_tayyorla(data):
+    """Eski bitta-kassa daftarini xotirada yangi formatga moslaydi."""
+    biznes = data.setdefault("biznes", {})
+    valyuta = _matn(biznes.get("valyuta")) or "UZS"
+    kassalar = biznes.get("kassalar")
+    if not isinstance(kassalar, list) or not kassalar:
+        kassalar = [{"nom": ASOSIY_KASSA, "valyuta": valyuta}]
+    toza = []
+    korilgan = set()
+    for kassa in kassalar:
+        if not isinstance(kassa, dict):
+            continue
+        nom = _matn(kassa.get("nom"))
+        if not nom or nom.lower() in korilgan:
+            continue
+        korilgan.add(nom.lower())
+        toza.append({"nom": nom, "valyuta": _matn(kassa.get("valyuta")) or valyuta})
+    if not toza:
+        toza = [{"nom": ASOSIY_KASSA, "valyuta": valyuta}]
+    asosiy = _matn(biznes.get("asosiy_kassa"))
+    if not any(k["nom"].lower() == asosiy.lower() for k in toza):
+        asosiy = toza[0]["nom"]
+    biznes.update({"valyuta": valyuta, "kassalar": toza, "asosiy_kassa": asosiy})
+    data["versiya"] = max(int(data.get("versiya") or 1), 2)
+    return data
+
+
+def _kassa_top(data, nom=""):
+    _kassalarni_tayyorla(data)
+    biznes = data["biznes"]
+    qidiruv = _matn(nom) or biznes["asosiy_kassa"]
+    for kassa in biznes["kassalar"]:
+        if kassa["nom"].lower() == qidiruv.lower():
+            return kassa
+    raise ValueError("Kassa topilmadi: %s. Mavjud kassalar: %s" % (
+        qidiruv, ", ".join(k["nom"] for k in biznes["kassalar"])))
+
+
+def _oqi():
+    if not os.path.isfile(HISOB_PATH):
+        return _bosh()
+    try:
+        with open(HISOB_PATH, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        if not isinstance(data, dict) or "amallar" not in data:
+            return _bosh()
+        data.setdefault("biznes", {"nom": "", "valyuta": "UZS"})
+        data.setdefault("versiya", 1)
+        return _kassalarni_tayyorla(data)
+    except Exception:
+        return _bosh()
+
+
+# Daftar o'zgarganda xabardor bo'lishni xohlaydiganlar shu yerga yoziladi.
+# Masalan Google Sheets avto-sinxroni. Kuzatuvchining xatosi daftarga
+# yozishni buzmasligi kerak — shuning uchun har biri alohida qo'riqlanadi.
+KUZATUVCHILAR = []
+
+
+def _yoz(data):
+    # Avval vaqtinchalik faylga yozamiz — yozish o'rtasida uzilsa,
+    # asosiy fayl buzilmasdan qoladi.
+    vaqtinchalik = HISOB_PATH + ".tmp"
+    with open(vaqtinchalik, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=1)
+    os.replace(vaqtinchalik, HISOB_PATH)
+    for kuzatuvchi in list(KUZATUVCHILAR):
+        try:
+            kuzatuvchi()
+        except Exception:
+            pass
+
+
+def _son(qiymat, standart=0):
+    if qiymat is None or qiymat == "":
+        return standart
+    try:
+        return round(float(str(qiymat).replace(" ", "").replace(",", ".")), 2)
+    except (TypeError, ValueError):
+        return standart
+
+
+def _matn(qiymat):
+    return str(qiymat or "").strip()
+
+
+# ────────────────────────────── YOZISH ──────────────────────────────
+
+# Model ba'zan ma'lumot yetishmasa o'zi to'ldirgich o'ylab topadi ("tovar",
+# miqdor 1, narx 0) va bu jurnalga tushib qoladi. Bunday yozuvning ma'nosi
+# yo'q: ombor qiymati 0, foyda noto'g'ri. Shuning uchun oxirgi to'siq shu
+# yerda — qaysi model ishlatilishidan qat'i nazar ishlaydi.
+_TOLDIRGICH = {
+    "tovar", "mahsulot", "narsa", "buyum", "noma'lum", "nomalum", "nomaʼlum",
+    "item", "product", "goods", "unknown", "none", "null", "-", "—", "?", "...",
+    "tovar nomi", "mahsulot nomi", "nomi",
+}
+
+
+def _mazmun_tekshir(tur, kim, tovar, miqdor, narx, summa, izoh):
+    """Ma'nosiz yozuvni jurnalga kiritishdan oldin rad etadi.
+
+    Xato matni foydalanuvchiga emas, MODELGA yo'llangan: nima yetishmayotganini
+    aytadi, shunda u to'ldirgich o'ylab topmasdan savol beradi."""
+    nom = _matn(tovar)
+    kimi = _matn(kim)
+
+    if tur in ("sotuv", "xarid"):
+        if not nom:
+            raise ValueError(
+                "Tovar nomi yo'q. YOZMA — avval foydalanuvchidan so'ra: "
+                "qaysi tovar, qancha miqdorda va qanchadan?")
+        if nom.lower() in _TOLDIRGICH:
+            raise ValueError(
+                "'%s' — bu tovar nomi emas, to'ldirgich. YOZMA — tovarning "
+                "haqiqiy nomini foydalanuvchidan so'ra." % nom)
+        if summa <= 0 and narx <= 0:
+            raise ValueError(
+                "Narx ham, summa ham ko'rsatilmagan. YOZMA — foydalanuvchidan "
+                "so'ra: qanchadan yoki jamiga qancha?")
+
+    elif tur in ("qarz_berdim", "qarz_oldim", "qarz_qaytardim", "qarz_qaytarildi"):
+        if not kimi:
+            raise ValueError(
+                "Kim ekani ko'rsatilmagan. YOZMA — avval so'ra: kim bilan?")
+        if summa <= 0:
+            raise ValueError(
+                "Summa ko'rsatilmagan. YOZMA — avval so'ra: qancha summa?")
+
+    elif tur in ("xarajat", "kirim"):
+        if summa <= 0:
+            raise ValueError(
+                "Summa ko'rsatilmagan. YOZMA — avval so'ra: qancha?")
+        if not _matn(izoh) and not kimi:
+            raise ValueError(
+                "Nima uchun ekani yozilmagan. YOZMA — avval so'ra: nimaga sarflandi "
+                "yoki nimadan tushdi?")
+
+    elif tur == "ombor_otkazma":
+        if not nom:
+            raise ValueError(
+                "O'tkaziladigan tovar nomi yo'q. YOZMA — avval so'ra: qaysi tovar?")
+        if nom.lower() in _TOLDIRGICH:
+            raise ValueError(
+                "'%s' — bu tovar nomi emas, to'ldirgich. YOZMA — tovarning "
+                "haqiqiy nomini ayt." % nom)
+        if miqdor <= 0:
+            raise ValueError(
+                "O'tkaziladigan miqdor 0 dan katta bo'lishi kerak.")
+
+
+def amal_qoshish(tur, kim="", tovar="", miqdor=0, birlik="dona", narx=0,
+                 summa=0, tan_narx=0, tolov="naqd", izoh="", sana="",
+                 kassa_nomi="", valyuta="", **qoshimcha):
+    """Jurnalga bitta amal qo'shadi va yangilangan hisobotni qaytaradi."""
+    tur = _matn(tur).lower()
+    if tur not in TURLAR:
+        raise ValueError("Noma'lum amal turi: %s. Mumkin: %s" % (tur, ", ".join(TURLAR)))
+
+    miqdor = _son(miqdor)
+    narx = _son(narx)
+    summa = _son(summa)
+    tan_narx = _son(tan_narx)
+
+    # Zargarlik: tosh vazni umumiy vaznga kiradi, lekin PULI TO'LANMAYDI.
+    # Sof tilla = umumiy − tosh, narx esa sof grammga qo'yiladi.
+    tosh = _son(qoshimcha.get("tosh"))
+    if tosh < 0:
+        raise ValueError("Tosh vazni manfiy bo'la olmaydi.")
+    if tosh and miqdor and tosh >= miqdor:
+        raise ValueError(
+            "Tosh vazni (%g) umumiy vazndan (%g) katta yoki teng bo'la olmaydi." % (tosh, miqdor))
+    sof_miqdor = round(miqdor - tosh, 3) if tosh else miqdor
+
+    # Summa berilmagan bo'lsa miqdor × narx dan chiqaramiz va aksincha —
+    # foydalanuvchi "3 dona 5 mingdan" desa ham, "jami 15 ming" desa ham ishlaydi.
+    if not summa and sof_miqdor and narx:
+        summa = round(sof_miqdor * narx, 2)
+    if not narx and sof_miqdor and summa:
+        narx = round(summa / sof_miqdor, 2)
+    if tur in ("sotuv", "xarid") and not miqdor:
+        miqdor = 1
+        if not narx:
+            narx = summa
+
+    # Barkod berilgan bo'lsa tovar nomini shundan olamiz (skaner uchun)
+    barkod = _matn(qoshimcha.get("barkod"))
+    if barkod and not _matn(tovar):
+        topilgan = barkod_topish(barkod)
+        if not topilgan["topildi"]:
+            raise ValueError("Bu barkod hech qaysi tovarga biriktirilmagan: %s" % barkod)
+        tovar = topilgan["tovar"]
+
+    _mazmun_tekshir(tur, kim, tovar, miqdor, narx, summa, izoh)
+
+    data = _oqi()
+    kassa = _kassa_top(data, kassa_nomi)
+
+    # ── otkazma: kirim tomonini ham tekshirib olamiz ──
+    kirim_kassa = None
+    kirim_summa = 0.0
+    if tur == "otkazma":
+        kirim_nomi = _matn(qoshimcha.get("kirim_kassa"))
+        if not kirim_nomi:
+            raise ValueError("O'tkazma uchun kirim_kassa ko'rsatilishi shart.")
+        kirim_kassa = _kassa_top(data, kirim_nomi)
+        if kirim_kassa["nom"] == kassa["nom"]:
+            raise ValueError("Chiqim va kirim kassasi bir xil bo'lishi mumkin emas.")
+        if summa <= 0:
+            raise ValueError("O'tkazma summasi 0 dan katta bo'lishi kerak.")
+        kirim_summa = _son(qoshimcha.get("kirim_summa")) or summa
+
+    dan_ombor = _matn(qoshimcha.get("dan_ombor") or "Asosiy")
+    ga_ombor = _matn(qoshimcha.get("ga_ombor") or kim or "Kuryer")
+
+    amal_valyutasi = _matn(valyuta) or kassa["valyuta"]
+    # DIQQAT: bu yerga "USD va USDT bir xil" degan istisno QO'SHMA.
+    # Ular boshqa aktivlar; qo'shilsa kassa raqami yolg'on chiqadi.
+    # Boshqa valyuta kerak bo'lsa — o'sha valyutada alohida kassa oching.
+    if amal_valyutasi.upper() != kassa["valyuta"].upper():
+        raise ValueError(
+            "'%s' kassasi %s da yuritiladi; %s dagi amalni unga yozib bo'lmaydi. "
+            "Avval %s uchun alohida kassa oching (kassa_ochish)." % (
+                kassa["nom"], kassa["valyuta"], amal_valyutasi, amal_valyutasi))
+
+    amal = {
+        "id": uuid.uuid4().hex[:10],
+        "sana": _matn(sana) or time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "tur": tur,
+        "kim": _matn(kim),
+        "tovar": _matn(tovar),
+        "miqdor": miqdor,
+        "birlik": _matn(birlik) or "dona",
+        "narx": narx,
+        "summa": summa,
+        "tan_narx": tan_narx,
+        "tolov": _matn(tolov).lower() or "naqd",
+        "izoh": _matn(izoh),
+        # Qaysi kassaga va qaysi valyutada — ilgari faqat tekshirilardi,
+        # saqlanmasdi. Saqlanmasa har valyutani alohida hisoblab bo'lmaydi.
+        "kassa_nomi": kassa["nom"],
+        "valyuta": amal_valyutasi.upper(),
+        "dan_ombor": dan_ombor,
+        "ga_ombor": ga_ombor,
+    }
+    if tur == "boshlangich" and "kassa" not in qoshimcha:
+        qoshimcha["kassa"] = summa
+    for kalit in ("kassa", "qarzim", "qarzdor"):
+        if kalit in qoshimcha:
+            amal[kalit] = _son(qoshimcha[kalit])
+
+    # Zargarlik: tosh va sof vazn — chekda va hisobotda ko'rinishi uchun
+    if tosh:
+        amal["tosh"] = tosh
+        amal["sof_miqdor"] = sof_miqdor
+
+    if tur == "otkazma":
+        amal["kirim_kassa"] = kirim_kassa["nom"]
+        amal["kirim_summa"] = kirim_summa
+        amal["kirim_valyuta"] = kirim_kassa["valyuta"].upper()
+
+    with _LOCK:
+        data = _oqi()
+        data["amallar"].append(amal)
+        # yangi tovar kirsa unga darrov barkod biriktiramiz
+        if tur in ("sotuv", "xarid") and amal["tovar"]:
+            jadval = data.setdefault("barkodlar", {})
+            mavjud = {t.lower(): t for t in jadval}
+            kalit = mavjud.get(amal["tovar"].lower())
+            if barkod and not kalit:
+                jadval[amal["tovar"]] = barkod
+            elif not kalit:
+                jadval[amal["tovar"]] = _avto_barkod(amal["tovar"], set(jadval.values()))
+        _yoz(data)
+    return amal
+
+
+def otkazma(chiqim_kassa, kirim_kassa, chiqim_summa, kirim_summa=None, izoh="", sana=""):
+    """Kassalar orasida pul o'tkazish / valyuta ayirboshlash.
+
+    Misol: otkazma("Zayniddin", "Asosiy", 10000, 10135) — 10 000 USDT chiqadi,
+    10 135 USD kiradi. Ayirboshlash foyda emas — aktiv shakli almashadi xolos."""
+    return amal_qoshish("otkazma", kassa_nomi=chiqim_kassa, summa=chiqim_summa,
+                        izoh=izoh, sana=sana,
+                        kirim_kassa=kirim_kassa, kirim_summa=kirim_summa)
+
+
+def amal_ochirish(amal_id):
+    """Xato yozilgan amalni o'chiradi. Qoldiqlar avtomatik qayta hisoblanadi."""
+    amal_id = _matn(amal_id)
+    with _LOCK:
+        data = _oqi()
+        oldin = len(data["amallar"])
+        data["amallar"] = [a for a in data["amallar"] if a.get("id") != amal_id]
+        if len(data["amallar"]) == oldin:
+            return False
+        _yoz(data)
+    return True
+
+
+def sozlama(nom=None, valyuta=None):
+    with _LOCK:
+        data = _oqi()
+        if nom is not None:
+            data["biznes"]["nom"] = _matn(nom)
+        if valyuta is not None:
+            data["biznes"]["valyuta"] = _matn(valyuta) or "UZS"
+        _yoz(data)
+        return dict(data["biznes"])
+
+
+# ────────────────────────────── BARKOD ──────────────────────────────
+# EAN-13 ishlatiladi. 200–299 prefiksi xalqaro standartda "do'kon ichida
+# erkin foydalanish" uchun ajratilgan — ya'ni o'zimiz bemalol beraveramiz,
+# hech qanday ro'yxatdan o'tish kerak emas va tashqi kod bilan to'qnashmaydi.
+
+def _ean13_nazorat(kod12):
+    """EAN-13 ning 13-raqami — qolgan 12 tasidan hisoblanadi."""
+    yigindi = sum(int(c) * (3 if i % 2 else 1) for i, c in enumerate(kod12))
+    return str((10 - yigindi % 10) % 10)
+
+
+def ean13_tekshir(kod):
+    """Berilgan barkod haqiqiy EAN-13 mi (uzunligi va nazorat raqami)."""
+    kod = _matn(kod)
+    if len(kod) != 13 or not kod.isdigit():
+        return False
+    return _ean13_nazorat(kod[:12]) == kod[12]
+
+
+def _avto_barkod(nom, band):
+    """Tovar nomidan barqaror barkod yasaydi.
+
+    hashlib ishlatiladi — Python'ning hash() i har ishga tushganda boshqa
+    qiymat beradi, u bilan barkod o'zgarib ketardi."""
+    xesh = hashlib.sha1(_matn(nom).lower().encode("utf-8")).hexdigest()
+    asos = int(xesh[:12], 16)
+    for surish in range(1000):
+        raqam = str((asos + surish) % 1000000000).zfill(9)
+        kod12 = "200" + raqam
+        kod = kod12 + _ean13_nazorat(kod12)
+        if kod not in band:
+            return kod
+    raise ValueError("Barkod yasab bo'lmadi.")
+
+
+def rasmlar():
+    """Tovar -> rasm jadvali."""
+    with _LOCK:
+        data = _oqi()
+    return dict(data.get("rasmlar") or {})
+
+
+def rasm_biriktirish(tovar, rasm):
+    """Tovarga rasm biriktiradi (fayl yo'li yoki URL)."""
+    nom = _matn(tovar)
+    manzil = _matn(rasm)
+    if not nom:
+        raise ValueError("Tovar nomi bo'sh.")
+    if not manzil:
+        raise ValueError("Rasm manzili bo'sh.")
+    with _LOCK:
+        data = _oqi()
+        jadval = data.setdefault("rasmlar", {})
+        for mavjud in list(jadval):
+            if mavjud.lower() == nom.lower():
+                nom = mavjud
+                break
+        jadval[nom] = manzil
+        _yoz(data)
+        return {"tovar": nom, "rasm": manzil}
+
+
+def rasm_ochirish(tovar):
+    """Tovardan rasmni olib tashlaydi."""
+    nom = _matn(tovar)
+    with _LOCK:
+        data = _oqi()
+        jadval = data.setdefault("rasmlar", {})
+        for mavjud in list(jadval):
+            if mavjud.lower() == nom.lower():
+                del jadval[mavjud]
+                _yoz(data)
+                return True
+        return False
+
+
+def rasmsiz_tovarlar():
+    """Ombordagi rasmi yo'q tovarlar — AI shularga rasm topib beradi."""
+    holat = hisobot()
+    mavjud = {t.lower() for t in (rasmlar() or {})}
+    return [t["nom"] for t in holat["ombor"]["tovarlar"]
+            if t["nom"].lower() not in mavjud]
+
+
+def barkodlar():
+    """Tovar -> barkod jadvali (mavjudlari)."""
+    with _LOCK:
+        data = _oqi()
+    return dict(data.get("barkodlar") or {})
+
+
+def barkod_biriktirish(tovar, barkod=""):
+    """Tovarga barkod biriktiradi. Barkod berilmasa avtomatik yasaladi.
+
+    Qo'lda berilgan kod EAN-13 bo'lishi shart emas — do'konlarda Code128 va
+    ichki kodlar ham uchraydi, shuning uchun faqat bo'sh emasligi va band
+    emasligi tekshiriladi."""
+    nom = _matn(tovar)
+    if not nom:
+        raise ValueError("Tovar nomi bo'sh.")
+    kod = _matn(barkod)
+    with _LOCK:
+        data = _oqi()
+        jadval = data.setdefault("barkodlar", {})
+        band = {v: k for k, v in jadval.items()}
+        if kod:
+            egasi = band.get(kod)
+            if egasi and egasi.lower() != nom.lower():
+                raise ValueError("Bu barkod '%s' tovariga biriktirilgan." % egasi)
+        else:
+            kod = _avto_barkod(nom, set(jadval.values()))
+        # nomni bir xil yozuvda saqlaymiz (katta-kichik harf farqi bo'lmasin)
+        for mavjud in list(jadval):
+            if mavjud.lower() == nom.lower():
+                nom = mavjud
+                break
+        jadval[nom] = kod
+        _yoz(data)
+        return {"tovar": nom, "barkod": kod, "avto": not _matn(barkod),
+                "ean13": ean13_tekshir(kod)}
+
+
+def barkod_ochirish(tovar):
+    """Tovardan barkodni olib tashlaydi."""
+    nom = _matn(tovar)
+    with _LOCK:
+        data = _oqi()
+        jadval = data.setdefault("barkodlar", {})
+        for mavjud in list(jadval):
+            if mavjud.lower() == nom.lower():
+                del jadval[mavjud]
+                _yoz(data)
+                return True
+        return False
+
+
+def barkod_topish(barkod):
+    """Barkod bo'yicha tovarni va uning ombordagi holatini qaytaradi."""
+    kod = _matn(barkod)
+    if not kod:
+        raise ValueError("Barkod bo'sh.")
+    with _LOCK:
+        data = _oqi()
+        jadval = dict(data.get("barkodlar") or {})
+    nom = None
+    for t, k in jadval.items():
+        if k == kod:
+            nom = t
+            break
+    if nom is None:
+        return {"topildi": False, "barkod": kod}
+    holat = hisobot()
+    tovar = next((t for t in holat["ombor"]["tovarlar"] if t["nom"].lower() == nom.lower()), None)
+    return {"topildi": True, "barkod": kod, "tovar": nom,
+            "ombor": tovar or {"nom": nom, "miqdor": 0, "birlik": "dona",
+                               "tan_narx": 0, "sotuv_narx": 0, "qiymat": 0}}
+
+
+# ────────────────────────────── HISOBLASH ──────────────────────────────
+
+def _naqd_tolov(amal):
+    """Sotuv/xarid naqd yoki karta bo'lsa pul harakati bo'ladi; qarz bo'lsa yo'q."""
+    return amal.get("tolov", "naqd") not in ("qarz", "nasiya", "keyin")
+
+
+
+def _taqsimot(amallar, biznes):
+    """Amallarni KASSA va VALYUTA bo'yicha ajratib hisoblaydi.
+
+    Asosiy hisobot hamma narsani bitta songa yig'adi — bu USD va UZS
+    aralashganda ma'nosiz bo'ladi. Shu funksiya har valyutani va har
+    kassani alohida chiqaradi. Asosiy hisobot maydonlari o'zgarmaydi."""
+    asosiy_val = (_matn(biznes.get("valyuta")) or "UZS").upper()
+    royxat = biznes.get("kassalar") or [{"nom": ASOSIY_KASSA, "valyuta": asosiy_val}]
+    kassa_val = {k["nom"]: (k.get("valyuta") or asosiy_val).upper() for k in royxat}
+    asosiy_kassa = biznes.get("asosiy_kassa") or ASOSIY_KASSA
+
+    per_val, per_kassa = {}, {}
+    # ro'yxatdagi kassalar amali bo'lmasa ham ko'rinsin
+    for k in royxat:
+        per_kassa[k["nom"]] = {"valyuta": kassa_val[k["nom"]], "qoldiq": 0.0}
+        per_val.setdefault(kassa_val[k["nom"]], _bosh_valyuta())
+
+    for amal in amallar:
+        qoida = TURLAR.get(amal.get("tur"))
+        if not qoida:
+            continue
+        tur = amal["tur"]
+        knom = _matn(amal.get("kassa_nomi")) or asosiy_kassa
+        val = (_matn(amal.get("valyuta")) or kassa_val.get(knom) or asosiy_val).upper()
+        summa = _son(amal.get("summa"))
+
+        v = per_val.setdefault(val, _bosh_valyuta())
+        k = per_kassa.setdefault(knom, {"valyuta": val, "qoldiq": 0.0})
+
+        if tur == "boshlangich":
+            boshi = _son(amal.get("kassa")) if "kassa" in amal else _son(amal.get("summa"))
+            v["kassa"] += boshi
+            k["qoldiq"] += boshi
+            v["qarzlarim"] += _son(amal.get("qarzim"))
+            v["qarzdorlar"] += _son(amal.get("qarzdor"))
+            continue
+
+        if tur == "otkazma":
+            v["kassa"] -= summa
+            k["qoldiq"] -= summa
+            k2nom = _matn(amal.get("kirim_kassa"))
+            v2nom = (_matn(amal.get("kirim_valyuta")) or kassa_val.get(k2nom) or asosiy_val).upper()
+            ks = _son(amal.get("kirim_summa"))
+            v2 = per_val.setdefault(v2nom, _bosh_valyuta())
+            k2 = per_kassa.setdefault(k2nom, {"valyuta": v2nom, "qoldiq": 0.0})
+            v2["kassa"] += ks
+            k2["qoldiq"] += ks
+            continue
+
+        nasiya = tur in ("sotuv", "xarid") and not _naqd_tolov(amal)
+        if qoida["kassa"] and not nasiya:
+            delta = qoida["kassa"] * summa
+            v["kassa"] += delta
+            k["qoldiq"] += delta
+
+        if tur == "sotuv":
+            v["savdo"] += summa
+            if nasiya:
+                v["qarzdorlar"] += summa
+        elif tur == "xarid":
+            if nasiya:
+                v["qarzlarim"] += summa
+        elif tur == "qarz_berdim":
+            v["qarzdorlar"] += summa
+        elif tur == "qarz_oldim":
+            v["qarzlarim"] += summa
+        elif tur == "qarz_qaytardim":
+            v["qarzlarim"] -= summa
+        elif tur == "qarz_qaytarildi":
+            v["qarzdorlar"] -= summa
+        elif tur == "xarajat":
+            v["xarajat"] += summa
+        elif tur == "kirim":
+            v["kirim"] += summa
+
+    kassalar = [{"nom": n, "valyuta": d["valyuta"], "qoldiq": round(d["qoldiq"], 2)}
+                for n, d in sorted(per_kassa.items())]
+    valyutalar = [{"valyuta": v, **{x: round(y, 2) for x, y in d.items()}}
+                  for v, d in sorted(per_val.items())]
+    return kassalar, valyutalar
+
+
+def _bosh_valyuta():
+    return {"kassa": 0.0, "qarzdorlar": 0.0, "qarzlarim": 0.0,
+            "savdo": 0.0, "xarajat": 0.0, "kirim": 0.0}
+
+
+def kassa_ochish(nom, valyuta=""):
+    """Yangi kassa (hisob) ochadi. Masalan: kassa_ochish("Dollar kassa", "USD")."""
+    nom = _matn(nom)
+    if not nom:
+        raise ValueError("Kassa nomi bo'sh bo'lishi mumkin emas.")
+    with _LOCK:
+        data = _oqi()
+        biznes = data["biznes"]
+        val = (_matn(valyuta) or biznes.get("valyuta") or "UZS").upper()
+        mavjud = biznes.get("kassalar") or []
+        for k in mavjud:
+            if k["nom"].lower() == nom.lower():
+                raise ValueError("'%s' nomli kassa allaqachon bor (%s)." % (k["nom"], k["valyuta"]))
+        mavjud.append({"nom": nom, "valyuta": val})
+        biznes["kassalar"] = mavjud
+        _yoz(data)
+        return {"nom": nom, "valyuta": val, "kassalar": list(mavjud)}
+
+
+def kassa_nomlash(eski_nom, yangi_nom):
+    """Kassa nomini o'zgartiradi.
+
+    Faqat ro'yxatdagi nomni emas, o'sha kassaga yozilgan BARCHA amallarni
+    va kerak bo'lsa asosiy kassa ko'rsatkichini ham yangilaydi — aks holda
+    amallar eski nomga bog'lanib qolib, kassa bo'sh ko'rinadi."""
+    eski = _matn(eski_nom)
+    yangi = _matn(yangi_nom)
+    if not yangi:
+        raise ValueError("Yangi nom bo'sh bo'lishi mumkin emas.")
+    with _LOCK:
+        data = _oqi()
+        _kassalarni_tayyorla(data)
+        biznes = data["biznes"]
+        royxat = biznes["kassalar"]
+
+        nishon = None
+        for k in royxat:
+            if k["nom"].lower() == eski.lower():
+                nishon = k
+                break
+        if nishon is None:
+            raise ValueError("'%s' nomli kassa yo'q. Mavjud: %s" % (
+                eski, ", ".join(k["nom"] for k in royxat)))
+
+        if yangi.lower() != eski.lower():
+            for k in royxat:
+                if k["nom"].lower() == yangi.lower():
+                    raise ValueError("'%s' nomi band — boshqa nom tanlang." % k["nom"])
+
+        oldingi = nishon["nom"]
+        nishon["nom"] = yangi
+
+        if (biznes.get("asosiy_kassa") or "").lower() == oldingi.lower():
+            biznes["asosiy_kassa"] = yangi
+
+        kochdi = 0
+        for amal in data["amallar"]:
+            if (amal.get("kassa_nomi") or "").lower() == oldingi.lower():
+                amal["kassa_nomi"] = yangi
+                kochdi += 1
+
+        _yoz(data)
+        return {"eski": oldingi, "yangi": yangi, "valyuta": nishon["valyuta"],
+                "kochirilgan_amallar": kochdi, "kassalar": list(royxat)}
+
+
+def kassa_ochirish(nom):
+    """Kassani ro'yxatdan olib tashlaydi. Amallari saqlanib qoladi."""
+    nom = _matn(nom)
+    with _LOCK:
+        data = _oqi()
+        biznes = data["biznes"]
+        asosiy = biznes.get("asosiy_kassa") or ASOSIY_KASSA
+        if nom.lower() == asosiy.lower():
+            raise ValueError("Asosiy kassani o'chirib bo'lmaydi.")
+        oldin = len(biznes.get("kassalar") or [])
+        biznes["kassalar"] = [k for k in (biznes.get("kassalar") or [])
+                              if k["nom"].lower() != nom.lower()]
+        if len(biznes["kassalar"]) == oldin:
+            return False
+        _yoz(data)
+        return True
+
+
+def jurnal(limit=1000):
+    """Dashboard uchun xronologik zanjir.
+
+    Har yozuv: qaysi kassa, qancha o'zgardi (+/-) va amaldan KEYIN qoldiq
+    qancha bo'ldi. O'tkazma ikki qator beradi (chiqim va kirim) — shunda
+    har kassaning zanjiri uzilmaydi. Hisob-kitob qoidalari hisobot() bilan
+    bir xil — manba bitta bo'lsin deb shu yerda ham jurnaldan olinadi."""
+    with _LOCK:
+        data = _oqi()
+    biznes = data.get("biznes", {})
+    asosiy_val = (_matn(biznes.get("valyuta")) or "UZS").upper()
+    kassa_val = {k["nom"]: (k.get("valyuta") or asosiy_val).upper()
+                 for k in (biznes.get("kassalar") or [])}
+    asosiy_kassa = biznes.get("asosiy_kassa") or ASOSIY_KASSA
+
+    qoldiq = {}
+    yozuvlar = []
+    for amal in data.get("amallar", []):
+        tur = amal.get("tur")
+        if tur not in TURLAR:
+            continue
+        knom = _matn(amal.get("kassa_nomi")) or asosiy_kassa
+        val = (_matn(amal.get("valyuta")) or kassa_val.get(knom) or asosiy_val).upper()
+        summa = _son(amal.get("summa"))
+
+        qadamlar = []
+        if tur == "boshlangich":
+            qadamlar.append((knom, val, _son(amal.get("kassa"))))
+        elif tur == "otkazma":
+            k2 = _matn(amal.get("kirim_kassa"))
+            v2 = (_matn(amal.get("kirim_valyuta")) or kassa_val.get(k2) or asosiy_val).upper()
+            qadamlar.append((knom, val, -summa))
+            qadamlar.append((k2, v2, _son(amal.get("kirim_summa"))))
+        else:
+            nasiya = tur in ("sotuv", "xarid") and not _naqd_tolov(amal)
+            qoida = TURLAR[tur]
+            delta = qoida["kassa"] * summa if (qoida["kassa"] and not nasiya) else 0.0
+            qadamlar.append((knom, val, delta))
+
+        for k, v, d in qadamlar:
+            qoldiq[k] = qoldiq.get(k, 0.0) + d
+            yozuvlar.append({
+                "id": amal.get("id"),
+                "sana": amal.get("sana"),
+                "tur": tur,
+                "kim": amal.get("kim") or "",
+                "tovar": amal.get("tovar") or "",
+                "miqdor": _son(amal.get("miqdor")),
+                "birlik": amal.get("birlik") or "",
+                "izoh": amal.get("izoh") or "",
+                "tolov": amal.get("tolov") or "",
+                "kassa": k,
+                "valyuta": v,
+                "ozgarish": round(d, 2),
+                "qoldiq": round(qoldiq[k], 2),
+            })
+    return yozuvlar[-max(1, int(limit)):]
+
+
+def kassalar():
+    """Ro'yxatdagi barcha kassalar."""
+    with _LOCK:
+        data = _oqi()
+    return list(data["biznes"].get("kassalar") or [])
+
+
+def hisobot():
+    """Butun jurnalni bittada hisoblab, joriy holatni qaytaradi."""
+    with _LOCK:
+        data = _oqi()
+    amallar = data.get("amallar", [])
+
+    kassa = 0.0
+    qarzdorlar = {}
+    qarzlarim = {}
+    ombor = {}
+    savdo = 0.0        # sotuvdan tushum (nasiya ham kiradi)
+    tannarx_jami = 0.0
+    xarajat = 0.0
+    boshqa_kirim = 0.0
+
+    for amal in amallar:
+        tur = amal.get("tur")
+        qoida = TURLAR.get(tur)
+        if not qoida:
+            continue
+        summa = _son(amal.get("summa"))
+        miqdor = _son(amal.get("miqdor"))
+        kim = amal.get("kim") or "—"
+        tovar = amal.get("tovar")
+
+        if tur == "boshlangich":
+            boshi = _son(amal.get("kassa")) if "kassa" in amal else _son(amal.get("summa"))
+            kassa += boshi
+            if _son(amal.get("qarzim")):
+                qarzlarim[kim] = qarzlarim.get(kim, 0.0) + _son(amal.get("qarzim"))
+            if _son(amal.get("qarzdor")):
+                qarzdorlar[kim] = qarzdorlar.get(kim, 0.0) + _son(amal.get("qarzdor"))
+            if tovar and miqdor:
+                qator = ombor.setdefault(tovar, {"miqdor": 0.0, "birlik": amal.get("birlik") or "dona",
+                                                 "tan_narx": 0.0, "sotuv_narx": 0.0, "lokatsiyalar": {}})
+                qator["miqdor"] += miqdor
+                lok = _matn(amal.get("ga_ombor") or amal.get("dan_ombor") or "Asosiy")
+                qator["lokatsiyalar"][lok] = qator["lokatsiyalar"].get(lok, 0.0) + miqdor
+                if _son(amal.get("tan_narx")):
+                    qator["tan_narx"] = _son(amal.get("tan_narx"))
+            continue
+
+        if tur == "otkazma":
+            # chiqim ayriladi, kirim qo'shiladi — umumiy son sof farqni oladi
+            kassa += _son(amal.get("kirim_summa")) - summa
+            continue
+
+        if tur == "ombor_otkazma":
+            if tovar and miqdor:
+                dan_lok = _matn(amal.get("dan_ombor") or "Asosiy")
+                ga_lok = _matn(amal.get("ga_ombor") or amal.get("kim") or "Kuryer")
+                qator = ombor.setdefault(tovar, {"miqdor": 0.0, "birlik": amal.get("birlik") or "dona",
+                                                 "tan_narx": 0.0, "sotuv_narx": 0.0, "lokatsiyalar": {}})
+                qator["lokatsiyalar"][dan_lok] = qator["lokatsiyalar"].get(dan_lok, 0.0) - miqdor
+                qator["lokatsiyalar"][ga_lok] = qator["lokatsiyalar"].get(ga_lok, 0.0) + miqdor
+            continue
+
+        nasiya = tur in ("sotuv", "xarid") and not _naqd_tolov(amal)
+
+        if qoida["kassa"] and not nasiya:
+            kassa += qoida["kassa"] * summa
+
+        if tur == "sotuv":
+            savdo += summa
+            if tovar:
+                qator = ombor.setdefault(tovar, {"miqdor": 0.0, "birlik": amal.get("birlik") or "dona",
+                                                 "tan_narx": 0.0, "sotuv_narx": 0.0, "lokatsiyalar": {}})
+                qator["miqdor"] -= miqdor
+                lok = _matn(amal.get("dan_ombor") or "Asosiy")
+                qator["lokatsiyalar"][lok] = qator["lokatsiyalar"].get(lok, 0.0) - miqdor
+                qator["sotuv_narx"] = _son(amal.get("narx")) or qator["sotuv_narx"]
+                # Tannarx ko'rsatilmagan bo'lsa omborga kirgan narxdan olamiz.
+                birlik_tannarx = _son(amal.get("tan_narx")) or qator["tan_narx"]
+                tannarx_jami += birlik_tannarx * miqdor
+            else:
+                tannarx_jami += _son(amal.get("tan_narx")) * (miqdor or 1)
+            if nasiya:
+                qarzdorlar[kim] = qarzdorlar.get(kim, 0.0) + summa
+
+        elif tur == "xarid":
+            if tovar:
+                qator = ombor.setdefault(tovar, {"miqdor": 0.0, "birlik": amal.get("birlik") or "dona",
+                                                 "tan_narx": 0.0, "sotuv_narx": 0.0, "lokatsiyalar": {}})
+                qator["miqdor"] += miqdor
+                lok = _matn(amal.get("ga_ombor") or "Asosiy")
+                qator["lokatsiyalar"][lok] = qator["lokatsiyalar"].get(lok, 0.0) + miqdor
+                if _son(amal.get("narx")):
+                    qator["tan_narx"] = _son(amal.get("narx"))
+                if amal.get("birlik"):
+                    qator["birlik"] = amal["birlik"]
+            if nasiya:
+                qarzlarim[kim] = qarzlarim.get(kim, 0.0) + summa
+
+        elif tur == "qarz_berdim":
+            qarzdorlar[kim] = qarzdorlar.get(kim, 0.0) + summa
+        elif tur == "qarz_oldim":
+            qarzlarim[kim] = qarzlarim.get(kim, 0.0) + summa
+        elif tur == "qarz_qaytardim":
+            qarzlarim[kim] = qarzlarim.get(kim, 0.0) - summa
+        elif tur == "qarz_qaytarildi":
+            qarzdorlar[kim] = qarzdorlar.get(kim, 0.0) - summa
+        elif tur == "xarajat":
+            xarajat += summa
+        elif tur == "kirim":
+            boshqa_kirim += summa
+
+    _kassalar_royxati, _valyutalar_royxati = _taqsimot(amallar, data.get("biznes", {}))
+
+    def _tozala(jadval):
+        # 1 so'mdan kichik qoldiqni yopilgan deb hisoblaymiz (yaxlitlash chiqindisi)
+        return [{"kim": k, "summa": round(v, 2)} for k, v in
+                sorted(jadval.items(), key=lambda kv: -kv[1]) if round(v, 2) >= 1]
+
+    # Barkodlar: biriktirilmagan tovarga avtomatik EAN-13 yasab qo'yamiz,
+    # shunda skanerlash birinchi kundan ishlaydi. Bir marta yasalgach
+    # saqlanadi — keyingi hisobotlarda o'sha kod qaytadi.
+    jadval = data.setdefault("barkodlar", {})
+    past = {t.lower(): k for t, k in jadval.items()}
+    rasm_jadval = {t.lower(): r for t, r in (data.get("rasmlar") or {}).items()}
+    yangi_barkod = False
+
+    tovarlar = []
+    lokatsiyalar_map = {}
+    for nom, q in sorted(ombor.items()):
+        if round(q["miqdor"], 3) == 0 and not q["tan_narx"]:
+            continue
+        kod = past.get(nom.lower())
+        if not kod:
+            kod = _avto_barkod(nom, set(jadval.values()))
+            jadval[nom] = kod
+            past[nom.lower()] = kod
+            yangi_barkod = True
+        tov_loks = []
+        for lok_nomi, lok_m in sorted(q.get("lokatsiyalar", {}).items()):
+            if round(lok_m, 3) != 0:
+                tov_loks.append({"lokatsiya": lok_nomi, "miqdor": round(lok_m, 3)})
+                lm = lokatsiyalar_map.setdefault(lok_nomi, {"nom": lok_nomi, "jami_qiymat": 0.0, "tovarlar": []})
+                l_qiy = round(lok_m * q["tan_narx"], 2)
+                lm["jami_qiymat"] = round(lm["jami_qiymat"] + l_qiy, 2)
+                lm["tovarlar"].append({
+                    "nom": nom,
+                    "miqdor": round(lok_m, 3),
+                    "birlik": q["birlik"],
+                    "tan_narx": round(q["tan_narx"], 2),
+                    "qiymat": l_qiy,
+                })
+        tovarlar.append({
+            "nom": nom,
+            "miqdor": round(q["miqdor"], 3),
+            "birlik": q["birlik"],
+            "tan_narx": round(q["tan_narx"], 2),
+            "sotuv_narx": round(q["sotuv_narx"], 2),
+            "qiymat": round(q["miqdor"] * q["tan_narx"], 2),
+            "barkod": kod,
+            "rasm": rasm_jadval.get(nom.lower(), ""),
+            "lokatsiyalar": tov_loks,
+        })
+
+    if yangi_barkod:
+        with _LOCK:
+            joriy = _oqi()
+            joriy.setdefault("barkodlar", {}).update(
+                {t: k for t, k in jadval.items()})
+            _yoz(joriy)
+
+    qarzdor_royxat = _tozala(qarzdorlar)
+    qarzim_royxat = _tozala(qarzlarim)
+    yalpi = savdo - tannarx_jami
+    sof = yalpi - xarajat
+
+    return {
+        "biznes": data.get("biznes", {}),
+        "kassa": round(kassa, 2),
+        "ombor": {
+            "tur_soni": len(tovarlar),
+            "jami_qiymat": round(sum(t["qiymat"] for t in tovarlar), 2),
+            "tovarlar": tovarlar,
+            "lokatsiyalar": list(lokatsiyalar_map.values()),
+        },
+        "qarzdorlar": {
+            "jami": round(sum(q["summa"] for q in qarzdor_royxat), 2),
+            "odamlar": qarzdor_royxat,
+        },
+        "qarzlarim": {
+            "jami": round(sum(q["summa"] for q in qarzim_royxat), 2),
+            "odamlar": qarzim_royxat,
+        },
+        "foyda": {
+            "savdo": round(savdo, 2),
+            "tannarx": round(tannarx_jami, 2),
+            "yalpi": round(yalpi, 2),
+            "boshqa_kirim": round(boshqa_kirim, 2),
+            "xarajat": round(xarajat, 2),
+            "sof": round(sof, 2),
+        },
+        "sof_balans": round(kassa + sum(t["qiymat"] for t in tovarlar)
+                            + sum(q["summa"] for q in qarzdor_royxat)
+                            - sum(q["summa"] for q in qarzim_royxat), 2),
+        "amallar_soni": len(amallar),
+        "kassalar": _kassalar_royxati,
+        "valyutalar": _valyutalar_royxati,
+    }
+
+
+def amallar(limit=30, kim="", tur="", tovar=""):
+    """Oxirgi amallarni qaytaradi (yangisi birinchi), ixtiyoriy filtr bilan."""
+    with _LOCK:
+        data = _oqi()
+    natija = data.get("amallar", [])
+    if kim:
+        past = kim.lower()
+        natija = [a for a in natija if past in (a.get("kim") or "").lower()]
+    if tur:
+        natija = [a for a in natija if a.get("tur") == tur.lower()]
+    if tovar:
+        past = tovar.lower()
+        natija = [a for a in natija if past in (a.get("tovar") or "").lower()]
+    limit = max(1, min(int(limit or 30), 500))
+    return list(reversed(natija))[:limit]

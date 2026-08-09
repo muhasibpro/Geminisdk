@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 320" width="100%" height="100%">
+  <defs>
+    <linearGradient id="fullBlueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8" />
+      <stop offset="50%" stop-color="#2563EB" />
+      <stop offset="100%" stop-color="#1D4ED8" />
+    </linearGradient>
+
+    <linearGradient id="fullCyanGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#06B6D4" />
+      <stop offset="60%" stop-color="#10B981" />
+      <stop offset="100%" stop-color="#34D399" />
+    </linearGradient>
+
+    <linearGradient id="fullGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FACC15" />
+      <stop offset="100%" stop-color="#F59E0B" />
+    </linearGradient>
+
+    <filter id="fullGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <g transform="translate(40, 20)">
+    <!-- ICON EMBLEM (280x280 scale) -->
+    <g transform="scale(0.55)">
+      <!-- Left Stem & Barcode Nodes -->
+      <path d="M 100 130 L 100 380 L 145 380 L 145 200 L 100 130 Z" fill="url(#fullBlueGrad)" />
+      <rect x="60" y="275" width="65" height="12" rx="6" fill="url(#fullBlueGrad)" />
+      <circle cx="50" cy="281" r="7" fill="#38BDF8" />
+      <rect x="75" y="305" width="50" height="10" rx="5" fill="url(#fullBlueGrad)" opacity="0.85" />
+      <circle cx="65" cy="310" r="5" fill="#38BDF8" opacity="0.85" />
+
+      <!-- Center M -->
+      <path d="M 145 200 L 256 340 L 320 250 L 270 200 L 256 220 L 180 130 Z" fill="url(#fullBlueGrad)" />
+
+      <!-- Right Leg & Revenue Arrow -->
+      <path d="M 367 250 L 367 380 L 412 380 L 412 180 Z" fill="url(#fullCyanGrad)" />
+      <path d="M 185 340 L 390 120 L 340 120 L 340 85 L 445 85 L 445 190 L 410 190 L 410 140 L 215 355 Z" fill="url(#fullCyanGrad)" filter="url(#fullGlow)" />
+      
+      <path d="M 230 315 L 390 155" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" opacity="0.75" />
+      <circle cx="280" cy="265" r="5" fill="#FFFFFF" opacity="0.9" />
+      <circle cx="340" cy="205" r="5" fill="#FFFFFF" opacity="0.9" />
+      <path d="M 435 70 L 440 55 L 455 50 L 440 45 L 435 30 L 430 45 L 415 50 L 430 55 Z" fill="url(#fullGoldGrad)" />
+    </g>
+
+    <!-- TYPOGRAPHY SECTION -->
+    <!-- MUHASIB Text -->
+    <text x="320" y="165" font-family="'Outfit', 'Plus Jakarta Sans', 'Segoe UI', sans-serif" font-size="110" font-weight="900" letter-spacing="4" fill="#FFFFFF">
+      MUHASIB
+    </text>
+
+    <!-- POS Badge -->
+    <rect x="850" y="75" width="220" height="95" rx="24" fill="url(#fullCyanGrad)" />
+    <text x="960" y="142" font-family="'Outfit', 'Plus Jakarta Sans', sans-serif" font-size="62" font-weight="900" fill="#0F172A" text-anchor="middle" letter-spacing="2">
+      POS
+    </text>
+
+    <!-- Subtitle Line -->
+    <text x="325" y="225" font-family="'Space Grotesk', 'JetBrains Mono', sans-serif" font-size="34" font-weight="600" letter-spacing="8" fill="#94A3B8">
+      SMART KASSA &amp; BIZNES TIZIMI
+    </text>
+
+    <!-- Decorative Accent Line -->
+    <line x1="325" y1="250" x2="1070" y2="250" stroke="url(#fullBlueGrad)" stroke-width="4" stroke-linecap="round" opacity="0.6" />
+  </g>
+</svg>

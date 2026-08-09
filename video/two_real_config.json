@@ -1,0 +1,68 @@
+{
+  "w": 1376,
+  "h": 768,
+  "duration": 13.04,
+  "scenes": [
+    {
+      "bg": "layers/real_1_bg.jpg",
+      "subject": "layers/real_1_subject.png",
+      "in": 0.0,
+      "out": 6.055999999999999,
+      "motion": "walk",
+      "hipY": 529,
+      "splitX": 855,
+      "bbox": [
+        566,
+        323,
+        201,
+        368
+      ],
+      "legB": [
+        624,
+        529
+      ],
+      "legF": [
+        652,
+        529
+      ],
+      "from": -470,
+      "walkDur": 3.6,
+      "push": 0.07
+    },
+    {
+      "bg": "layers/real_2_bg.jpg",
+      "subject": "layers/real_2_subject.png",
+      "in": 5.655999999999999,
+      "out": 13.04,
+      "motion": "lean",
+      "bbox": [
+        434,
+        55,
+        629,
+        634
+      ],
+      "push": 0.08
+    }
+  ],
+  "texts": {
+    "price": "TEZKOR SKANER",
+    "shout": "MUHASIB — bir soniyada!",
+    "priceAt": [
+      1.2,
+      5.755999999999999
+    ],
+    "shoutAt": [
+      6.055999999999999,
+      10.54
+    ],
+    "cardAt": [
+      6.255999999999999,
+      11.239999999999998
+    ],
+    "scanAt": [
+      6.855999999999999,
+      8.256
+    ],
+    "endAt": 11.04
+  }
+}

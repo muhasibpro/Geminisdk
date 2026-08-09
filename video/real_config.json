@@ -1,0 +1,52 @@
+{
+  "w": 1376,
+  "h": 768,
+  "bg": "layers/scene_1_bg.jpg",
+  "subject": "layers/scene_1_subject.png",
+  "bbox": [
+    547,
+    130,
+    400,
+    600
+  ],
+  "hipY": 466,
+  "splitX": 700,
+  "legBackPivot": [
+    662,
+    466
+  ],
+  "legFrontPivot": [
+    719,
+    466
+  ],
+  "walkFrom": -470,
+  "walkIn": [
+    0.5,
+    4.3
+  ],
+  "glow": [
+    962,
+    345,
+    210
+  ],
+  "glowAt": [
+    4.1,
+    5.3
+  ],
+  "cardAt": [
+    5.4,
+    12.49
+  ],
+  "scanAt": [
+    5.9,
+    7.1
+  ],
+  "endAt": [
+    9.5,
+    14.09
+  ],
+  "duration": 14.09,
+  "item": "Turbo Spark energetik",
+  "price": "25 000",
+  "total": "25 000 so'm"
+}

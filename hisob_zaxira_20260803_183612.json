@@ -1,0 +1,87 @@
+{
+ "versiya": 2,
+ "biznes": {
+  "nom": "",
+  "valyuta": "USD",
+  "kassalar": [
+   {
+    "nom": "Asosiy",
+    "valyuta": "USD"
+   },
+   {
+    "nom": "Zayniddin",
+    "valyuta": "USDT"
+   }
+  ],
+  "asosiy_kassa": "Asosiy"
+ },
+ "amallar": [
+  {
+   "id": "78d5a46253",
+   "sana": "2026-08-03T17:43:23",
+   "tur": "kirim",
+   "kim": "Zayniddin",
+   "tovar": "",
+   "miqdor": 0.0,
+   "birlik": "dona",
+   "narx": 0.0,
+   "summa": 10000.0,
+   "tan_narx": 0.0,
+   "tolov": "naqd",
+   "izoh": "10000 USDT Zayniddin kassasiga kiritildi",
+   "kassa_nomi": "Zayniddin",
+   "valyuta": "USDT"
+  },
+  {
+   "id": "8b05ad0f2c",
+   "sana": "2026-08-03T17:56:00",
+   "tur": "otkazma",
+   "kim": "",
+   "tovar": "",
+   "miqdor": 0.0,
+   "birlik": "dona",
+   "narx": 0.0,
+   "summa": 10000.0,
+   "tan_narx": 0.0,
+   "tolov": "naqd",
+   "izoh": "10 000 USDT sotildi — 10 135 USD tushdi (kurs 1.0135)",
+   "kassa_nomi": "Zayniddin",
+   "valyuta": "USDT",
+   "kirim_kassa": "Asosiy",
+   "kirim_summa": 10135.0,
+   "kirim_valyuta": "USD"
+  },
+  {
+   "id": "5f027ea493",
+   "sana": "2026-08-03T18:20:30",
+   "tur": "xarid",
+   "kim": "",
+   "tovar": "tovar",
+   "miqdor": 10.0,
+   "birlik": "dona",
+   "narx": 0.0,
+   "summa": 0.0,
+   "tan_narx": 0.0,
+   "tolov": "naqd",
+   "izoh": "",
+   "kassa_nomi": "Asosiy",
+   "valyuta": "USD"
+  },
+  {
+   "id": "15a51936e0",
+   "sana": "2026-08-03T18:31:00",
+   "tur": "xarid",
+   "kim": "",
+   "tovar": "tovar",
+   "miqdor": 1.0,
+   "birlik": "dona",
+   "narx": 0.0,
+   "summa": 0.0,
+   "tan_narx": 0.0,
+   "tolov": "naqd",
+   "izoh": "",
+   "kassa_nomi": "Asosiy",
+   "valyuta": "USD"
+  }
+ ]
+}

@@ -1,0 +1,269 @@
+<h1>📈 Nafa va Foyda Tahlili</h1>
+
+<style>
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    color: #1e293b;
+    margin: 0;
+    padding: 0;
+  }
+  .karta {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
+  }
+  .grid-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+  }
+  .stat-card {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 16px;
+    border-left: 4px solid #1a73e8;
+  }
+  .stat-title {
+    font-size: 12px;
+    color: #64748b;
+    font-weight: 600;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+  .stat-val {
+    font-size: 22px;
+    font-weight: 700;
+    color: #0f172a;
+  }
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 12px;
+  }
+  label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #475569;
+    display: block;
+    margin-bottom: 4px;
+  }
+  input, select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 14px;
+    box-sizing: border-box;
+  }
+  input:focus, select:focus {
+    outline: none;
+    border-color: #1a73e8;
+  }
+  button {
+    background: #1a73e8;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  button:hover {
+    background: #1557b0;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+  th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 14px;
+  }
+  th {
+    background: #f8fafc;
+    color: #475569;
+    font-weight: 600;
+  }
+  .badge-green {
+    background: #dcfce7;
+    color: #15803d;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-weight: 600;
+  }
+  .badge-blue {
+    background: #e0f2fe;
+    color: #0369a1;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-weight: 600;
+  }
+</style>
+
+<div class="karta">
+  <div class="grid-stats">
+    <div class="stat-card" style="border-color:#1a73e8">
+      <div class="stat-title">Jami Sotuv Tushumi</div>
+      <div id="stat-sotuv" class="stat-val" style="color:#1a73e8">0 so'm</div>
+    </div>
+    <div class="stat-card" style="border-color:#eab308">
+      <div class="stat-title">Jami Tan Narxi (Maya)</div>
+      <div id="stat-tan" class="stat-val" style="color:#ca8a04">0 so'm</div>
+    </div>
+    <div class="stat-card" style="border-color:#16a34a">
+      <div class="stat-title">Jami Sof Nafa (Foyda)</div>
+      <div id="stat-nafa" class="stat-val" style="color:#16a34a">0 so'm</div>
+    </div>
+    <div class="stat-card" style="border-color:#0284c7">
+      <div class="stat-title">O'rtacha Marja (%)</div>
+      <div id="stat-marja" class="stat-val" style="color:#0284c7">0%</div>
+    </div>
+  </div>
+</div>
+
+<div class="karta">
+  <h3>⚡ Yangi Nafa (Foyda Margin) Yozuvini Qo'shish</h3>
+  <form id="nafaForm" onsubmit="saqlaNafa(event)">
+    <div class="form-grid">
+      <div>
+        <label>Mahsulot / Buyum nomi:</label>
+        <input type="text" id="mahsulot_nomi" placeholder="Masalan: Tilla Uzuk 585" required>
+      </div>
+      <div>
+        <label>Tan narxi (Maya, so'm):</label>
+        <input type="number" id="tan_narxi" placeholder="1 000 000" required oninput="hisoblaNafaMargin()">
+      </div>
+      <div>
+        <label>Sotish narxi (so'm):</label>
+        <input type="number" id="sotish_narxi" placeholder="1 300 000" required oninput="hisoblaNafaMargin()">
+      </div>
+      <div>
+        <label>Sof Nafa (so'm):</label>
+        <input type="text" id="nafa_summa" readonly style="background:#f1f5f9;font-weight:bold;color:#16a34a">
+      </div>
+      <div>
+        <label>Marja foizi (%):</label>
+        <input type="text" id="marja_foiz" readonly style="background:#f1f5f9;font-weight:bold;color:#0284c7">
+      </div>
+      <div>
+        <label>Kategoriya:</label>
+        <select id="kategoriya">
+          <option value="Tilla">Tilla</option>
+          <option value="Zargarlik">Zargarlik</option>
+          <option value="Kumush">Kumush</option>
+          <option value="Umumiy Savdo">Umumiy Savdo</option>
+        </select>
+      </div>
+      <div style="grid-column: 1 / -1">
+        <label>Izoh:</label>
+        <input type="text" id="izoh" placeholder="Qo'shimcha izohlar...">
+      </div>
+    </div>
+    <div style="margin-top:15px">
+      <button type="submit" style="width:100%;padding:12px;font-size:15px">+ Nafa Yozuvini Saqlash</button>
+    </div>
+  </form>
+</div>
+
+<div class="karta">
+  <h3>📋 Nafa va Foyda Daftari</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Sana</th>
+        <th>Mahsulot</th>
+        <th>Kategoriya</th>
+        <th>Tan Narxi</th>
+        <th>Sotish Narxi</th>
+        <th>Sof Nafa</th>
+        <th>Marja %</th>
+        <th>Izoh</th>
+        <th>Amal</th>
+      </tr>
+    </thead>
+    <tbody id="nafaJadval"></tbody>
+  </table>
+</div>
+
+<script>
+function hisoblaNafaMargin() {
+  const tan = parseFloat(document.getElementById('tan_narxi').value) || 0;
+  const sot = parseFloat(document.getElementById('sotish_narxi').value) || 0;
+  const nafa = sot - tan;
+  const foiz = tan > 0 ? ((nafa / tan) * 100).toFixed(2) : 0;
+
+  document.getElementById('nafa_summa').value = pul(nafa) + " so'm";
+  document.getElementById('marja_foiz').value = foiz + " %";
+}
+
+async function yuklaNafa() {
+  const rows = await sql("SELECT * FROM nafa_hisob ORDER BY id DESC");
+  let totalSotuv = 0, totalTan = 0, totalNafa = 0;
+  let html = '';
+
+  for (let r of rows) {
+    totalSotuv += r.sotish_narxi;
+    totalTan += r.tan_narxi;
+    totalNafa += r.nafa_summa;
+
+    html += `<tr>
+      <td>${r.sana}</td>
+      <td><b>${r.mahsulot_nomi}</b></td>
+      <td><span class="badge-blue">${r.kategoriya || 'Savdo'}</span></td>
+      <td>${pul(r.tan_narxi)} so'm</td>
+      <td>${pul(r.sotish_narxi)} so'm</td>
+      <td><span class="badge-green">+ ${pul(r.nafa_summa)} so'm</span></td>
+      <td><b>${r.marja_foiz || 0}%</b></td>
+      <td>${r.izoh || ''}</td>
+      <td><button onclick="ochirNafa(${r.id})" style="background:#ef4444;padding:4px 8px;font-size:12px">❌</button></td>
+    </tr>`;
+  }
+
+  const avgMarja = totalTan > 0 ? ((totalNafa / totalTan) * 100).toFixed(2) : 0;
+
+  document.getElementById('stat-sotuv').innerText = pul(totalSotuv) + " so'm";
+  document.getElementById('stat-tan').innerText = pul(totalTan) + " so'm";
+  document.getElementById('stat-nafa').innerText = pul(totalNafa) + " so'm";
+  document.getElementById('stat-marja').innerText = avgMarja + " %";
+
+  document.getElementById('nafaJadval').innerHTML = html || '<tr><td colspan="9">Hali nafa yozuvlari yo'q</td></tr>';
+}
+
+async function saqlaNafa(e) {
+  e.preventDefault();
+  const nom = document.getElementById('mahsulot_nomi').value;
+  const tan = parseFloat(document.getElementById('tan_narxi').value) || 0;
+  const sot = parseFloat(document.getElementById('sotish_narxi').value) || 0;
+  const nafa = sot - tan;
+  const foiz = tan > 0 ? parseFloat(((nafa / tan) * 100).toFixed(2)) : 0;
+  const kat = document.getElementById('kategoriya').value;
+  const iz = document.getElementById('izoh').value;
+  const now = bugun() + ' ' + new Date().toTimeString().split(' ')[0].substring(0,5);
+
+  await exec("INSERT INTO nafa_hisob (sana, mahsulot_nomi, tan_narxi, sotish_narxi, nafa_summa, marja_foiz, kategoriya, izoh) VALUES (?,?,?,?,?,?,?,?)",
+    [now, nom, tan, sot, nafa, foiz, kat, iz]);
+
+  document.getElementById('mahsulot_nomi').value = '';
+  document.getElementById('tan_narxi').value = '';
+  document.getElementById('sotish_narxi').value = '';
+  document.getElementById('nafa_summa').value = '';
+  document.getElementById('marja_foiz').value = '';
+  document.getElementById('izoh').value = '';
+  yuklaNafa();
+}
+
+async function ochirNafa(id) {
+  if (confirm("Ushbu nafa yozuvini o'chirmoqchimisiz?")) {
+    await exec("DELETE FROM nafa_hisob WHERE id=?", [id]);
+    yuklaNafa();
+  }
+}
+
+yuklaNafa();
+</script>

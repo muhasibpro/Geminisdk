@@ -1,0 +1,135 @@
+<h1>⚖️ Tilla Pereshot & Hisob-kitobi (585 / 750 / 999 Proba)</h1>
+<div class="karta" style="background:#fef3c7;border-color:#fde68a;color:#78350f">
+  💡 <b>Tilla pereshot formulasi:</b> Toza tilla (999 proba) = Og'irlik × (Proba / 1000). <br>
+  Masalan: 10 gramm 585 proba tilla = 10 × 0.585 = 5.85 gramm toza (999) tilla bo'ladi.
+</div>
+
+<div class="karta">
+  <h3>⚡ Yangi Tilla Buyum Pereshot Qilish va Saqlash</h3>
+  <form id="tillaForm" onsubmit="saqlaTilla(event)" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px">
+    <div>
+      <label style="font-size:12px;font-weight:bold;color:#4b5563">Buyum nomi:</label>
+      <input type="text" id="buyum_nomi" placeholder="Zanjir, Uzuk..." required style="width:100%">
+    </div>
+    <div>
+      <label style="font-size:12px;font-weight:bold;color:#4b5563">Og'irligi (gramm):</label>
+      <input type="number" step="0.01" id="ogirligi_g" placeholder="10.5" required oninput="hisoblaPereshot()" style="width:100%">
+    </div>
+    <div>
+      <label style="font-size:12px;font-weight:bold;color:#4b5563">Proba:</label>
+      <select id="proba" onchange="hisoblaPereshot()" style="width:100%">
+        <option value="585">585 Proba (58.5%)</option>
+        <option value="750">750 Proba (75.0%)</option>
+        <option value="999">999 Proba (Toza 100%)</option>
+        <option value="375">375 Proba (37.5%)</option>
+        <option value="583">583 Proba (58.3%)</option>
+      </select>
+    </div>
+    <div>
+      <label style="font-size:12px;font-weight:bold;color:#4b5563">Gramm narxi (USD $):</label>
+      <input type="number" step="0.1" id="gramm_narxi_usd" value="65.0" oninput="hisoblaPereshot()" style="width:100%">
+    </div>
+    <div>
+      <label style="font-size:12px;font-weight:bold;color:#4b5563">Toza tilla (999g):</label>
+      <input type="text" id="toza_tilla_g" readonly style="background:#f1f5f9;font-weight:bold;color:#b45309;width:100%">
+    </div>
+    <div>
+      <label style="font-size:12px;font-weight:bold;color:#4b5563">Jami Qiymati ($):</label>
+      <input type="text" id="jami_summa_usd" readonly style="background:#f1f5f9;font-weight:bold;color:#15803d;width:100%">
+    </div>
+    <div style="grid-column:1 / -1">
+      <input type="text" id="tilla_izoh" placeholder="Izoh..." style="width:100%">
+    </div>
+    <div style="grid-column:1 / -1">
+      <button type="submit" style="width:100%;background:#d97706;padding:12px;font-size:16px">+ Bazaga Saqlash</button>
+    </div>
+  </form>
+</div>
+
+<div class="karta">
+  <h3>🏆 Saqlangan Tilla Pereshotlar Bazasi</h3>
+  <table>
+    <thead>
+      <tr><th>Sana</th><th>Buyum</th><th>Og'irlik</th><th>Proba</th><th>Toza Tilla (999)</th><th>$ / Gram</th><th>Jami $</th><th>Izoh</th><th>O'chirish</th></tr>
+    </thead>
+    <tbody id="tillaJadval"></tbody>
+  </table>
+</div>
+
+<script>
+function hisoblaPereshot(){
+  const g = parseFloat(document.getElementById('ogirligi_g').value) || 0;
+  const p = parseInt(document.getElementById('proba').value) || 585;
+  const px = parseFloat(document.getElementById('gramm_narxi_usd').value) || 0;
+
+  const toza = g * (p / 1000.0);
+  const jami = toza * px;
+
+  document.getElementById('toza_tilla_g').value = toza.toFixed(3) + " g";
+  document.getElementById('jami_summa_usd').value = "$ " + pul(jami);
+}
+
+async function yuklaTilla(){
+  const rows = await sql("SELECT * FROM tilla_hisob ORDER BY id DESC");
+  let html = '';
+  let jamiOg = 0, jamiToza = 0, jamiUsd = 0;
+
+  for(let r of rows){
+    jamiOg += r.ogirligi_g;
+    jamiToza += r.toza_tilla_g;
+    jamiUsd += (r.jami_summa_usd || 0);
+    html += `<tr>
+      <td>${r.sana}</td>
+      <td><b>${r.buyum_nomi}</b></td>
+      <td>${r.ogirligi_g} g</td>
+      <td><span style="background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:6px;font-weight:bold">${r.proba}</span></td>
+      <td><b style="color:#b45309">${r.toza_tilla_g.toFixed(3)} g</b></td>
+      <td>$ ${r.gramm_narxi_usd || 0}</td>
+      <td><b style="color:#15803d">$ ${pul(r.jami_summa_usd || 0)}</b></td>
+      <td>${r.izoh || ''}</td>
+      <td><button onclick="ochirTilla(${r.id})" style="background:#ef4444;padding:4px 8px;font-size:12px">❌</button></td>
+    </tr>`;
+  }
+
+  html += `<tr style="background:#f8fafc;font-weight:bold">
+    <td colspan="2">JAMI:</td>
+    <td>${jamiOg.toFixed(2)} g</td>
+    <td>-</td>
+    <td><b style="color:#b45309">${jamiToza.toFixed(3)} g</b></td>
+    <td>-</td>
+    <td><b style="color:#15803d">$ ${pul(jamiUsd)}</b></td>
+    <td colspan="2"></td>
+  </tr>`;
+
+  document.getElementById('tillaJadval').innerHTML = html;
+}
+
+async function saqlaTilla(e){
+  e.preventDefault();
+  const nom = document.getElementById('buyum_nomi').value;
+  const og = parseFloat(document.getElementById('ogirligi_g').value) || 0;
+  const pr = parseInt(document.getElementById('proba').value) || 585;
+  const px = parseFloat(document.getElementById('gramm_narxi_usd').value) || 0;
+  const toza = og * (pr / 1000.0);
+  const jami = toza * px;
+  const iz = document.getElementById('tilla_izoh').value;
+  const s = bugun();
+
+  await exec("INSERT INTO tilla_hisob(sana,buyum_nomi,ogirligi_g,proba,toza_tilla_g,gramm_narxi_usd,jami_summa_usd,izoh) VALUES(?,?,?,?,?,?,?,?)",
+    [s, nom, og, pr, toza, px, jami, iz]);
+
+  document.getElementById('buyum_nomi').value = '';
+  document.getElementById('ogirligi_g').value = '';
+  document.getElementById('tilla_izoh').value = '';
+  yuklaTilla();
+}
+
+async function ochirTilla(id){
+  if(confirm("Ushbu tilla yozuvini o'chirmoqchimisiz?")){
+    await exec("DELETE FROM tilla_hisob WHERE id=?", [id]);
+    yuklaTilla();
+  }
+}
+
+yuklaTilla();
+</script>

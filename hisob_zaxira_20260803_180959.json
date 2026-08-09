@@ -1,0 +1,68 @@
+{
+ "versiya": 2,
+ "biznes": {
+  "nom": "",
+  "valyuta": "USD",
+  "kassalar": [
+   {
+    "nom": "Asosiy",
+    "valyuta": "USD"
+   },
+   {
+    "nom": "Zayniddin",
+    "valyuta": "USDT"
+   }
+  ],
+  "asosiy_kassa": "Asosiy"
+ },
+ "amallar": [
+  {
+   "id": "78d5a46253",
+   "sana": "2026-08-03T17:43:23",
+   "tur": "kirim",
+   "kim": "Zayniddin",
+   "tovar": "",
+   "miqdor": 0.0,
+   "birlik": "dona",
+   "narx": 0.0,
+   "summa": 10000.0,
+   "tan_narx": 0.0,
+   "tolov": "naqd",
+   "izoh": "10000 USDT Zayniddin kassasiga kiritildi",
+   "kassa_nomi": "Zayniddin",
+   "valyuta": "USDT"
+  },
+  {
+   "id": "otkazma_usdt_1",
+   "sana": "2026-08-03T17:56:00",
+   "tur": "otkazma",
+   "kim": "",
+   "tovar": "",
+   "miqdor": 0.0,
+   "birlik": "dona",
+   "narx": 0.0,
+   "summa": 10000.0,
+   "tan_narx": 0.0,
+   "tolov": "naqd",
+   "izoh": "10000 USDT sotildi (Zayniddin kassasidan chiqim)",
+   "kassa_nomi": "Zayniddin",
+   "valyuta": "USDT"
+  },
+  {
+   "id": "sotuv_usdt_1",
+   "sana": "2026-08-03T17:56:00",
+   "tur": "sotuv",
+   "kim": "",
+   "tovar": "",
+   "miqdor": 0,
+   "birlik": "USDT",
+   "narx": 1.0135,
+   "summa": 10135.0,
+   "tan_narx": 10000.0,
+   "tolov": "naqd",
+   "izoh": "10000 USDT sotildi (10135$ tushdi)",
+   "kassa_nomi": "Asosiy",
+   "valyuta": "USD"
+  }
+ ]
+}

@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geolokatsiya Ruxsati va Aniq Joylashuv</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 650px;
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 36px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .icon-wrapper {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(16, 185, 129, 0.2));
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            position: relative;
+        }
+
+        .icon-wrapper.pulse::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 2px solid var(--primary);
+            animation: ripple 2s infinite ease-out;
+        }
+
+        @keyframes ripple {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(1.6); opacity: 0; }
+        }
+
+        .icon-wrapper svg {
+            width: 40px;
+            height: 40px;
+            fill: none;
+            stroke: #818cf8;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            background: linear-gradient(to right, #818cf8, #34d399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 28px;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 18px;
+            border-radius: 9999px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .status-badge.pending {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .status-badge.success {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .status-badge.error {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-action {
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.6);
+        }
+
+        .btn-action:active {
+            transform: translateY(0);
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-top: 24px;
+            text-align: left;
+        }
+
+        .card-info {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 14px;
+            padding: 16px;
+        }
+
+        .card-info .label {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .card-info .value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #f1f5f9;
+            word-break: break-all;
+        }
+
+        .map-btn {
+            display: none;
+            margin-top: 24px;
+            background: linear-gradient(135deg, #059669, #10b981);
+            color: white;
+            text-decoration: none;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-weight: 600;
+            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        .map-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.6);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="icon-wrapper pulse" id="iconBox">
+        <svg viewBox="0 0 24 24">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"></path>
+            <circle cx="12" cy="9" r="2.5"></circle>
+        </svg>
+    </div>
+
+    <h1>Joylashuv Ruxsati</h1>
+    <p class="subtitle">Brauzeringiz oynasining yuqori qismida chiqadigan <strong>"Ruxsat berish" (Allow)</strong> tugmasini bosing.</p>
+
+    <div class="status-badge pending" id="statusBadge">
+        ⏳ Brauzer ruxsati kutilmoqda...
+    </div>
+
+    <br>
+
+    <button class="btn-action" id="reqBtn" onclick="requestLocation()">
+        📍 Joylashuvni Aniqlash (Ruxsat Berish)
+    </button>
+
+    <div class="details-grid" id="detailsGrid" style="display: none;">
+        <div class="card-info">
+            <div class="label">Kenglik (Latitude)</div>
+            <div class="value" id="valLat">-</div>
+        </div>
+        <div class="card-info">
+            <div class="label">Uzoqlik (Longitude)</div>
+            <div class="value" id="valLon">-</div>
+        </div>
+        <div class="card-info">
+            <div class="label">Aniqlik Chegarasi</div>
+            <div class="value" id="valAcc">-</div>
+        </div>
+    </div>
+
+    <a href="#" target="_blank" class="map-btn" id="mapBtn">
+        🗺️ Google Maps'da Ochish
+    </a>
+</div>
+
+<script>
+    function updateStatus(type, message) {
+        const badge = document.getElementById('statusBadge');
+        badge.className = 'status-badge ' + type;
+        badge.innerHTML = message;
+    }
+
+    function requestLocation() {
+        updateStatus('pending', '⏳ Ruxsat soʻralmoqda... (Oynani tasdiqlang)');
+        
+        if (!navigator.geolocation) {
+            updateStatus('error', '❌ Qurilmangiz Geolocation API funksiyasini qoʻllamaydi.');
+            return;
+        }
+
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                const lat = pos.coords.latitude;
+                const lon = pos.coords.longitude;
+                const acc = pos.coords.accuracy;
+
+                document.getElementById('valLat').innerText = lat.toFixed(6) + '°';
+                document.getElementById('valLon').innerText = lon.toFixed(6) + '°';
+                document.getElementById('valAcc').innerText = '±' + Math.round(acc) + ' metr';
+
+                document.getElementById('detailsGrid').style.display = 'grid';
+                
+                const mapBtn = document.getElementById('mapBtn');
+                mapBtn.href = `https://www.google.com/maps?q=${lat},${lon}&z=17`;
+                mapBtn.style.display = 'inline-block';
+
+                document.getElementById('iconBox').classList.remove('pulse');
+                document.getElementById('reqBtn').style.display = 'none';
+
+                updateStatus('success', '✅ Ruxsat berildi! Aniq joylashuv muvaffaqiyatli olindi.');
+            },
+            (err) => {
+                let msg = '❌ Ruxsat berilmadi yoki xatolik yuz berdi.';
+                if (err.code === 1) {
+                    msg = '❌ Ruxsat rad etildi (Permission Denied). Brauzer sozlamalaridan ruxsat bering.';
+                } else if (err.code === 2) {
+                    msg = '❌ GPS/Joylashuv signali topilmadi.';
+                } else if (err.code === 3) {
+                    msg = '⏱️ Ruxsat berish vaqti tugadi (Timeout).';
+                }
+                updateStatus('error', msg);
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 15000,
+                maximumAge: 0
+            }
+        );
+    }
+
+    // Auto trigger on page load
+    window.addEventListener('DOMContentLoaded', () => {
+        requestLocation();
+    });
+</script>
+
+</body>
+</html>

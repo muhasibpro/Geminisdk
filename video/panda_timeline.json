@@ -1,0 +1,30 @@
+{
+  "duration": 31.5,
+  "lines": [
+    {
+      "who": "cash",
+      "start": 12.2,
+      "dur": 4.44
+    },
+    {
+      "who": "boy",
+      "start": 17.94,
+      "dur": 3.84
+    },
+    {
+      "who": "boy",
+      "start": 23.28,
+      "dur": 4.82
+    }
+  ],
+  "price": "25 000 so'm",
+  "cashText": [
+    "Uka, energetik ichimligingiz",
+    "25 000 so'm bo'ldi."
+  ],
+  "boyText": [
+    "VAY!",
+    "Nega sizlarda MUHASIB",
+    "dasturi yo'q?!"
+  ]
+}

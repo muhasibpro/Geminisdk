@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MUHASIB HUD - Inqilobiy Kassa Tizimi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>
+    :root {
+      --bg-midnight: #060913;
+      --gold-amber: #f59e0b;
+      --gold-glow: rgba(245, 158, 11, 0.4);
+      --emerald-neon: #10b981;
+      --cyan-neon: #06b6d4;
+      --hud-glass: rgba(15, 23, 42, 0.75);
+      --hud-border: rgba(245, 158, 11, 0.25);
+      --text-bright: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--bg-midnight);
+      background-image: 
+        radial-gradient(circle at 50% 50%, rgba(245, 158, 11, 0.08) 0%, transparent 60%),
+        radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.06) 0%, transparent 40%),
+        linear-gradient(to bottom, rgba(6, 9, 19, 0.8), rgba(6, 9, 19, 0.95));
+      color: var(--text-bright);
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top HUD Navigation Header */
+    .hud-header {
+      height: 64px;
+      background: rgba(10, 15, 29, 0.8);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--hud-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      z-index: 50;
+    }
+
+    .brand-hud {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-hud-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--gold-amber), #b45309);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px var(--gold-glow);
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 800;
+      font-size: 20px;
+      color: #000;
+    }
+
+    .brand-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      background: linear-gradient(90deg, #fbbf24, var(--emerald-neon));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hud-stats-row {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .hud-stat-box {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .hud-stat-box span.val {
+      font-weight: 700;
+      color: var(--gold-amber);
+    }
+
+    /* Main Futuristic Layout */
+    .hud-container {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 320px 1fr 380px;
+      gap: 16px;
+      padding: 16px;
+      height: calc(100vh - 64px);
+      overflow: hidden;
+    }
+
+    /* Left Control & Numpad Cockpit */
+    .left-cockpit {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .hud-card {
+      background: var(--hud-glass);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--hud-border);
+      border-radius: 20px;
+      padding: 16px;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+    }
+
+    /* Search & Scanner Input */
+    .scanner-box {
+      display: flex;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--hud-border);
+      border-radius: 12px;
+      padding: 10px 14px;
+      gap: 10px;
+    }
+
+    .scanner-box input {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text-bright);
+      font-size: 14px;
+      width: 100%;
+    }
+
+    /* Touch Speed Numpad */
+    .numpad-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .numpad-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .numpad-btn {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-bright);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .numpad-btn:hover {
+      background: rgba(245, 158, 11, 0.2);
+      border-color: var(--gold-amber);
+      color: var(--gold-amber);
+      box-shadow: 0 0 12px var(--gold-glow);
+    }
+
+    .numpad-btn.enter {
+      grid-column: span 2;
+      background: linear-gradient(135deg, var(--gold-amber), #d97706);
+      color: #000;
+      border: none;
+    }
+
+    /* AI Assistant & Telemetry */
+    .ai-widget {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .ai-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--emerald-neon);
+    }
+
+    .ai-pulse {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--emerald-neon);
+      box-shadow: 0 0 10px var(--emerald-neon);
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.2); opacity: 1; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+
+    /* Center Section: Radial Category Wheel & Product HUD Grid */
+    .center-hud {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      overflow: hidden;
+    }
+
+    /* Radial HUD Selector */
+    .radial-hud-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      background: var(--hud-glass);
+      border: 1px solid var(--hud-border);
+      border-radius: 20px;
+      padding: 12px;
+    }
+
+    .radial-slice {
+      padding: 10px 20px;
+      border-radius: 30px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .radial-slice:hover, .radial-slice.active {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(16, 185, 129, 0.25));
+      border-color: var(--gold-amber);
+      color: #fff;
+      box-shadow: 0 0 15px var(--gold-glow);
+    }
+
+    /* 3D Floating Product Cards Grid */
+    .hud-products-grid {
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 16px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .hud-product-card {
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 12px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+      position: relative;
+    }
+
+    .hud-product-card:hover {
+      transform: translateY(-6px) scale(1.02);
+      border-color: var(--gold-amber);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6), 0 0 20px var(--gold-glow);
+      background: rgba(30, 41, 59, 0.8);
+    }
+
+    .product-img-box {
+      width: 100%;
+      height: 120px;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+      background: #0f172a;
+    }
+
+    .product-img-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s;
+    }
+
+    .hud-product-card:hover img {
+      transform: scale(1.08);
+    }
+
+    .product-tag {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(6px);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--emerald-neon);
+      border: 1px solid var(--emerald-neon);
+    }
+
+    .hud-product-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-bright);
+    }
+
+    .hud-price-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .hud-price {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--gold-amber);
+    }
+
+    .hud-add-btn {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid var(--gold-amber);
+      color: var(--gold-amber);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      transition: all 0.2s;
+    }
+
+    .hud-product-card:hover .hud-add-btn {
+      background: var(--gold-amber);
+      color: #000;
+      box-shadow: 0 0 12px var(--gold-amber);
+    }
+
+    /* Right HUD Checkout Cockpit */
+    .right-cockpit {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .cart-hud-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--hud-border);
+      padding-bottom: 12px;
+    }
+
+    .cart-hud-items {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 10px 0;
+    }
+
+    .cart-hud-item {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .hud-checkout-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      border: none;
+      color: #000;
+      padding: 16px;
+      border-radius: 14px;
+      font-weight: 800;
+      font-size: 16px;
+      letter-spacing: 1px;
+      cursor: pointer;
+      box-shadow: 0 0 25px var(--gold-glow);
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .hud-checkout-btn:hover {
+      transform: scale(1.02);
+      box-shadow: 0 0 35px rgba(245, 158, 11, 0.8);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="hud-header">
+    <div class="brand-hud">
+      <div class="brand-hud-icon">M</div>
+      <div>
+        <div class="brand-title">MUHASIB HUD v3.0</div>
+        <div style="font-size: 11px; color: var(--text-muted);">Inqilobiy Kassa Cockpit Interfeysi</div>
+      </div>
+    </div>
+
+    <div class="hud-stats-row">
+      <div class="hud-stat-box">
+        <i data-lucide="zap" size="14" style="color: var(--gold-amber)"></i>
+        <span>Rejim: <span class="val">HUD TURBO</span></span>
+      </div>
+      <div class="hud-stat-box">
+        <i data-lucide="trending-up" size="14" style="color: var(--emerald-neon)"></i>
+        <span>Bugungi Tushum: <span class="val" id="todaySales">4,850,000 UZS</span></span>
+      </div>
+      <div class="hud-stat-box">
+        <i data-lucide="clock" size="14" style="color: var(--cyan-neon)"></i>
+        <span id="hudTime">21:56:40</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <div class="hud-container">
+    
+    <!-- Left Cockpit Panel -->
+    <aside class="left-cockpit">
+      
+      <!-- Quick Search / Barcode -->
+      <div class="hud-card">
+        <div class="scanner-box">
+          <i data-lucide="scan" style="color: var(--gold-amber)"></i>
+          <input type="text" id="hudSearch" placeholder="Shtrix-kod yoki Numpad raqam..." oninput="onSearchInput()">
+        </div>
+      </div>
+
+      <!-- Touch Speed Numpad -->
+      <div class="hud-card">
+        <div class="numpad-title">
+          <span>TEZKOR NUMPAD (TOUCH)</span>
+          <i data-lucide="grid" size="14" style="color: var(--gold-amber)"></i>
+        </div>
+        <div class="numpad-grid">
+          <button class="numpad-btn" onclick="pressNumpad('7')">7</button>
+          <button class="numpad-btn" onclick="pressNumpad('8')">8</button>
+          <button class="numpad-btn" onclick="pressNumpad('9')">9</button>
+          <button class="numpad-btn" onclick="pressNumpad('4')">4</button>
+          <button class="numpad-btn" onclick="pressNumpad('5')">5</button>
+          <button class="numpad-btn" onclick="pressNumpad('6')">6</button>
+          <button class="numpad-btn" onclick="pressNumpad('1')">1</button>
+          <button class="numpad-btn" onclick="pressNumpad('2')">2</button>
+          <button class="numpad-btn" onclick="pressNumpad('3')">3</button>
+          <button class="numpad-btn" onclick="pressNumpad('0')">0</button>
+          <button class="numpad-btn" onclick="pressNumpad('C')" style="color: var(--emerald-neon)">C</button>
+          <button class="numpad-btn enter" onclick="submitBarcodeNumpad()">SKANERLASH ⏎</button>
+        </div>
+      </div>
+
+      <!-- AI Assistant Telemetry Widget -->
+      <div class="hud-card ai-widget">
+        <div class="ai-header">
+          <div class="ai-pulse"></div>
+          <span>MUHASIB AI TELEMETRIYA</span>
+        </div>
+        <canvas id="salesChart" height="110"></canvas>
+        <div style="font-size: 12px; color: var(--text-muted); line-height: 1.4;">
+          💡 AI Tavsiyasi: Bugun <strong>"Zargarlik va Gadjetlar"</strong> bo'limida savdo 34% yuqori.
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- Center Section: Radial Menu & Products Grid -->
+    <main class="center-hud">
+      
+      <!-- Radial Category HUD Selector -->
+      <div class="radial-hud-bar">
+        <div class="radial-slice active" onclick="selectHudCategory('all', this)">
+          <i data-lucide="sparkles" size="14"></i> Barchasi
+        </div>
+        <div class="radial-slice" onclick="selectHudCategory('jewelry', this)">
+          <i data-lucide="gem" size="14"></i> Zargarlik
+        </div>
+        <div class="radial-slice" onclick="selectHudCategory('tech', this)">
+          <i data-lucide="watch" size="14"></i> Soatlar & Gadjet
+        </div>
+        <div class="radial-slice" onclick="selectHudCategory('apparel', this)">
+          <i data-lucide="shirt" size="14"></i> Premium Kiyim
+        </div>
+        <div class="radial-slice" onclick="selectHudCategory('perfume', this)">
+          <i data-lucide="droplet" size="14"></i> Atirlar
+        </div>
+      </div>
+
+      <!-- Products Grid -->
+      <div class="hud-products-grid" id="hudProductsGrid">
+        <!-- Rendered via JS -->
+      </div>
+
+    </main>
+
+    <!-- Right Cockpit Panel: Cart & Checkout -->
+    <aside class="right-cockpit">
+      <div class="hud-card" style="flex: 1; display: flex; flex-direction: column;">
+        <div class="cart-hud-title">
+          <div style="display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 16px;">
+            <i data-lucide="shopping-bag" style="color: var(--gold-amber)"></i>
+            <span>SAVAT TELEMETRIYASI</span>
+          </div>
+          <span style="background: var(--gold-amber); color: #000; padding: 2px 8px; border-radius: 8px; font-weight: 800; font-size: 12px;" id="cartCount">0</span>
+        </div>
+
+        <div class="cart-hud-items" id="cartHudList">
+          <div style="text-align: center; color: var(--text-muted); margin-top: 80px;">
+            <i data-lucide="disc" size="40" style="opacity: 0.3; margin-bottom: 10px;"></i>
+            <p>Mahsulot tanglang</p>
+          </div>
+        </div>
+
+        <div style="border-top: 1px solid var(--hud-border); padding-top: 14px; display: flex; flex-direction: column; gap: 10px;">
+          <div style="display: flex; justify-content: space-between; font-size: 13px; color: var(--text-muted);">
+            <span>Kassa bonusi (5%):</span>
+            <span style="color: var(--emerald-neon)">+12,000 UZS</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 22px; font-weight: 800;">
+            <span>JAMI:</span>
+            <span id="hudGrandTotal" style="color: var(--gold-amber)">0 UZS</span>
+          </div>
+
+          <button class="hud-checkout-btn" onclick="executeCheckout()">
+            <i data-lucide="zap"></i>
+            <span>TEZKOR TO'LOV</span>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+
+  <script>
+    // Web Audio Synthesizer for Sci-Fi Sound FX (No external audio needed!)
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    
+    function playBeep(freq = 880, duration = 0.08) {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + duration);
+    }
+
+    const uniqueProducts = [
+      { id: 101, name: 'Diamond Eclipse Ring', category: 'jewelry', price: 12500000, img: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=400&q=80', tag: 'LUXURY' },
+      { id: 102, name: 'Orion Skeleton Watch', category: 'tech', price: 8900000, img: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=400&q=80', tag: 'LIMITED' },
+      { id: 103, name: 'Black Titanium Suit', category: 'apparel', price: 4500000, img: 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=400&q=80', tag: 'NEW' },
+      { id: 104, name: 'Oud Noir Luxury Perfume', category: 'perfume', price: 2100000, img: 'https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=400&q=80', tag: 'PARFUM' },
+      { id: 105, name: 'Cyber Cyberware Headphones', category: 'tech', price: 1800000, img: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=400&q=80', tag: 'AUDIO' },
+      { id: 106, name: 'Gold Leaf Pendant 18K', category: 'jewelry', price: 6200000, img: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=400&q=80', tag: 'GOLD' }
+    ];
+
+    let hudCart = [];
+    let currentCategory = 'all';
+
+    function renderHudProducts() {
+      const grid = document.getElementById('hudProductsGrid');
+      grid.innerHTML = '';
+      
+      const filtered = uniqueProducts.filter(p => currentCategory === 'all' || p.category === currentCategory);
+
+      filtered.forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'hud-product-card';
+        card.onclick = () => addToHudCart(p.id);
+        card.innerHTML = `
+          <div class="product-img-box">
+            <img src="${p.img}" alt="${p.name}">
+            <div class="product-tag">${p.tag}</div>
+          </div>
+          <div>
+            <div class="hud-product-title">${p.name}</div>
+            <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Kod: #${p.id}</div>
+          </div>
+          <div class="hud-price-row">
+            <div class="hud-price">${p.price.toLocaleString()} UZS</div>
+            <button class="hud-add-btn">+ QO'SHISH</button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+      lucide.createIcons();
+    }
+
+    function selectHudCategory(cat, el) {
+      playBeep(600, 0.05);
+      currentCategory = cat;
+      document.querySelectorAll('.radial-slice').forEach(s => s.classList.remove('active'));
+      el.classList.add('active');
+      renderHudProducts();
+    }
+
+    function pressNumpad(num) {
+      playBeep(1200, 0.04);
+      const inp = document.getElementById('hudSearch');
+      if (num === 'C') inp.value = '';
+      else inp.value += num;
+    }
+
+    function addToHudCart(id) {
+      playBeep(950, 0.06);
+      const prod = uniqueProducts.find(p => p.id === id);
+      const exist = hudCart.find(i => i.id === id);
+      if (exist) exist.qty += 1;
+      else hudCart.push({ ...prod, qty: 1 });
+      updateHudCartUI();
+    }
+
+    function updateHudCartUI() {
+      const list = document.getElementById('cartHudList');
+      const countEl = document.getElementById('cartCount');
+      const totalEl = document.getElementById('hudGrandTotal');
+
+      const totalItems = hudCart.reduce((acc, i) => acc + i.qty, 0);
+      countEl.innerText = totalItems;
+
+      if (hudCart.length === 0) {
+        list.innerHTML = `
+          <div style="text-align: center; color: var(--text-muted); margin-top: 80px;">
+            <i data-lucide="disc" size="40" style="opacity: 0.3; margin-bottom: 10px;"></i>
+            <p>Mahsulot tanglang</p>
+          </div>
+        `;
+        totalEl.innerText = '0 UZS';
+      } else {
+        list.innerHTML = '';
+        let grand = 0;
+        hudCart.forEach(item => {
+          grand += item.price * item.qty;
+          const d = document.createElement('div');
+          d.className = 'cart-hud-item';
+          d.innerHTML = `
+            <div>
+              <div style="font-size: 13px; font-weight: 700;">${item.name}</div>
+              <div style="font-size: 12px; color: var(--gold-amber);">${(item.price * item.qty).toLocaleString()} UZS</div>
+            </div>
+            <div style="font-weight: 800; font-size: 14px;">x${item.qty}</div>
+          `;
+          list.appendChild(d);
+        });
+        totalEl.innerText = grand.toLocaleString() + ' UZS';
+      }
+      lucide.createIcons();
+    }
+
+    function executeCheckout() {
+      if (hudCart.length === 0) {
+        alert("Savat bo'sh!");
+        return;
+      }
+      playBeep(1500, 0.2);
+      alert("🚀 TEZKOR KASSA TO'LOVI MUVAFFAQIYATLI AMALGA OSHIRILDI!");
+      hudCart = [];
+      updateHudCartUI();
+    }
+
+    // Canvas Telemetry Chart Drawing
+    function drawChart() {
+      const cvs = document.getElementById('salesChart');
+      const ctx = cvs.getContext('2d');
+      ctx.clearRect(0, 0, cvs.width, cvs.height);
+
+      ctx.beginPath();
+      ctx.moveTo(10, 80);
+      ctx.bezierCurveTo(70, 20, 120, 90, 180, 30);
+      ctx.bezierCurveTo(220, 10, 260, 70, 300, 40);
+      ctx.strokeStyle = '#f59e0b';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      ctx.lineTo(300, 110);
+      ctx.lineTo(10, 110);
+      ctx.fillStyle = 'rgba(245, 158, 11, 0.1)';
+      ctx.fill();
+    }
+
+    setInterval(() => {
+      document.getElementById('hudTime').innerText = new Date().toTimeString().split(' ')[0];
+    }, 1000);
+
+    renderHudProducts();
+    drawChart();
+  </script>
+</body>
+</html>

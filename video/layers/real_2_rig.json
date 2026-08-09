@@ -1,0 +1,23 @@
+{
+  "w": 1376,
+  "h": 768,
+  "bg": "layers/real_2_bg.jpg",
+  "subject": "layers/real_2_subject.png",
+  "bbox": [
+    434,
+    55,
+    629,
+    634
+  ],
+  "hipY": 410,
+  "splitX": 748,
+  "legBackPivot": [
+    616,
+    410
+  ],
+  "legFrontPivot": [
+    704,
+    410
+  ],
+  "groundY": 689
+}

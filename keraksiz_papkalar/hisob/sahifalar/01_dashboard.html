@@ -1,0 +1,103 @@
+<h1>📊 Bosh Ekran (Dashboard)</h1>
+<div class="karta" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:15px;background:linear-gradient(135deg, #1e293b, #0f172a);color:#fff">
+  <div style="padding:10px">
+    <div style="font-size:12px;color:#94a3b8">BUGUNGI KIRIM</div>
+    <div id="stat-kirim" style="font-size:24px;font-weight:700;color:#4ade80">0 so'm</div>
+  </div>
+  <div style="padding:10px">
+    <div style="font-size:12px;color:#94a3b8">BUGUNGI CHIQIM</div>
+    <div id="stat-chiqim" style="font-size:24px;font-weight:700;color:#f87171">0 so'm</div>
+  </div>
+  <div style="padding:10px">
+    <div style="font-size:12px;color:#94a3b8">SOF FOYDA (BUGUN)</div>
+    <div id="stat-foyda" style="font-size:24px;font-weight:700;color:#38bdf8">0 so'm</div>
+  </div>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:15px">
+  <div class="karta">
+    <h3>⚡ Quick Kirim / Chiqim</h3>
+    <form id="amalForm" onsubmit="qo_shAmal(event)" style="display:flex;flex-direction:column;gap:10px">
+      <select id="tur" style="width:100%">
+        <option value="kirim">🟢 Kirim</option>
+        <option value="chiqim">🔴 Chiqim</option>
+      </select>
+      <input type="number" id="summa" placeholder="Summa (so'm)" required style="width:100%">
+      <input type="text" id="kategoriya" placeholder="Kategoriya (masalan: Savdo, Xarajat)" style="width:100%">
+      <input type="text" id="izoh" placeholder="Izoh..." style="width:100%">
+      <button type="submit">+ Saqlash</button>
+    </form>
+  </div>
+
+  <div class="karta">
+    <h3>🧮 Tezkor Kalkulyator</h3>
+    <input type="text" id="calcInput" placeholder="Masalan: 125000 * 3 + 45000" style="width:100%;font-size:18px;margin-bottom:10px" onkeyup="if(event.key==='Enter')hisoblaCalc()">
+    <div style="display:flex;gap:10px">
+      <button onclick="hisoblaCalc()" style="flex:1">Hisoblash</button>
+      <button onclick="document.getElementById('calcInput').value=''" style="background:#64748b">C</button>
+    </div>
+    <div id="calcRes" style="margin-top:12px;font-size:22px;font-weight:bold;color:#1a73e8">Natija: 0</div>
+  </div>
+</div>
+
+<div class="karta">
+  <h3>📋 So'nggi Amallar</h3>
+  <table>
+    <thead>
+      <tr><th>Sana</th><th>Tur</th><th>Kategoriya</th><th>Summa</th><th>Izoh</th></tr>
+    </thead>
+    <tbody id="amalJadval"></tbody>
+  </table>
+</div>
+
+<script>
+async function yukla(){
+  const amallar = await sql("SELECT * FROM amal ORDER BY id DESC LIMIT 20");
+  let k=0, ch=0;
+  const todayStr = bugun();
+  let html = '';
+  for(let a of amallar){
+    if(a.sana.startsWith(todayStr)){
+      if(a.tur === 'kirim') k += a.summa; else ch += a.summa;
+    }
+    const color = a.tur === 'kirim' ? '#16a34a' : '#dc2626';
+    const sign = a.tur === 'kirim' ? '+' : '-';
+    html += `<tr>
+      <td>${a.sana}</td>
+      <td><b style="color:${color}">${a.tur.toUpperCase()}</b></td>
+      <td>${a.kategoriya || '-'}</td>
+      <td><b style="color:${color}">${sign} ${pul(a.summa)} so'm</b></td>
+      <td>${a.izoh || ''}</td>
+    </tr>`;
+  }
+  document.getElementById('stat-kirim').innerText = pul(k) + " so'm";
+  document.getElementById('stat-chiqim').innerText = pul(ch) + " so'm";
+  document.getElementById('stat-foyda').innerText = pul(k - ch) + " so'm";
+  document.getElementById('amalJadval').innerHTML = html || '<tr><td colspan="5">Ma'lumot yo'q</td></tr>';
+}
+
+async function qo_shAmal(e){
+  e.preventDefault();
+  const t = document.getElementById('tur').value;
+  const s = parseFloat(document.getElementById('summa').value);
+  const k = document.getElementById('kategoriya').value;
+  const i = document.getElementById('izoh').value;
+  const now = bugun() + ' ' + new Date().toTimeString().split(' ')[0].substring(0,5);
+  await exec("INSERT INTO amal(sana,tur,summa,kategoriya,izoh) VALUES(?,?,?,?,?)", [now, t, s, k, i]);
+  document.getElementById('summa').value = '';
+  document.getElementById('izoh').value = '';
+  yukla();
+}
+
+function hisoblaCalc(){
+  try{
+    const val = document.getElementById('calcInput').value.replace(/[^0-9\+\-\*\/\.\(\)\s]/g, '');
+    const res = eval(val);
+    document.getElementById('calcRes').innerText = "Natija: " + pul(res);
+  }catch(e){
+    document.getElementById('calcRes').innerText = "Xato formula";
+  }
+}
+
+yukla();
+</script>

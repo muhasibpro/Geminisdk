@@ -1,0 +1,723 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<title>MUHASIB — Yoqimtoy AI Robot Multfilm</title>
+<style>
+  html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: #0b0f19; overflow: hidden; font-family: 'Outfit', 'Inter', system-ui, sans-serif; }
+  svg { display: block; width: 100vw; height: 100vh; }
+  text { font-family: 'Inter', 'Segoe UI', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+</style>
+</head>
+<body>
+
+<svg id="stage" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <!-- Gradients -->
+  <linearGradient id="gWall" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#1e293b"/>
+    <stop offset="50%" stop-color="#0f172a"/>
+    <stop offset="100%" stop-color="#090d16"/>
+  </linearGradient>
+
+  <linearGradient id="gFloor" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#334155"/>
+    <stop offset="100%" stop-color="#1e293b"/>
+  </linearGradient>
+
+  <linearGradient id="gCounter" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#1e293b"/>
+    <stop offset="20%" stop-color="#0f172a"/>
+    <stop offset="100%" stop-color="#020617"/>
+  </linearGradient>
+
+  <linearGradient id="gCounterTop" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0%" stop-color="#38bdf8"/>
+    <stop offset="50%" stop-color="#818cf8"/>
+    <stop offset="100%" stop-color="#c084fc"/>
+  </linearGradient>
+
+  <linearGradient id="gRobotBody" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#ffffff"/>
+    <stop offset="60%" stop-color="#f1f5f9"/>
+    <stop offset="100%" stop-color="#cbd5e1"/>
+  </linearGradient>
+
+  <linearGradient id="gRobotGlass" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#0284c7"/>
+    <stop offset="50%" stop-color="#0369a1"/>
+    <stop offset="100%" stop-color="#0c4a6e"/>
+  </linearGradient>
+
+  <linearGradient id="gPosScreen" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#0f172a"/>
+    <stop offset="100%" stop-color="#020617"/>
+  </linearGradient>
+
+  <linearGradient id="gPosActive" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#0369a1"/>
+    <stop offset="50%" stop-color="#0d9488"/>
+    <stop offset="100%" stop-color="#059669"/>
+  </linearGradient>
+
+  <linearGradient id="gLaser" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.9"/>
+    <stop offset="50%" stop-color="#22d3ee" stop-opacity="0.6"/>
+    <stop offset="100%" stop-color="#a855f7" stop-opacity="0.1"/>
+  </linearGradient>
+
+  <linearGradient id="gBadge" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0%" stop-color="#0284c7"/>
+    <stop offset="50%" stop-color="#2563eb"/>
+    <stop offset="100%" stop-color="#7c3aed"/>
+  </linearGradient>
+
+  <radialGradient id="gHoverGlow" cx="0.5" cy="0.5" r="0.5">
+    <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.9"/>
+    <stop offset="40%" stop-color="#0284c7" stop-opacity="0.5"/>
+    <stop offset="100%" stop-color="#0369a1" stop-opacity="0"/>
+  </radialGradient>
+
+  <radialGradient id="gLightBeam" cx="0.5" cy="0" r="1">
+    <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.3"/>
+    <stop offset="100%" stop-color="#38bdf8" stop-opacity="0"/>
+  </radialGradient>
+
+  <!-- Filters -->
+  <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+    <feGaussianBlur stdDeviation="8" result="blur"/>
+    <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+  </filter>
+
+  <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+    <feDropShadow dx="0" dy="12" stdDeviation="15" flood-color="#000000" flood-opacity="0.4"/>
+  </filter>
+</defs>
+
+<!-- ══════════ MASTER CAMERA ══════════ -->
+<g id="cam">
+  <!-- Devor va Pol -->
+  <rect x="-400" y="-200" width="2800" height="1100" fill="url(#gWall)"/>
+  
+  <!-- Devor lampalari (Neon Glow) -->
+  <g opacity="0.4">
+    <line x1="200" y1="100" x2="600" y2="100" stroke="#38bdf8" stroke-width="4" filter="url(#glow)"/>
+    <line x1="800" y1="100" x2="1200" y2="100" stroke="#818cf8" stroke-width="4" filter="url(#glow)"/>
+    <line x1="1400" y1="100" x2="1800" y2="100" stroke="#c084fc" stroke-width="4" filter="url(#glow)"/>
+  </g>
+
+  <!-- Orqa javonlar (Do'kon Mahsulotlari) -->
+  <g id="bgShelves">
+    <!-- Javon 1 -->
+    <rect x="150" y="220" width="650" height="16" rx="5" fill="#334155"/>
+    <g id="shelfItems1"></g>
+
+    <!-- Javon 2 -->
+    <rect x="1100" y="220" width="650" height="16" rx="5" fill="#334155"/>
+    <g id="shelfItems2"></g>
+  </g>
+
+  <rect x="-400" y="800" width="2800" height="500" fill="url(#gFloor)"/>
+
+  <!-- Pol kafellari liniyalari -->
+  <g opacity="0.15" stroke="#94a3b8" stroke-width="2">
+    <line x1="0" y1="800" x2="-200" y2="1200"/>
+    <line x1="400" y1="800" x2="300" y2="1200"/>
+    <line x1="800" y1="800" x2="800" y2="1200"/>
+    <line x1="1200" y1="800" x2="1300" y2="1200"/>
+    <line x1="1600" y1="800" x2="1800" y2="1200"/>
+  </g>
+
+  <!-- ══════════ KASSA CHETI VA KASSIR (DILNOZA) ══════════ -->
+  <g id="cashierGroup" transform="translate(450, 480)">
+    <!-- Kassir Dilnoza -->
+    <g id="dilnoza">
+      <!-- Tanasi va Apron -->
+      <g id="dilBody">
+        <path d="M-60,180 Q-80,330 -90,370 L90,370 Q80,330 60,180 Z" fill="#0f172a"/>
+        <!-- Apron -->
+        <path d="M-45,200 L45,200 L55,370 L-55,370 Z" fill="#0284c7"/>
+        <rect x="-35" y="240" width="70" height="8" rx="4" fill="#38bdf8"/>
+        <!-- Badge -->
+        <rect x="-30" y="210" width="25" height="16" rx="4" fill="#ffffff"/>
+        <rect x="-26" y="214" width="17" height="4" rx="2" fill="#0284c7"/>
+      </g>
+
+      <!-- Chap Qo'li -->
+      <g id="dilArmL">
+        <path d="M-65,190 Q-100,240 -70,300" stroke="#0f172a" stroke-width="32" stroke-linecap="round" fill="none"/>
+        <circle id="dilHandL" cx="-70" cy="300" r="16" fill="#fbcfe8"/>
+      </g>
+
+      <!-- O'ng Qo'li -->
+      <g id="dilArmR">
+        <path id="dilArmRPath" d="M65,190 Q100,240 70,300" stroke="#0f172a" stroke-width="32" stroke-linecap="round" fill="none"/>
+        <circle id="dilHandR" cx="70" cy="300" r="16" fill="#fbcfe8"/>
+      </g>
+
+      <!-- Boshi -->
+      <g id="dilHead" transform="translate(0, 110)">
+        <!-- Soch Bun -->
+        <circle cx="0" cy="-60" r="35" fill="#331800"/>
+        <!-- Yuzi -->
+        <circle cx="0" cy="0" r="55" fill="#fde047" opacity="0.1"/>
+        <circle cx="0" cy="0" r="52" fill="#fbcfe8"/>
+        <!-- Soch alohida -->
+        <path d="M-54,-10 Q0,-65 54,-10 Q40,-45 -40,-45 Z" fill="#451a03"/>
+        
+        <!-- Ko'zlar -->
+        <g id="dilEyes">
+          <circle id="dilEyeL" cx="-20" cy="-5" r="7" fill="#1e293b"/>
+          <circle id="dilEyeR" cx="20" cy="-5" r="7" fill="#1e293b"/>
+          <circle cx="-18" cy="-8" r="2.5" fill="#ffffff"/>
+          <circle cx="22" cy="-8" r="2.5" fill="#ffffff"/>
+        </g>
+        
+        <!-- Qoshlar -->
+        <g id="dilBrows">
+          <path id="dilBrowL" d="M-30,-20 Q-20,-25 -10,-20" stroke="#451a03" stroke-width="4" stroke-linecap="round" fill="none"/>
+          <path id="dilBrowR" d="M10,-20 Q20,-25 30,-20" stroke="#451a03" stroke-width="4" stroke-linecap="round" fill="none"/>
+        </g>
+
+        <!-- Og'iz -->
+        <path id="dilMouth" d="M-15,20 Q0,30 15,20" stroke="#be123c" stroke-width="4" stroke-linecap="round" fill="none"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- ══════════ KASSA STOLI VA POS TERMINAL ══════════ -->
+  <g id="counterGroup">
+    <!-- Stol Asosi -->
+    <rect x="250" y="700" width="1420" height="260" rx="16" fill="url(#gCounter)" filter="url(#softShadow)"/>
+    <rect x="230" y="685" width="1460" height="25" rx="8" fill="url(#gCounterTop)"/>
+    <rect x="250" y="715" width="1420" height="6" fill="#38bdf8" filter="url(#glow)" opacity="0.8"/>
+
+    <!-- Counter Ustidagi Mahsulotlar (Scanning Items) -->
+    <g id="counterItems">
+      <!-- Sharbat Qutisi -->
+      <g id="item1" transform="translate(820, 590)">
+        <rect x="0" y="0" width="55" height="95" rx="8" fill="#f97316"/>
+        <rect x="8" y="15" width="39" height="40" rx="4" fill="#fef08a"/>
+        <text x="27" y="40" font-size="12" font-weight="bold" fill="#ea580c" text-anchor="middle">JUICE</text>
+        <!-- Barcode -->
+        <rect x="10" y="65" width="35" height="18" fill="#ffffff"/>
+        <line x1="15" y1="67" x2="15" y2="81" stroke="#000" stroke-width="2"/>
+        <line x1="20" y1="67" x2="20" y2="81" stroke="#000" stroke-width="1"/>
+        <line x1="24" y1="67" x2="24" y2="81" stroke="#000" stroke-width="3"/>
+        <line x1="31" y1="67" x2="31" y2="81" stroke="#000" stroke-width="1.5"/>
+        <line x1="37" y1="67" x2="37" y2="81" stroke="#000" stroke-width="2"/>
+      </g>
+
+      <!-- Sut Shishasi -->
+      <g id="item2" transform="translate(900, 605)">
+        <rect x="0" y="0" width="45" height="80" rx="6" fill="#e2e8f0"/>
+        <rect x="6" y="20" width="33" height="30" fill="#3b82f6"/>
+        <text x="22" y="38" font-size="10" font-weight="bold" fill="#ffffff" text-anchor="middle">MILK</text>
+      </g>
+    </g>
+
+    <!-- POS TERMINAL MONITORI -->
+    <g id="posMonitor" transform="translate(620, 480)">
+      <!-- Stend -->
+      <rect x="85" y="160" width="30" height="55" rx="5" fill="#334155"/>
+      <ellipse cx="100" cy="210" rx="45" ry="12" fill="#1e293b"/>
+
+      <!-- Monitor Ramkasi -->
+      <rect x="0" y="0" width="200" height="160" rx="14" fill="#0f172a" stroke="#334155" stroke-width="5" filter="url(#softShadow)"/>
+      
+      <!-- Monitor Ekrani (MUHASIB Interface) -->
+      <rect id="posScreenBg" x="10" y="10" width="180" height="140" rx="8" fill="url(#gPosScreen)"/>
+
+      <!-- Ekran Tarkibi (Dynamic) -->
+      <g id="posScreenContent">
+        <!-- Header -->
+        <rect x="15" y="15" width="170" height="24" rx="4" fill="#1e293b"/>
+        <text x="25" y="31" font-size="11" font-weight="bold" fill="#38bdf8">MUHASIB POS AI</text>
+        <circle id="posStatusDot" cx="170" cy="27" r="4" fill="#ef4444"/>
+
+        <!-- Statik/Dinamik Ro'yxat -->
+        <g id="posRows" transform="translate(20, 48)">
+          <!-- Row 1 -->
+          <rect x="0" y="0" width="160" height="18" rx="3" fill="#1e293b" opacity="0.6"/>
+          <text x="8" y="13" font-size="9" fill="#94a3b8">Apelsin sharbati 1.0L</text>
+          <text x="152" y="13" font-size="9" font-weight="bold" fill="#38bdf8" text-anchor="end">18,000</text>
+
+          <!-- Row 2 -->
+          <rect x="0" y="22" width="160" height="18" rx="3" fill="#1e293b" opacity="0.4"/>
+          <text x="8" y="35" font-size="9" fill="#94a3b8">Tabiiy Sut 0.5L</text>
+          <text x="152" y="35" font-size="9" font-weight="bold" fill="#38bdf8" text-anchor="end">9,000</text>
+        </g>
+
+        <!-- Jami Narx va Tugma -->
+        <rect id="posTotalBg" x="15" y="105" width="170" height="38" rx="6" fill="#1e293b"/>
+        <text x="25" y="122" font-size="10" fill="#94a3b8">JAMI SUMMA:</text>
+        <text id="posTotalTxt" x="25" y="136" font-size="14" font-weight="bold" fill="#22c55e">27,000 UZS</text>
+        
+        <!-- Rapid Scan Status -->
+        <rect x="110" y="112" width="68" height="24" rx="4" fill="#0284c7"/>
+        <text x="144" y="128" font-size="10" font-weight="bold" fill="#ffffff" text-anchor="middle">TEZKOR</text>
+      </g>
+    </g>
+
+    <!-- Chek Printeri va Chek -->
+    <g id="printer" transform="translate(520, 610)">
+      <rect x="0" y="0" width="70" height="75" rx="8" fill="#1e293b" stroke="#334155" stroke-width="3"/>
+      <rect x="10" y="12" width="50" height="6" rx="3" fill="#090d16"/>
+      <!-- Chek qog'ozi (animatsiyali) -->
+      <g id="receiptPaper" transform="translate(15, 15)">
+        <rect id="receiptRect" x="0" y="0" width="40" height="0" fill="#ffffff" rx="2"/>
+        <g id="receiptLines" opacity="0">
+          <line x1="5" y1="6" x2="35" y2="6" stroke="#000" stroke-width="2"/>
+          <line x1="5" y1="12" x2="25" y2="12" stroke="#666" stroke-width="1.5"/>
+          <line x1="5" y1="18" x2="35" y2="18" stroke="#666" stroke-width="1.5"/>
+          <line x1="5" y1="26" x2="30" y2="26" stroke="#000" stroke-width="2"/>
+        </g>
+      </g>
+    </g>
+  </g>
+
+  <!-- ══════════ YOQIMTOY AI ROBOT (ROBO-MUHASIB) ══════════ -->
+  <g id="robotGroup" transform="translate(1300, 420)">
+    
+    <!-- Hover Soyasi va Plasma Plomi -->
+    <g id="robotHover">
+      <ellipse cx="0" cy="240" rx="90" ry="22" fill="url(#gHoverGlow)" filter="url(#glow)"/>
+      <!-- Plasma Cone -->
+      <path d="M-40,160 Q0,230 40,160 Z" fill="url(#gHoverGlow)" opacity="0.85"/>
+      <!-- Plasma Sparks -->
+      <circle cx="-15" cy="200" r="4" fill="#38bdf8" filter="url(#glow)"/>
+      <circle cx="20" cy="215" r="3" fill="#67e8f9" filter="url(#glow)"/>
+      <circle cx="5" cy="225" r="5" fill="#38bdf8" filter="url(#glow)"/>
+    </g>
+
+    <g id="robotBodyMain">
+      <!-- Tanasi (Cute Spherical Body) -->
+      <rect x="-85" y="0" width="170" height="170" rx="85" fill="url(#gRobotBody)" stroke="#94a3b8" stroke-width="4" filter="url(#softShadow)"/>
+      
+      <!-- Yon Neon Liniyalar -->
+      <path d="M-80,60 Q-50,85 -80,110" stroke="#0284c7" stroke-width="5" fill="none" stroke-linecap="round" filter="url(#glow)"/>
+      <path d="M80,60 Q50,85 80,110" stroke="#0284c7" stroke-width="5" fill="none" stroke-linecap="round" filter="url(#glow)"/>
+
+      <!-- Ko'krakdagi MUHASIB AI Yubak Core -->
+      <g id="robotCore" transform="translate(0, 85)">
+        <circle cx="0" cy="0" r="28" fill="#0f172a" stroke="#38bdf8" stroke-width="3"/>
+        <circle id="robotCoreGlow" cx="0" cy="0" r="20" fill="#0284c7" filter="url(#glow)"/>
+        <!-- MUHASIB M logotipi -->
+        <path d="M-10,8 L-10,-8 L0,0 L10,-8 L10,8" stroke="#ffffff" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
+      </g>
+
+      <!-- Chap Qo'l (Waving / Gesturing) -->
+      <g id="robotArmL" transform="translate(-85, 60)">
+        <path id="robotArmLPath" d="M0,0 Q-40,20 -50,60" stroke="#e2e8f0" stroke-width="22" stroke-linecap="round" fill="none"/>
+        <circle id="robotHandL" cx="-50" cy="60" r="16" fill="#38bdf8" stroke="#ffffff" stroke-width="3"/>
+      </g>
+
+      <!-- O'ng Qo'l (Scanner Beam Emitter) -->
+      <g id="robotArmR" transform="translate(85, 60)">
+        <path id="robotArmRPath" d="M0,0 Q40,20 50,60" stroke="#e2e8f0" stroke-width="22" stroke-linecap="round" fill="none"/>
+        <!-- Skaner Nozzle -->
+        <g id="robotHandRGroup" transform="translate(50, 60)">
+          <circle cx="0" cy="0" r="18" fill="#0284c7" stroke="#ffffff" stroke-width="3"/>
+          <circle id="scannerEmitter" cx="0" cy="0" r="8" fill="#38bdf8" filter="url(#glow)"/>
+        </g>
+      </g>
+
+      <!-- ROBOT BOSHI -->
+      <g id="robotHead" transform="translate(0, -90)">
+        <!-- Antenna -->
+        <line x1="0" y1="-50" x2="0" y2="-90" stroke="#64748b" stroke-width="6" stroke-linecap="round"/>
+        <circle id="robotAntennaBulb" cx="0" cy="-95" r="12" fill="#38bdf8" filter="url(#glow)"/>
+        
+        <!-- Bosh Korpusi -->
+        <rect x="-90" y="-60" width="180" height="120" rx="60" fill="url(#gRobotBody)" stroke="#94a3b8" stroke-width="4"/>
+        
+        <!-- Yon Quloq Boltlar -->
+        <rect x="-102" y="-20" width="14" height="40" rx="6" fill="#0284c7"/>
+        <rect x="88" y="-20" width="14" height="40" rx="6" fill="#0284c7"/>
+
+        <!-- VIZOR EKRANI (Dark Glass Visor) -->
+        <rect x="-72" y="-45" width="144" height="90" rx="45" fill="url(#gRobotGlass)" stroke="#38bdf8" stroke-width="3"/>
+        
+        <!-- KO'ZLAR VA YUZ IFORASI -->
+        <g id="robotFace">
+          <!-- Normal Eyes (Glowing Blue Ellipses) -->
+          <g id="robotEyesNormal">
+            <ellipse cx="-30" cy="-5" rx="14" ry="18" fill="#38bdf8" filter="url(#glow)"/>
+            <circle cx="-25" cy="-10" r="5" fill="#ffffff"/>
+            <ellipse cx="30" cy="-5" rx="14" ry="18" fill="#38bdf8" filter="url(#glow)"/>
+            <circle cx="35" cy="-10" r="5" fill="#ffffff"/>
+          </g>
+
+          <!-- Happy Eyes ^ ^ (Hidden by default) -->
+          <g id="robotEyesHappy" opacity="0">
+            <path d="M-44,-5 Q-30,-25 -16,-5" stroke="#38bdf8" stroke-width="6" stroke-linecap="round" fill="none" filter="url(#glow)"/>
+            <path d="M16,-5 Q30,-25 44,-5" stroke="#38bdf8" stroke-width="6" stroke-linecap="round" fill="none" filter="url(#glow)"/>
+          </g>
+
+          <!-- Scanning Target Eyes (Hidden by default) -->
+          <g id="robotEyesScan" opacity="0">
+            <circle cx="-30" cy="-5" r="15" fill="none" stroke="#22d3ee" stroke-width="3" filter="url(#glow)"/>
+            <circle cx="-30" cy="-5" r="5" fill="#22d3ee"/>
+            <circle cx="30" cy="-5" r="15" fill="none" stroke="#22d3ee" stroke-width="3" filter="url(#glow)"/>
+            <circle cx="30" cy="-5" r="5" fill="#22d3ee"/>
+          </g>
+
+          <!-- Digital LED Mouth -->
+          <path id="robotMouth" d="M-15,22 Q0,30 15,22" stroke="#38bdf8" stroke-width="4" stroke-linecap="round" fill="none" filter="url(#glow)"/>
+        </g>
+      </g>
+    </g>
+  </g>
+
+  <!-- ══════════ SKANER LASER NURI ══════════ -->
+  <g id="laserBeamGroup" opacity="0">
+    <polygon id="laserCone" points="1350,480 845,630 875,670" fill="url(#gLaser)" filter="url(#glow)"/>
+    <line id="laserLine" x1="1350" y1="480" x2="860" y2="650" stroke="#38bdf8" stroke-width="6" filter="url(#glow)"/>
+    <!-- Scanning Sparks at Target -->
+    <circle cx="860" cy="650" r="18" fill="#38bdf8" opacity="0.8" filter="url(#glow)"/>
+    <circle cx="860" cy="650" r="8" fill="#ffffff" filter="url(#glow)"/>
+  </g>
+
+  <!-- ══════════ SPEECH BUBBLES & CARDS ══════════ -->
+  <!-- Dilnoza Speech Bubble -->
+  <g id="bubbleDilnoza" transform="translate(320, 240)" opacity="0">
+    <path d="M0,0 L260,0 Q280,0 280,20 L280,110 Q280,130 260,130 L160,130 L140,155 L130,130 L20,130 Q0,130 0,110 Z" fill="#ffffff" filter="url(#softShadow)"/>
+    <text id="dilTxt1" x="25" y="42" font-size="16" font-weight="bold" fill="#0f172a">Vaqt kam, navbat ketyapti!</text>
+    <text id="dilTxt2" x="25" y="75" font-size="15" fill="#334155">Kassa hisobini qanday</text>
+    <text id="dilTxt3" x="25" y="100" font-size="15" fill="#0284c7" font-weight="bold">tezlashtirsam bo'ladi?</text>
+  </g>
+
+  <!-- Robot Speech Bubble 1 -->
+  <g id="bubbleRobot1" transform="translate(1080, 200)" opacity="0">
+    <path d="M0,20 Q0,0 20,0 L320,0 Q340,0 340,20 L340,110 Q340,130 320,130 L240,130 L260,155 L220,130 L20,130 Q0,130 0,110 Z" fill="#0f172a" stroke="#38bdf8" stroke-width="3" filter="url(#softShadow)"/>
+    <text id="rob1Txt1" x="25" y="45" font-size="17" font-weight="bold" fill="#38bdf8">Xavotir olmang, Dilnoza opa!</text>
+    <text id="rob1Txt2" x="25" y="80" font-size="16" fill="#ffffff">Sizga <tspan fill="#38bdf8" font-weight="bold">MUHASIB AI</tspan> kassa</text>
+    <text id="rob1Txt3" x="25" y="105" font-size="16" fill="#ffffff">tizimi yordamga keladi! 🚀</text>
+  </g>
+
+  <!-- Robot Speech Bubble 2 (Feature Showcase Card) -->
+  <g id="bubbleRobot2" transform="translate(1020, 160)" opacity="0">
+    <rect x="0" y="0" width="440" height="175" rx="16" fill="#0f172a" stroke="#38bdf8" stroke-width="3" filter="url(#softShadow)"/>
+    <text x="25" y="38" font-size="18" font-weight="bold" fill="#ffffff">MUHASIB AI KASSA DASTURI:</text>
+    
+    <!-- Feature 1 -->
+    <circle cx="35" cy="72" r="14" fill="#0284c7"/>
+    <text x="35" y="77" font-size="14" fill="#fff" text-anchor="middle">⚡</text>
+    <text x="60" y="77" font-size="16" font-weight="bold" fill="#38bdf8">1 soniyada tezkor skanerlash</text>
+
+    <!-- Feature 2 -->
+    <circle cx="35" cy="112" r="14" fill="#059669"/>
+    <text x="35" y="117" font-size="14" fill="#fff" text-anchor="middle">📊</text>
+    <text x="60" y="117" font-size="16" font-weight="bold" fill="#4ade80">Aniq hisob va 100% nazorat!</text>
+
+    <!-- Feature 3 -->
+    <circle cx="35" cy="150" r="14" fill="#7c3aed"/>
+    <text x="35" y="155" font-size="14" fill="#fff" text-anchor="middle">🚀</text>
+    <text x="60" y="155" font-size="15" fill="#e0e7ff">Savdo 2 baravar tezlashadi!</text>
+  </g>
+
+  <!-- ══════════ HOLOGRAM STATS & BADGES ══════════ -->
+  <g id="hologramBadges" opacity="0">
+    <!-- Badge 1 -->
+    <g transform="translate(1120, 360)">
+      <rect x="0" y="0" width="130" height="40" rx="20" fill="url(#gBadge)" filter="url(#glow)"/>
+      <text x="65" y="25" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">⚡ 1 SEC SCAN</text>
+    </g>
+    <!-- Badge 2 -->
+    <g transform="translate(700, 380)">
+      <rect x="0" y="0" width="140" height="40" rx="20" fill="#059669" filter="url(#glow)"/>
+      <text x="70" y="25" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">🎯 100% ANIQ</text>
+    </g>
+  </g>
+
+  <!-- ══════════ YAKUNIY KATTA BANNER (FINAL PRESENTATION) ══════════ -->
+  <g id="finalBanner" transform="translate(460, 200)" opacity="0">
+    <rect x="0" y="0" width="1000" height="260" rx="24" fill="#0f172a" stroke="url(#gCounterTop)" stroke-width="6" filter="url(#softShadow)"/>
+    
+    <!-- Logo Badge -->
+    <rect x="40" y="40" width="70" height="70" rx="20" fill="url(#gBadge)"/>
+    <path d="M55,85 L55,60 L75,75 L95,60 L95,85" stroke="#ffffff" stroke-width="6" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
+    
+    <!-- Sarlavha -->
+    <text x="135" y="75" font-size="40" font-weight="bold" fill="#ffffff">MUHASIB POS KASSA</text>
+    <text x="135" y="110" font-size="22" fill="#38bdf8">Do'koningiz uchun eng aqlli va tezkor kassa dasturi!</text>
+    
+    <line x1="40" y1="140" x2="960" y2="140" stroke="#334155" stroke-width="2"/>
+
+    <!-- Aloqa & Vebsayt -->
+    <g transform="translate(60, 195)">
+      <!-- Telefon -->
+      <circle cx="20" cy="-5" r="18" fill="#0284c7"/>
+      <text x="20" y="0" font-size="16" fill="#fff" text-anchor="middle">📞</text>
+      <text x="50" y="2" font-size="22" font-weight="bold" fill="#ffffff">+998 (71) 200-00-00</text>
+
+      <!-- Vebsayt -->
+      <circle cx="520" cy="-5" r="18" fill="#059669"/>
+      <text x="520" y="0" font-size="16" fill="#fff" text-anchor="middle">🌐</text>
+      <text x="550" y="2" font-size="22" font-weight="bold" fill="#4ade80">muhasib.uz</text>
+    </g>
+  </g>
+
+</g>
+</svg>
+
+<script>
+// ══════════ DEFAULT TIMELINE CONFIG ══════════
+window.CONFIG = window.CONFIG || {
+  duration: 22.0,
+  lines: [
+    { who: "dilnoza", start: 1.0, dur: 3.8 },
+    { who: "robot1",   start: 5.8, dur: 3.4 },
+    { who: "robot2",   start: 10.2, dur: 6.2 }
+  ],
+  dilnozaText: ["Vaqt kam, navbat ketyapti!", "Kassa hisobini qanday tezlashtirsam bo'ladi?"],
+  robotText1: ["Xavotir olmang, Dilnoza opa!", "Sizga MUHASIB AI kassa yordamga keladi!"],
+  robotText2: ["MUHASIB kassa dasturi bilan:", "⚡ 1 soniyada skanerlash", "📊 Aniq hisob va 100% nazorat!"]
+};
+
+window.DURATION = window.CONFIG.duration || 22.0;
+
+// ══════════ HELPER MATH FUNCTIONS ══════════
+function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+function lerp(a, b, p) { return a + (b - a) * clamp(p, 0, 1); }
+function smoothstep(p) { p = clamp(p, 0, 1); return p * p * (3 - 2 * p); }
+function seg(t, t0, t1) { return clamp((t - t0) / (t1 - t0), 0, 1); }
+function easeOutBack(p) { p = clamp(p, 0, 1); const c1 = 1.70158; const c3 = c1 + 1; return 1 + c3 * Math.pow(p - 1, 3) + c1 * Math.pow(p - 1, 2); }
+
+// Popule shelves with colorful items
+(function initShelves(){
+  const s1 = document.getElementById('shelfItems1');
+  const s2 = document.getElementById('shelfItems2');
+  const colors = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'];
+  
+  let h1 = '', h2 = '';
+  for(let i=0; i<10; i++) {
+    h1 += `<rect x="${i*62+10}" y="${220-40-(i%3)*10}" width="40" height="${40+(i%3)*10}" rx="4" fill="${colors[i%colors.length]}"/>`;
+    h2 += `<rect x="${i*62+10}" y="${220-45-(i%2)*12}" width="42" height="${45+(i%2)*12}" rx="4" fill="${colors[(i+2)%colors.length]}"/>`;
+  }
+  s1.innerHTML = h1;
+  s2.innerHTML = h2;
+})();
+
+// DOM Elements
+const cam = document.getElementById('cam');
+const dilHead = document.getElementById('dilHead');
+const dilEyeL = document.getElementById('dilEyeL');
+const dilEyeR = document.getElementById('dilEyeR');
+const dilBrowL = document.getElementById('dilBrowL');
+const dilBrowR = document.getElementById('dilBrowR');
+const dilMouth = document.getElementById('dilMouth');
+const dilHandR = document.getElementById('dilHandR');
+const dilArmRPath = document.getElementById('dilArmRPath');
+
+const robotGroup = document.getElementById('robotGroup');
+const robotHead = document.getElementById('robotHead');
+const robotMouth = document.getElementById('robotMouth');
+const robotEyesNormal = document.getElementById('robotEyesNormal');
+const robotEyesHappy = document.getElementById('robotEyesHappy');
+const robotEyesScan = document.getElementById('robotEyesScan');
+const robotAntennaBulb = document.getElementById('robotAntennaBulb');
+const robotArmLPath = document.getElementById('robotArmLPath');
+const robotHandL = document.getElementById('robotHandL');
+const robotArmRPath = document.getElementById('robotArmRPath');
+const robotHandRGroup = document.getElementById('robotHandRGroup');
+const robotCoreGlow = document.getElementById('robotCoreGlow');
+
+const posMonitor = document.getElementById('posMonitor');
+const posStatusDot = document.getElementById('posStatusDot');
+const posScreenBg = document.getElementById('posScreenBg');
+const receiptPaper = document.getElementById('receiptPaper');
+const receiptRect = document.getElementById('receiptRect');
+const receiptLines = document.getElementById('receiptLines');
+
+const laserBeamGroup = document.getElementById('laserBeamGroup');
+const bubbleDilnoza = document.getElementById('bubbleDilnoza');
+const bubbleRobot1 = document.getElementById('bubbleRobot1');
+const bubbleRobot2 = document.getElementById('bubbleRobot2');
+const hologramBadges = document.getElementById('hologramBadges');
+const finalBanner = document.getElementById('finalBanner');
+
+// Set Bubble Texts from CONFIG
+if (window.CONFIG.dilnozaText) {
+  document.getElementById('dilTxt1').textContent = window.CONFIG.dilnozaText[0] || "";
+  document.getElementById('dilTxt2').textContent = window.CONFIG.dilnozaText[1] || "";
+}
+if (window.CONFIG.robotText1) {
+  document.getElementById('rob1Txt1').textContent = window.CONFIG.robotText1[0] || "";
+  document.getElementById('rob1Txt2').textContent = window.CONFIG.robotText1[1] || "";
+}
+
+// ══════════ DETERMINISTIC SEEK(t) FUNCTION ══════════
+window.SEEK = function(t) {
+  const cfg = window.CONFIG;
+  const lineDil = cfg.lines[0];
+  const lineRob1 = cfg.lines[1];
+  const lineRob2 = cfg.lines[2];
+
+  // 1) CAMERA MOTION
+  let camX = 0, camY = 0, scale = 1.0;
+  if (t < lineDil.start + lineDil.dur + 0.5) {
+    // Zoomed in on Dilnoza at counter
+    const p = smoothstep(seg(t, 0, 1.0));
+    camX = lerp(0, 150, p);
+    camY = lerp(0, 80, p);
+    scale = lerp(1.0, 1.15, p);
+  } else if (t < lineRob1.start + lineRob1.dur + 0.5) {
+    // Zoom out to show Robot entering & talking
+    const p = smoothstep(seg(t, lineDil.start + lineDil.dur + 0.5, lineRob1.start));
+    camX = lerp(150, -50, p);
+    camY = lerp(80, 20, p);
+    scale = lerp(1.15, 1.0, p);
+  } else if (t < lineRob2.start + lineRob2.dur) {
+    // Zoom slightly towards Robot scanning counter
+    const p = smoothstep(seg(t, lineRob1.start + lineRob1.dur, lineRob2.start));
+    camX = lerp(-50, 60, p);
+    camY = lerp(20, 40, p);
+    scale = lerp(1.0, 1.1, p);
+  } else {
+    // Final zoom to showcase banner & characters
+    const p = smoothstep(seg(t, lineRob2.start + lineRob2.dur, lineRob2.start + lineRob2.dur + 1.2));
+    camX = lerp(60, 0, p);
+    camY = lerp(40, -50, p);
+    scale = lerp(1.1, 1.05, p);
+  }
+  cam.setAttribute('transform', `translate(${960 - 960*scale - camX*scale}, ${540 - 540*scale - camY*scale}) scale(${scale})`);
+
+  // 2) DILNOZA ANIMATION & EXPRESSIONS
+  const isDilSpeaking = (t >= lineDil.start && t <= lineDil.start + lineDil.dur);
+  // Head tilt & eyebrows
+  if (isDilSpeaking) {
+    const talkProgress = seg(t, lineDil.start, lineDil.start + lineDil.dur);
+    const mouthOpen = Math.abs(Math.sin(t * 18)) * 14;
+    dilMouth.setAttribute('d', `M-15,18 Q0,${18 + mouthOpen} 15,18`);
+    dilBrowL.setAttribute('d', "M-30,-15 Q-20,-30 -10,-25"); // Worried eyebrows
+    dilBrowR.setAttribute('d', "M10,-25 Q20,-30 30,-15");
+    // Speech bubble 1
+    bubbleDilnoza.setAttribute('opacity', smoothstep(seg(t, lineDil.start, lineDil.start + 0.3)) * (1 - smoothstep(seg(t, lineDil.start + lineDil.dur, lineDil.start + lineDil.dur + 0.4))));
+  } else {
+    bubbleDilnoza.setAttribute('opacity', '0');
+    if (t > lineRob1.start) {
+      // Surprised & happy faces when robot appears
+      dilMouth.setAttribute('d', "M-18,18 Q0,35 18,18");
+      dilBrowL.setAttribute('d', "M-30,-25 Q-20,-20 -10,-25");
+      dilBrowR.setAttribute('d', "M10,-25 Q20,-20 30,-25");
+    } else {
+      dilMouth.setAttribute('d', "M-15,20 Q0,25 15,20");
+    }
+  }
+
+  // Dilnoza Thumbs up at the end
+  if (t > lineRob2.start + lineRob2.dur) {
+    dilHandR.setAttribute('cx', '90');
+    dilHandR.setAttribute('cy', '220');
+    dilArmRPath.setAttribute('d', "M65,190 Q110,210 90,220");
+  }
+
+  // 3) YOQIMTOY ROBOT ANIMATION
+  // Robot Entry (Floats down from above top screen)
+  let robY = -350;
+  if (t < lineDil.start + lineDil.dur + 0.2) {
+    robY = -350;
+  } else {
+    const entryProgress = easeOutBack(seg(t, lineDil.start + lineDil.dur + 0.2, lineRob1.start));
+    robY = lerp(-350, 420, entryProgress);
+  }
+
+  // Floating hover bobbing
+  const bobbing = Math.sin(t * 4) * 12;
+  const currentRobY = robY + bobbing;
+  robotGroup.setAttribute('transform', `translate(1300, ${currentRobY})`);
+
+  // Antenna Bulb Blinking
+  const bulbGlow = (Math.sin(t * 10) > 0) ? "#38bdf8" : "#22d3ee";
+  robotAntennaBulb.setAttribute('fill', bulbGlow);
+
+  const isRob1Speaking = (t >= lineRob1.start && t <= lineRob1.start + lineRob1.dur);
+  const isRob2Speaking = (t >= lineRob2.start && t <= lineRob2.start + lineRob2.dur);
+
+  // Robot Eyes & Expressions
+  if (isRob1Speaking) {
+    robotEyesNormal.setAttribute('opacity', '0');
+    robotEyesHappy.setAttribute('opacity', '1');
+    robotEyesScan.setAttribute('opacity', '0');
+    // Arm Waving
+    const wave = Math.sin(t * 14) * 25;
+    robotArmLPath.setAttribute('d', `M0,0 Q-50,${0 + wave} -60,${-40 + wave}`);
+    robotHandL.setAttribute('cx', '-60');
+    robotHandL.setAttribute('cy', `${-40 + wave}`);
+    
+    // Bubble 1
+    bubbleRobot1.setAttribute('opacity', smoothstep(seg(t, lineRob1.start, lineRob1.start + 0.3)) * (1 - smoothstep(seg(t, lineRob1.start + lineRob1.dur, lineRob1.start + lineRob1.dur + 0.4))));
+    bubbleRobot2.setAttribute('opacity', '0');
+  } else if (isRob2Speaking) {
+    robotEyesNormal.setAttribute('opacity', '0');
+    robotEyesHappy.setAttribute('opacity', '0');
+    robotEyesScan.setAttribute('opacity', '1');
+    
+    bubbleRobot1.setAttribute('opacity', '0');
+    bubbleRobot2.setAttribute('opacity', smoothstep(seg(t, lineRob2.start, lineRob2.start + 0.3)));
+    hologramBadges.setAttribute('opacity', smoothstep(seg(t, lineRob2.start + 0.5, lineRob2.start + 1.0)));
+  } else if (t > lineRob2.start + lineRob2.dur) {
+    // Ultra Happy Eyes at final presentation
+    robotEyesNormal.setAttribute('opacity', '0');
+    robotEyesHappy.setAttribute('opacity', '1');
+    robotEyesScan.setAttribute('opacity', '0');
+    bubbleRobot2.setAttribute('opacity', '0');
+    hologramBadges.setAttribute('opacity', '1');
+    
+    // Final presentation banner
+    const bannerProg = easeOutBack(seg(t, lineRob2.start + lineRob2.dur + 0.2, lineRob2.start + lineRob2.dur + 1.0));
+    finalBanner.setAttribute('opacity', bannerProg);
+    finalBanner.setAttribute('transform', `translate(460, ${lerp(250, 180, bannerProg)}) scale(${bannerProg})`);
+  } else {
+    robotEyesNormal.setAttribute('opacity', '1');
+    robotEyesHappy.setAttribute('opacity', '0');
+    robotEyesScan.setAttribute('opacity', '0');
+    bubbleRobot1.setAttribute('opacity', '0');
+    bubbleRobot2.setAttribute('opacity', '0');
+  }
+
+  // Robot Mouth Speaking Wave
+  if (isRob1Speaking || isRob2Speaking) {
+    const rMouthOpen = Math.abs(Math.sin(t * 20)) * 12;
+    robotMouth.setAttribute('d', `M-15,22 Q0,${22 + rMouthOpen} 15,22`);
+    robotCoreGlow.setAttribute('r', `${20 + Math.sin(t*15)*5}`);
+  } else {
+    robotMouth.setAttribute('d', "M-15,22 Q0,28 15,22");
+    robotCoreGlow.setAttribute('r', '20');
+  }
+
+  // 4) SCANNER LASER & POS TRANSFORM
+  const isScanning = (t >= lineRob2.start + 0.4 && t <= lineRob2.start + 3.5);
+  if (isScanning) {
+    laserBeamGroup.setAttribute('opacity', '1');
+    // Arm extended to scanner target
+    robotArmRPath.setAttribute('d', "M0,0 Q-120,40 -280,140");
+    robotHandRGroup.setAttribute('transform', "translate(-280, 140)");
+    
+    // POS Terminal Activation
+    posStatusDot.setAttribute('fill', '#22c55e');
+    posScreenBg.setAttribute('fill', 'url(#gPosActive)');
+    
+    // Receipt Printing
+    const printProg = seg(t, lineRob2.start + 1.0, lineRob2.start + 3.0);
+    receiptRect.setAttribute('height', `${printProg * 50}`);
+    if (printProg > 0.5) receiptLines.setAttribute('opacity', '1');
+  } else {
+    laserBeamGroup.setAttribute('opacity', '0');
+    if (t < lineRob2.start) {
+      robotArmRPath.setAttribute('d', "M0,0 Q40,20 50,60");
+      robotHandRGroup.setAttribute('transform', "translate(50, 60)");
+    } else {
+      // Robot waving right arm at end
+      robotArmRPath.setAttribute('d', "M0,0 Q40,-20 60,-50");
+      robotHandRGroup.setAttribute('transform', "translate(60, -50)");
+    }
+  }
+};
+
+// Initial view call
+window.SEEK(0);
+</script>
+</body>
+</html>

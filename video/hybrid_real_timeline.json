@@ -1,0 +1,25 @@
+{
+  "duration": 29.03,
+  "lines": [
+    {
+      "key": "hb_line1",
+      "start": 0.8,
+      "dur": 4.61
+    },
+    {
+      "key": "hb_line2",
+      "start": 6.31,
+      "dur": 6.22
+    },
+    {
+      "key": "hb_line3",
+      "start": 13.42,
+      "dur": 6.02
+    },
+    {
+      "key": "hb_line4",
+      "start": 20.35,
+      "dur": 5.18
+    }
+  ]
+}
