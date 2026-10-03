@@ -42,6 +42,9 @@ FFMPEG = shutil.which("ffmpeg") or "/opt/homebrew/bin/ffmpeg"
 
 
 def find_chrome():
+    env = os.environ.get("CHROME")          # boshqa joydagi Chrome/Chromium uchun
+    if env and os.path.exists(env):
+        return env
     for p in CHROME_PATHS:
         if os.path.exists(p):
             return p
@@ -179,6 +182,8 @@ def launch_chrome(chrome, port, w, h, profile):
         "--disable-features=CalculateNativeWinOcclusion",
         "about:blank",
     ]
+    if sys.platform.startswith("linux") and os.geteuid() == 0:
+        args.insert(1, "--no-sandbox")      # Linux konteynerida root bo'lsa Chrome shusiz ochilmaydi
     return subprocess.Popen(args, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 

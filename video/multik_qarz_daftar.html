@@ -1,0 +1,873 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>MUHASIB — qarz daftari multfilmi</title>
+<style>
+  html,body{margin:0;padding:0;width:100%;height:100%;background:#0b1020;overflow:hidden}
+  svg{display:block;width:100vw;height:100vh}
+  text{font-family:'Helvetica Neue',Helvetica,Arial,'Liberation Sans',sans-serif;-webkit-font-smoothing:antialiased}
+</style>
+
+<!--
+  Ssenariy: do'kondor ota qog'oz qarz daftarida adashib qoladi, varaqlar
+  uchib ketadi. Qizi telefonda MUHASIB ni ko'rsatadi — ota oddiy gap aytadi,
+  dastur qarzni yozib, kassa va qarzdorlarni o'zi hisoblaydi. Ota eski
+  daftarni chelakka otadi.
+
+  Hamma harakat SEEK(t) ichida t dan hisoblanadi (render_anim.py shartnomasi).
+-->
+
+<svg id="stage" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <linearGradient id="gWall" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#f3e3c3"/><stop offset="100%" stop-color="#e2c99c"/>
+  </linearGradient>
+  <linearGradient id="gFloor" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#a26b3f"/><stop offset="100%" stop-color="#7a4a26"/>
+  </linearGradient>
+  <linearGradient id="gCounter" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#8b5a2b"/><stop offset="100%" stop-color="#5c3818"/>
+  </linearGradient>
+  <linearGradient id="gSky" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#f97316"/><stop offset="60%" stop-color="#fb923c"/><stop offset="100%" stop-color="#fde68a"/>
+  </linearGradient>
+  <linearGradient id="gLogo" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0%" stop-color="#3b82f6"/><stop offset="50%" stop-color="#6366f1"/><stop offset="100%" stop-color="#1d4ed8"/>
+  </linearGradient>
+  <radialGradient id="gLamp" cx="0.5" cy="0.1" r="0.9">
+    <stop offset="0%" stop-color="#fff7d6" stop-opacity="0.55"/>
+    <stop offset="100%" stop-color="#fff7d6" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="gGlow" cx="0.5" cy="0.5" r="0.5">
+    <stop offset="0%" stop-color="#60a5fa" stop-opacity="0.9"/>
+    <stop offset="100%" stop-color="#60a5fa" stop-opacity="0"/>
+  </radialGradient>
+  <clipPath id="dressClip">
+    <path d="M-26,-116 Q0,-126 26,-116 L56,44 Q0,58 -56,44 Z"/>
+  </clipPath>
+  <clipPath id="phoneClip">
+    <rect x="1178" y="58" width="524" height="964" rx="46"/>
+  </clipPath>
+</defs>
+
+<!-- ══════════ KAMERA (dunyo) ══════════ -->
+<g id="cam">
+  <rect x="-600" y="-200" width="3400" height="1090" fill="url(#gWall)"/>
+  <rect x="-600" y="880" width="3400" height="500" fill="url(#gFloor)"/>
+  <g id="planks" opacity="0.28"></g>
+
+  <!-- deraza: kechki osmon -->
+  <g id="window">
+    <rect x="1560" y="150" width="300" height="300" rx="14" fill="#8b5a2b"/>
+    <rect x="1576" y="166" width="268" height="268" rx="8" fill="url(#gSky)"/>
+    <circle id="sun" cx="1700" cy="380" r="46" fill="#fef3c7" opacity="0.9"/>
+    <rect x="1706" y="166" width="10" height="268" fill="#8b5a2b"/>
+    <rect x="1576" y="296" width="268" height="10" fill="#8b5a2b"/>
+  </g>
+
+  <!-- eshik (chapda) -->
+  <g id="door">
+    <rect x="-90" y="300" width="250" height="590" rx="10" fill="#6b4220"/>
+    <g id="doorPanel">
+      <rect x="-80" y="310" width="230" height="572" rx="8" fill="#9a6435"/>
+      <rect x="-56" y="340" width="182" height="220" rx="8" fill="#bfe3ff" opacity="0.7"/>
+      <rect x="110" y="600" width="14" height="56" rx="7" fill="#f6d365"/>
+    </g>
+  </g>
+
+  <!-- peshtaxta yozuvi -->
+  <g id="sign">
+    <rect x="700" y="84" width="520" height="92" rx="16" fill="#14532d"/>
+    <rect x="712" y="96" width="496" height="68" rx="10" fill="none" stroke="#facc15" stroke-width="3"/>
+    <text x="960" y="146" font-size="44" font-weight="800" fill="#fef3c7" text-anchor="middle" letter-spacing="3">OILAVIY DO'KON</text>
+  </g>
+
+  <!-- orqa javonlar -->
+  <g id="shelves">
+    <rect x="600" y="300" width="900" height="22" rx="6" fill="#7a4a22"/>
+    <rect x="600" y="470" width="900" height="22" rx="6" fill="#7a4a22"/>
+    <g id="goods"></g>
+  </g>
+
+  <!-- osma chiroq -->
+  <g id="lamp">
+    <line x1="0" y1="-200" x2="0" y2="40" stroke="#3f2a14" stroke-width="4"/>
+    <path d="M-50,40 L50,40 L30,10 L-30,10 Z" fill="#14532d"/>
+    <ellipse cx="0" cy="44" rx="18" ry="10" fill="#fff7d6"/>
+    <path d="M-50,44 L-260,560 L260,560 L50,44 Z" fill="url(#gLamp)"/>
+  </g>
+
+  <!-- MADINA (qiz) -->
+  <g id="mad">
+    <g id="madLegB">
+      <line x1="0" y1="0" x2="0" y2="88" stroke="#1e293b" stroke-width="22" stroke-linecap="round"/>
+      <g id="madKneeB" transform="translate(0,88)">
+        <line x1="0" y1="0" x2="0" y2="84" stroke="#1e293b" stroke-width="20" stroke-linecap="round"/>
+        <rect x="-12" y="78" width="44" height="18" rx="9" fill="#7f1d1d"/>
+      </g>
+    </g>
+    <g id="madArmB">
+      <line x1="0" y1="0" x2="0" y2="66" stroke="#c98d6a" stroke-width="18" stroke-linecap="round"/>
+      <g id="madElbowB" transform="translate(0,66)">
+        <line x1="0" y1="0" x2="0" y2="64" stroke="#c98d6a" stroke-width="16" stroke-linecap="round"/>
+        <circle cx="0" cy="68" r="11" fill="#d9a07c"/>
+      </g>
+    </g>
+    <g id="madBraid">
+      <path d="M0,0 C-8,40 -6,80 -2,120" stroke="#2b1d14" stroke-width="20" fill="none" stroke-linecap="round"/>
+      <g fill="#3a281c">
+        <ellipse cx="-2" cy="20" rx="13" ry="10"/><ellipse cx="-4" cy="46" rx="12" ry="10"/>
+        <ellipse cx="-4" cy="72" rx="11" ry="9"/><ellipse cx="-3" cy="96" rx="10" ry="9"/>
+      </g>
+      <circle cx="-2" cy="122" r="8" fill="#ec4899"/>
+    </g>
+    <g id="madLegF">
+      <line x1="0" y1="0" x2="0" y2="88" stroke="#334155" stroke-width="22" stroke-linecap="round"/>
+      <g id="madKneeF" transform="translate(0,88)">
+        <line x1="0" y1="0" x2="0" y2="84" stroke="#334155" stroke-width="20" stroke-linecap="round"/>
+        <rect x="-12" y="78" width="44" height="18" rx="9" fill="#991b1b"/>
+      </g>
+    </g>
+    <g id="madBody">
+      <g clip-path="url(#dressClip)">
+        <rect x="-70" y="-130" width="140" height="200" fill="#db2777"/>
+        <!-- atlas naqshi -->
+        <path d="M-70,-90 l14,-12 l14,12 l14,-12 l14,12 l14,-12 l14,12 l14,-12 l14,12 l14,-12 l14,12" stroke="#facc15" stroke-width="7" fill="none"/>
+        <path d="M-70,-40 l14,-12 l14,12 l14,-12 l14,12 l14,-12 l14,12 l14,-12 l14,12 l14,-12 l14,12" stroke="#38bdf8" stroke-width="7" fill="none"/>
+        <path d="M-70,10 l14,-12 l14,12 l14,-12 l14,12 l14,-12 l14,12 l14,-12 l14,12 l14,-12 l14,12" stroke="#facc15" stroke-width="7" fill="none"/>
+        <rect x="-70" y="30" width="140" height="10" fill="#9d174d"/>
+      </g>
+    </g>
+    <g id="madHead">
+      <path d="M-44,-4 q-4,-52 44,-52 q48,0 46,52 q-2,48 -46,48 q-42,0 -44,-48 z" fill="#d9a07c"/>
+      <path d="M-50,10 q-8,-72 50,-72 q52,0 50,58 q-18,-30 -44,-34 q-26,-2 -40,16 q-6,14 -16,32 z" fill="#2b1d14"/>
+      <circle cx="30" cy="-56" r="11" fill="#ec4899"/><circle cx="44" cy="-50" r="8" fill="#ec4899"/>
+      <g id="madEyeL"><ellipse cx="-4" cy="2" rx="7" ry="9" fill="#1f2937"/></g>
+      <g id="madEyeR"><ellipse cx="26" cy="2" rx="7" ry="9" fill="#1f2937"/></g>
+      <ellipse cx="-14" cy="20" rx="9" ry="5" fill="#f472b6" opacity="0.45"/>
+      <ellipse cx="38" cy="20" rx="8" ry="5" fill="#f472b6" opacity="0.45"/>
+      <ellipse id="madMouth" cx="12" cy="28" rx="11" ry="4" fill="#7c2f2f"/>
+      <path id="madSmile" d="M0,25 q12,12 24,0" stroke="#7c2f2f" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+    </g>
+    <g id="madArmF">
+      <line x1="0" y1="0" x2="0" y2="66" stroke="#d9a07c" stroke-width="18" stroke-linecap="round"/>
+      <g id="madElbowF" transform="translate(0,66)">
+        <line x1="0" y1="0" x2="0" y2="64" stroke="#d9a07c" stroke-width="16" stroke-linecap="round"/>
+        <circle cx="0" cy="68" r="11" fill="#e4ad89"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- telefon Madinaning qo'lida (dunyo koordinatasida, kaftga yopishadi) -->
+  <g id="handPhone">
+    <circle id="handGlow" cx="0" cy="0" r="70" fill="url(#gGlow)" opacity="0"/>
+    <rect x="-18" y="-32" width="36" height="64" rx="7" fill="#111827"/>
+    <rect x="-14" y="-27" width="28" height="52" rx="4" fill="#1d4ed8"/>
+    <rect x="-9" y="-20" width="18" height="4" rx="2" fill="#93c5fd"/>
+    <rect x="-9" y="-12" width="12" height="4" rx="2" fill="#93c5fd"/>
+  </g>
+
+  <!-- OTA (do'kondor) — prilavka orqasida turadi -->
+  <g id="dad">
+    <g id="dadBody">
+      <path d="M-74,14 C-84,-60 -74,-112 -42,-128 L42,-128 C74,-112 84,-60 74,14 Z" fill="#e0f2fe"/>
+      <path d="M-74,14 C-84,-60 -74,-112 -42,-128 L-22,-128 L-30,14 Z" fill="#1e3a5f"/>
+      <path d="M74,14 C84,-60 74,-112 42,-128 L22,-128 L30,14 Z" fill="#1e3a5f"/>
+      <path d="M-40,-70 L40,-70 L48,14 L-48,14 Z" fill="#ffffff"/>
+      <rect x="10" y="-52" width="26" height="22" rx="4" fill="#e2e8f0"/>
+      <rect x="24" y="-66" width="5" height="22" rx="2" fill="#2563eb"/>
+      <path d="M-14,-128 L0,-108 L14,-128" fill="#cbd5e1"/>
+    </g>
+    <g id="dadHead">
+      <circle cx="-56" cy="4" r="12" fill="#c98a5e"/><circle cx="56" cy="4" r="12" fill="#c98a5e"/>
+      <path d="M-54,-6 q-6,-62 54,-62 q60,0 54,62 q-4,62 -54,62 q-50,0 -54,-62 z" fill="#d9976a"/>
+      <!-- do'ppi -->
+      <path d="M-52,-34 L-44,-84 Q0,-98 44,-84 L52,-34 Q0,-46 -52,-34 Z" fill="#111827"/>
+      <g fill="#f8fafc">
+        <path d="M-30,-48 q-6,-14 4,-24 q4,10 -4,24 z"/>
+        <path d="M-2,-50 q-6,-16 4,-28 q4,12 -4,28 z"/>
+        <path d="M26,-48 q-6,-14 4,-24 q4,10 -4,24 z"/>
+      </g>
+      <g id="dadEyeL"><ellipse cx="-21" cy="-4" rx="8" ry="10" fill="#1f2937"/></g>
+      <g id="dadEyeR"><ellipse cx="21" cy="-4" rx="8" ry="10" fill="#1f2937"/></g>
+      <rect id="dadBrowL" x="-36" y="-30" width="28" height="8" rx="4" fill="#3b2a1e"/>
+      <rect id="dadBrowR" x="8" y="-30" width="28" height="8" rx="4" fill="#3b2a1e"/>
+      <path d="M-4,4 q-6,16 4,18 q8,0 6,-4" stroke="#a8673f" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <ellipse id="dadMouth" cx="0" cy="38" rx="14" ry="4" fill="#6b1f1f"/>
+      <path id="dadSmile" d="M-16,34 q16,16 32,0" stroke="#6b1f1f" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <path d="M-30,30 q14,-14 30,-6 q16,-8 30,6 q-16,-2 -30,4 q-14,-6 -30,-4 z" fill="#3b2a1e"/>
+    </g>
+    <g id="dadArmR">
+      <line x1="0" y1="0" x2="0" y2="74" stroke="#e0f2fe" stroke-width="26" stroke-linecap="round"/>
+      <g id="dadElbowR" transform="translate(0,74)">
+        <line x1="0" y1="0" x2="0" y2="70" stroke="#d9976a" stroke-width="22" stroke-linecap="round"/>
+        <circle cx="0" cy="74" r="16" fill="#e2a679"/>
+      </g>
+    </g>
+    <g id="dadArmL">
+      <line x1="0" y1="0" x2="0" y2="74" stroke="#e0f2fe" stroke-width="26" stroke-linecap="round"/>
+      <g id="dadElbowL" transform="translate(0,74)">
+        <line x1="0" y1="0" x2="0" y2="70" stroke="#d9976a" stroke-width="22" stroke-linecap="round"/>
+        <circle cx="0" cy="74" r="16" fill="#e2a679"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- prilavka -->
+  <g id="counter">
+    <rect x="740" y="700" width="800" height="42" rx="10" fill="#b07a45"/>
+    <rect x="760" y="742" width="760" height="270" fill="url(#gCounter)"/>
+    <rect x="790" y="780" width="200" height="190" rx="10" fill="#4a2c12" opacity="0.5"/>
+    <rect x="1040" y="780" width="200" height="190" rx="10" fill="#4a2c12" opacity="0.5"/>
+    <rect x="1290" y="780" width="200" height="190" rx="10" fill="#4a2c12" opacity="0.5"/>
+    <!-- prilavkadagi narsalar -->
+    <rect x="1400" y="640" width="120" height="62" rx="8" fill="#4b5563"/>
+    <rect x="1412" y="650" width="96" height="20" rx="4" fill="#a7f3d0"/>
+    <text x="1500" y="666" font-size="16" font-weight="700" fill="#065f46" text-anchor="end">0</text>
+    <rect x="1290" y="620" width="70" height="82" rx="10" fill="#fbbf24"/>
+    <rect x="1290" y="620" width="70" height="16" rx="8" fill="#d97706"/>
+  </g>
+
+  <!-- daftar (ochiq) -->
+  <g id="book" transform="translate(1150,700)">
+    <rect x="-100" y="-8" width="200" height="12" rx="4" fill="#7c2d12"/>
+    <path d="M-96,-6 L-2,-6 L-2,-30 L-88,-36 Z" fill="#fdf6e3" stroke="#c9b98f" stroke-width="2"/>
+    <path d="M96,-6 L2,-6 L2,-30 L88,-36 Z" fill="#fdf6e3" stroke="#c9b98f" stroke-width="2"/>
+    <g stroke="#94a3b8" stroke-width="2">
+      <line x1="-80" y1="-26" x2="-12" y2="-23"/><line x1="-82" y1="-17" x2="-12" y2="-15"/>
+      <line x1="12" y1="-23" x2="80" y2="-26"/><line x1="12" y1="-15" x2="82" y2="-17"/>
+    </g>
+    <path id="flipPage" d="M0,-6 L94,-6 L86,-36 L0,-30 Z" fill="#fffaf0" stroke="#c9b98f" stroke-width="2"/>
+  </g>
+
+  <!-- yopiq daftar (otish uchun) -->
+  <g id="bookClosed" opacity="0">
+    <rect x="-56" y="-38" width="112" height="76" rx="8" fill="#7c2d12"/>
+    <rect x="-48" y="-30" width="96" height="60" rx="5" fill="#9a3412"/>
+    <text x="0" y="8" font-size="20" font-weight="800" fill="#fde68a" text-anchor="middle">QARZ</text>
+  </g>
+
+  <!-- uchib yurgan varaqlar -->
+  <g id="papers"></g>
+
+  <!-- chelak -->
+  <g id="bin">
+    <path d="M-62,-150 L62,-150 L48,0 L-48,0 Z" fill="#64748b"/>
+    <rect x="-70" y="-162" width="140" height="18" rx="8" fill="#475569"/>
+    <g stroke="#475569" stroke-width="4"><line x1="-30" y1="-130" x2="-24" y2="-14"/><line x1="0" y1="-130" x2="0" y2="-14"/><line x1="30" y1="-130" x2="24" y2="-14"/></g>
+  </g>
+  <g id="puff" opacity="0"></g>
+
+  <!-- ovoz to'lqinlari (ota telefonga gapiradi) -->
+  <g id="voiceWaves" opacity="0" fill="none" stroke="#2563eb" stroke-width="6" stroke-linecap="round">
+    <path id="vw1" d=""/><path id="vw2" d=""/><path id="vw3" d=""/>
+  </g>
+
+  <!-- hayrat belgisi -->
+  <g id="qmark" opacity="0">
+    <text x="0" y="0" font-size="110" font-weight="900" fill="#dc2626" text-anchor="middle">?</text>
+  </g>
+
+  <!-- gap puffaklari (dunyo koordinatasida — personaj bilan birga suriladi) -->
+  <g id="bubbles"></g>
+</g>
+
+<!-- ══════════ EKRAN USTI: telefon interfeysi ══════════ -->
+<g id="ui">
+  <rect id="dim" x="0" y="0" width="1920" height="1080" fill="#0b1020" opacity="0"/>
+
+  <g id="phoneUI" opacity="0">
+    <rect x="1160" y="40" width="560" height="1000" rx="64" fill="#0f172a" stroke="#334155" stroke-width="6"/>
+    <g clip-path="url(#phoneClip)">
+      <rect x="1178" y="58" width="524" height="964" fill="#0b1220"/>
+      <!-- holat qatori -->
+      <text x="1222" y="96" font-size="22" font-weight="700" fill="#e2e8f0">18:42</text>
+      <rect x="1618" y="80" width="40" height="18" rx="4" fill="none" stroke="#e2e8f0" stroke-width="2"/>
+      <rect x="1621" y="83" width="28" height="12" rx="2" fill="#4ade80"/>
+      <rect x="1400" y="70" width="80" height="26" rx="13" fill="#000"/>
+      <!-- sarlavha -->
+      <rect x="1206" y="124" width="46" height="46" rx="12" fill="url(#gLogo)"/>
+      <text x="1229" y="157" font-size="28" font-weight="900" fill="#fff" text-anchor="middle">M</text>
+      <text x="1266" y="158" font-size="30" font-weight="800" fill="#f8fafc">MUHASIB</text>
+      <circle cx="1638" cy="147" r="7" fill="#22c55e"/>
+      <text x="1626" y="155" font-size="22" fill="#94a3b8" text-anchor="end">Sol</text>
+      <!-- hisob chizig'i -->
+      <g id="stats">
+        <g id="cellKassa">
+          <rect x="1196" y="190" width="158" height="104" rx="18" fill="#111c33" stroke="#1e293b" stroke-width="2"/>
+          <text x="1212" y="226" font-size="20" fill="#94a3b8">Kassa</text>
+          <text id="vKassa" x="1212" y="268" font-size="27" font-weight="800" fill="#f8fafc">3 450 000</text>
+        </g>
+        <g id="cellQarz">
+          <rect x="1362" y="190" width="158" height="104" rx="18" fill="#111c33" stroke="#1e293b" stroke-width="2"/>
+          <text x="1378" y="226" font-size="20" fill="#94a3b8">Qarzdorlar</text>
+          <text id="vQarz" x="1378" y="268" font-size="27" font-weight="800" fill="#f8fafc">0</text>
+        </g>
+        <g id="cellFoyda">
+          <rect x="1528" y="190" width="158" height="104" rx="18" fill="#111c33" stroke="#1e293b" stroke-width="2"/>
+          <text x="1544" y="226" font-size="20" fill="#94a3b8">Foyda</text>
+          <text id="vFoyda" x="1544" y="268" font-size="27" font-weight="800" fill="#4ade80">1 280 000</text>
+        </g>
+        <rect id="hiRing" x="1196" y="190" width="158" height="104" rx="18" fill="none" stroke="#facc15" stroke-width="5" opacity="0"/>
+      </g>
+
+      <!-- suhbat -->
+      <g id="welcome">
+        <text x="1206" y="372" font-size="25" fill="#cbd5e1">Assalomu alaykum!</text>
+        <text x="1206" y="408" font-size="25" fill="#cbd5e1">Nima yozib qo'yay?</text>
+      </g>
+      <g id="userMsg" opacity="0">
+        <rect x="1330" y="440" width="350" height="104" rx="26" fill="#2563eb"/>
+        <text id="um1" x="1354" y="484" font-size="25" font-weight="600" fill="#fff"></text>
+        <text id="um2" x="1354" y="520" font-size="25" font-weight="600" fill="#fff"></text>
+      </g>
+      <g id="typingDots" opacity="0">
+        <circle class="dot" cx="1222" cy="594" r="8" fill="#94a3b8"/>
+        <circle class="dot" cx="1248" cy="594" r="8" fill="#94a3b8"/>
+        <circle class="dot" cx="1274" cy="594" r="8" fill="#94a3b8"/>
+      </g>
+      <g id="reply" opacity="0">
+        <circle cx="1222" cy="594" r="16" fill="#22c55e"/>
+        <path d="M1214,594 l6,6 l11,-12" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="1248" y="603" font-size="26" font-weight="700" fill="#f8fafc">Yozib qo'ydim</text>
+        <g id="replyBody">
+          <rect x="1206" y="630" width="474" height="150" rx="18" fill="#0f1b33" stroke="#1e3a5f" stroke-width="2"/>
+          <text x="1228" y="672" font-size="23" fill="#94a3b8">Amal</text>
+          <text x="1660" y="672" font-size="23" font-weight="700" fill="#f8fafc" text-anchor="end">Qarz berdim</text>
+          <text x="1228" y="712" font-size="23" fill="#94a3b8">Kimga</text>
+          <text id="rWho" x="1660" y="712" font-size="23" font-weight="700" fill="#f8fafc" text-anchor="end">Alisher</text>
+          <text x="1228" y="752" font-size="23" fill="#94a3b8">Summa</text>
+          <text id="rSum" x="1660" y="752" font-size="23" font-weight="800" fill="#facc15" text-anchor="end">200 000 so'm</text>
+        </g>
+        <text id="rNote" x="1206" y="826" font-size="22" fill="#94a3b8">Kassa va qarzdorlar yangilandi.</text>
+      </g>
+
+      <!-- kompozitor -->
+      <rect x="1196" y="918" width="488" height="72" rx="36" fill="#111c33" stroke="#1e293b" stroke-width="2"/>
+      <text id="placeholder" x="1226" y="962" font-size="22" fill="#64748b">Yozing yoki gapiring…</text>
+      <text id="transcript" x="1226" y="962" font-size="22" font-weight="600" fill="#f8fafc"></text>
+      <g id="wave"></g>
+      <circle id="micPulse" cx="1642" cy="954" r="30" fill="#ef4444" opacity="0"/>
+      <circle id="micBtn" cx="1642" cy="954" r="26" fill="#2563eb"/>
+      <rect x="1635" y="938" width="14" height="22" rx="7" fill="#fff"/>
+      <path d="M1630,954 q12,16 24,0" stroke="#fff" stroke-width="3" fill="none"/>
+      <line x1="1642" y1="964" x2="1642" y2="972" stroke="#fff" stroke-width="3"/>
+    </g>
+  </g>
+
+  <!-- yakuniy ekran -->
+  <g id="outro" opacity="0">
+    <rect x="0" y="0" width="1920" height="1080" fill="#0b1020"/>
+    <g id="outroLogo">
+      <g transform="translate(790, 150) scale(0.7)">
+        <path d="M 100 130 L 100 380 L 145 380 L 145 200 L 100 130 Z" fill="url(#gLogo)"/>
+        <rect x="60" y="275" width="65" height="12" rx="6" fill="url(#gLogo)"/>
+        <circle cx="50" cy="281" r="7" fill="#38BDF8"/>
+        <rect x="75" y="305" width="50" height="10" rx="5" fill="url(#gLogo)" opacity="0.85"/>
+        <circle cx="65" cy="310" r="5" fill="#38BDF8" opacity="0.85"/>
+        <path d="M 145 200 L 256 340 L 320 250 L 270 200 L 256 220 L 180 130 Z" fill="url(#gLogo)"/>
+        <path d="M 367 250 L 367 380 L 412 380 L 412 180 Z" fill="#06B6D4"/>
+        <path d="M 185 340 L 390 120 L 340 120 L 340 85 L 445 85 L 445 190 L 410 190 L 410 140 L 215 355 Z" fill="#06B6D4"/>
+        <path d="M 230 315 L 390 155" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" opacity="0.75"/>
+        <path d="M 435 70 L 440 55 L 455 50 L 440 45 L 435 30 L 430 45 L 415 50 L 430 55 Z" fill="#FACC15"/>
+      </g>
+      <text x="960" y="520" font-size="104" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="8">MUHASIB</text>
+      <text id="outroSub" x="960" y="600" font-size="44" font-weight="700" fill="#facc15" text-anchor="middle"></text>
+    </g>
+    <g id="outroChips" opacity="0"></g>
+  </g>
+  <g id="sparks"></g>
+</g>
+</svg>
+
+<script>
+const $ = id => document.getElementById(id);
+const clamp = (v,a,b) => v<a?a:(v>b?b:v);
+const lerp  = (a,b,t) => a + (b-a)*t;
+const ease  = t => t<0 ? 0 : t>1 ? 1 : t*t*(3-2*t);
+const easeOut = t => 1-Math.pow(1-clamp(t,0,1),3);
+const seg = (t,t0,t1) => clamp((t-t0)/Math.max(0.0001,t1-t0),0,1);
+const T   = (g,tr) => g.setAttribute('transform',tr);
+const fmt = n => String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g,' ');
+
+/* ── vaqt jadvali (render paytida window.CONFIG bilan almashtiriladi) ──
+   lines: 0-ota, 1-Madina, 2-ota telefonga, 3-Madina, 4-ota, 5-yakuniy ovoz */
+let TL = {
+  duration: 40,
+  lines: [
+    {who:'dad', start:1.2,  dur:4.6},
+    {who:'mad', start:8.4,  dur:4.8},
+    {who:'dad', start:14.8, dur:2.6},
+    {who:'mad', start:19.8, dur:4.4},
+    {who:'dad', start:27.0, dur:3.0},
+    {who:'mad', start:31.6, dur:3.0}
+  ],
+  bubbles: [
+    ["Alisher qancha qarz edi?!", "Daftarning beti qani?"],
+    ["Dadajon, daftarni qo'ying!", "MUHASIBga gapiring."],
+    null,
+    ["Kassa, qarzdorlar, foyda —", "hammasi tepada!"],
+    ["Zo'r-ku! Endi bitta so'm", "ham yo'qolmaydi!"],
+    null
+  ],
+  transcript: "Alisherga ikki yuz ming qarz berdim.",
+  userMsg: ["Alisherga ikki yuz ming", "qarz berdim."],
+  who: "Alisher",
+  amount: 200000,
+  kassa0: 3450000,
+  foyda: 1280000,
+  outroSub: "Siz gapiring — u hisoblaydi",
+  chips: ["Qarzlar", "Kassa", "Ombor", "Foyda"]
+};
+window.DURATION = TL.duration;
+
+window.APPLY_CONFIG = function(){
+  if(!window.CONFIG) return;
+  TL = Object.assign(TL, window.CONFIG);
+  window.DURATION = TL.duration;
+  build();
+};
+
+/* ── gap puffagi: dumi personaj tomonga qaraydi ── */
+function bubblePath(w, h, tailX, tailDx){
+  const r = 26;
+  return `M${r},0 h${w-2*r} a${r},${r} 0 0 1 ${r},${r} v${h-2*r} a${r},${r} 0 0 1 -${r},${r}`
+       + ` H${tailX+34} l${tailDx},58 L${tailX-10},${h} H${r} a${r},${r} 0 0 1 -${r},-${r}`
+       + ` v-${h-2*r} a${r},${r} 0 0 1 ${r},-${r} z`;
+}
+
+/* puffak joylari (dunyo koordinatasi): [x, y, kenglik, dum x, dum siljishi] */
+const BUB_POS = {
+  0: [700, 250, 600, 360, 40],
+  1: [250, 290, 600, 380, 10],
+  3: [360, 210, 600, 230, -10],
+  4: [620, 230, 620, 380, 30]
+};
+
+function build(){
+  let bh = '';
+  TL.bubbles.forEach((b, i) => {
+    if(!b || !BUB_POS[i]) return;
+    const [, , w, tx, tdx] = BUB_POS[i];
+    const red = TL.lines[i] && TL.lines[i].who === 'dad' && i === 0;
+    bh += `<g id="bub${i}" opacity="0">
+      <path d="${bubblePath(w, 150, tx, tdx)}" fill="#ffffff" stroke="#cbd5e1" stroke-width="4"/>
+      <text x="${w/2}" y="64" font-size="40" font-weight="800" fill="${red?'#b91c1c':'#1f2937'}" text-anchor="middle">${b[0]||''}</text>
+      <text x="${w/2}" y="116" font-size="40" font-weight="700" fill="#1f2937" text-anchor="middle">${b[1]||''}</text>
+    </g>`;
+  });
+  $('bubbles').innerHTML = bh;
+
+  $('um1').textContent = TL.userMsg[0] || '';
+  $('um2').textContent = TL.userMsg[1] || '';
+  $('rWho').textContent = TL.who;
+  $('rSum').textContent = fmt(TL.amount) + " so'm";
+  $('outroSub').textContent = TL.outroSub;
+
+  let ch = '', cx = 960 - (TL.chips.length*220 - 20)/2;
+  const cols = ['#ef4444','#3b82f6','#f59e0b','#22c55e'];
+  TL.chips.forEach((c,i) => {
+    const x = cx + i*220;
+    ch += `<g class="chip"><rect x="${x}" y="660" width="200" height="64" rx="32" fill="none" stroke="${cols[i%4]}" stroke-width="4"/>
+           <text x="${x+100}" y="703" font-size="30" font-weight="700" fill="${cols[i%4]}" text-anchor="middle">${c}</text></g>`;
+  });
+  $('outroChips').innerHTML = ch;
+}
+
+/* ── bir marta chiziladigan bezaklar ── */
+(function decor(){
+  let s = '';
+  for(let y=900; y<1300; y+=46)
+    s += `<line x1="-600" y1="${y}" x2="2800" y2="${y}" stroke="#4a2c12" stroke-width="3"/>`;
+  for(let i=0;i<60;i++){
+    const y = 900 + (i%9)*46, x = -600 + ((i*397)%3400);
+    s += `<line x1="${x}" y1="${y}" x2="${x}" y2="${y+46}" stroke="#4a2c12" stroke-width="3"/>`;
+  }
+  $('planks').innerHTML = s;
+
+  let g = '';
+  const pal = ['#ef4444','#f59e0b','#22c55e','#3b82f6','#a855f7','#ec4899','#14b8a6'];
+  [300, 470].forEach((y, r) => {
+    for(let i=0;i<13;i++){
+      const x = 620 + i*66, h = 70 + ((i*7+r*3)%4)*18, c = pal[(i+r*2)%pal.length];
+      if(i%3===1){                                     /* banka */
+        g += `<rect x="${x}" y="${y-h+10}" width="48" height="${h-10}" rx="10" fill="${c}" opacity="0.9"/>
+              <rect x="${x+4}" y="${y-h+4}" width="40" height="14" rx="5" fill="#f8fafc"/>`;
+      } else {                                         /* quti */
+        g += `<rect x="${x}" y="${y-h}" width="54" height="${h}" rx="6" fill="${c}"/>
+              <rect x="${x+8}" y="${y-h+16}" width="38" height="12" rx="4" fill="#fff" opacity="0.75"/>`;
+      }
+    }
+  });
+  $('goods').innerHTML = g;
+
+  let p = '';
+  for(let i=0;i<8;i++)
+    p += `<g class="paper" opacity="0"><rect x="-34" y="-24" width="68" height="48" rx="3" fill="#fffaf0" stroke="#c9b98f" stroke-width="2"/>
+          <line x1="-24" y1="-10" x2="24" y2="-10" stroke="#94a3b8" stroke-width="2"/>
+          <line x1="-24" y1="2" x2="20" y2="2" stroke="#94a3b8" stroke-width="2"/>
+          <line x1="-24" y1="14" x2="10" y2="14" stroke="#94a3b8" stroke-width="2"/></g>`;
+  $('papers').innerHTML = p;
+
+  let w = '';
+  for(let i=0;i<14;i++) w += `<rect class="wbar" x="${1226 + i*20}" y="944" width="10" height="20" rx="5" fill="#60a5fa"/>`;
+  $('wave').innerHTML = w;
+
+  let pf = '';
+  for(let i=0;i<10;i++) pf += `<circle class="pf" r="${10+(i%3)*5}" fill="#e2e8f0"/>`;
+  $('puff').innerHTML = pf;
+
+  let sp = '';
+  for(let i=0;i<30;i++)
+    sp += `<circle class="spark" r="${3+(i%4)}" fill="${['#3b82f6','#ef4444','#facc15','#22c55e'][i%4]}" opacity="0"/>`;
+  $('sparks').innerHTML = sp;
+  build();
+})();
+const PAPERS = Array.from(document.querySelectorAll('.paper'));
+const WBARS  = Array.from(document.querySelectorAll('.wbar'));
+const PUFFS  = Array.from(document.querySelectorAll('.pf'));
+const SPARKS = Array.from(document.querySelectorAll('.spark'));
+const DOTS   = Array.from(document.querySelectorAll('.dot'));
+
+/* ── rig ── */
+function poseLimb(sh, el, x, up, a1, a2, L1){
+  T(sh, `translate(${x},${up}) rotate(${a1.toFixed(2)})`);
+  T(el, `translate(0,${L1}) rotate(${a2.toFixed(2)})`);
+}
+/* kaft koordinatasi: SVG rotate(θ) (0,L) → (-L·sinθ, L·cosθ) */
+function limbTip(sx, sy, a1, a2, l1, l2){
+  const r1 = a1*Math.PI/180, r2 = (a1+a2)*Math.PI/180;
+  return [sx - l1*Math.sin(r1) - l2*Math.sin(r2), sy + l1*Math.cos(r1) + l2*Math.cos(r2)];
+}
+function mouthTalk(m, s, on, t, speed, base){
+  if(on){
+    const o = 0.5 + 0.5*Math.sin(t*(speed||24)) * (0.6 + 0.4*Math.sin(t*7.3));
+    m.setAttribute('ry', (3 + o*(base||10)).toFixed(2));
+    m.setAttribute('opacity', 1); s.setAttribute('opacity', 0);
+  } else { m.setAttribute('opacity', 0); s.setAttribute('opacity', 1); }
+}
+function blink(eL, eR, t, phase){
+  const p = ((t + (phase||0)) % 3.6);
+  const k = p < 0.14 ? Math.abs(Math.cos(p/0.14*Math.PI/2)) : 1;
+  const sy = clamp(k, 0.08, 1);
+  T(eL, `translate(0,${(1-sy)*2}) scale(1,${sy})`);
+  T(eR, `translate(0,${(1-sy)*2}) scale(1,${sy})`);
+}
+
+/* ── sahna vaqtlari ── */
+function beats(){
+  const L = TL.lines.map(l => [l.start, l.start + l.dur]);
+  const send = L[2][1] + 0.25;
+  const outro = L[4][1] + 0.5;
+  return {
+    L, send,
+    walk:     [L[0][1] - 0.6, L[1][0] - 0.3],
+    phoneIn:  [L[1][1] + 0.1, L[1][1] + 1.2],
+    typing:   [send + 0.35, send + 1.3],
+    reply:    send + 1.3,
+    count:    [send + 1.5, send + 2.6],
+    phoneOut: [L[3][1] + 0.3, L[3][1] + 1.2],
+    grab:     [L[3][1] + 0.6, L[3][1] + 1.3],
+    lift:     [L[3][1] + 1.3, L[3][1] + 1.9],
+    fly:      [L[3][1] + 1.9, L[3][1] + 2.8],
+    outro
+  };
+}
+
+/* kamera kalit kadrlari: markaz (cx,cy) va masshtab s */
+function camKeys(B){
+  return [
+    [0,                 960, 540, 1.00],
+    [1.0,              1000, 560, 1.14],
+    [B.walk[0],        1000, 560, 1.14],
+    [B.walk[0] + 1.4,   860, 540, 1.00],
+    [B.L[1][1],         860, 540, 1.00],
+    [B.phoneIn[1],     1270, 540, 1.00],
+    [B.phoneOut[0],    1270, 540, 1.00],
+    [B.phoneOut[1],    1120, 540, 1.00],
+    [B.fly[1] + 0.3,   1120, 540, 1.00],
+    [B.L[4][0] + 0.2,  1000, 560, 1.10]
+  ];
+}
+function camAt(t, keys){
+  if(t <= keys[0][0]) return keys[0].slice(1);
+  for(let i=1;i<keys.length;i++){
+    if(t <= keys[i][0]){
+      const a = keys[i-1], b = keys[i], k = ease(seg(t, a[0], b[0]));
+      return [lerp(a[1],b[1],k), lerp(a[2],b[2],k), lerp(a[3],b[3],k)];
+    }
+  }
+  return keys[keys.length-1].slice(1);
+}
+
+/* ══════════════ ASOSIY: t soniyaga mos kadr ══════════════ */
+window.SEEK = function(t){
+  const B = beats(), L = B.L;
+  const FLOOR = 880;
+  const talk = i => t >= L[i][0] && t <= L[i][1];
+
+  /* ── chiroq tebranadi ── */
+  T($('lamp'), `translate(1060,0) rotate(${(Math.sin(t*1.4)*3).toFixed(2)})`);
+  $('sun').setAttribute('cy', (380 + t*0.6).toFixed(1));
+
+  /* ════ OTA ════ */
+  const DX = 1010;
+  let lean = 0, hop = 0;
+  if(talk(2)) lean = -7 * ease(seg(t, L[2][0]-0.4, L[2][0]));          /* telefonga engashadi */
+  if(t >= L[4][0]-0.3 && t <= L[4][1]) hop = Math.abs(Math.sin((t-L[4][0]+0.3)*6.5))*22*(1-seg(t, L[4][1]-0.6, L[4][1]));
+  const breathe = Math.sin(t*2.1)*2;
+  T($('dad'), `translate(${DX},${(FLOOR - hop).toFixed(1)}) rotate(${lean.toFixed(2)},0,-200)`);
+  T($('dadBody'), `translate(0,${(-190 + breathe*0.3).toFixed(2)}) scale(1,${(1+breathe*0.004).toFixed(4)})`);
+
+  let headRot = Math.sin(t*0.9)*2, headY = -372;
+  if(talk(0)) headRot = Math.sin(t*3.2)*7;                                /* bosh chayqaydi */
+  T($('dadHead'), `translate(0,${headY}) rotate(${headRot.toFixed(2)})`);
+
+  /* qo'llar: R — daftar tomondagi (o'ng), L — chap */
+  let lA1 = 12, lA2 = 8, rA1 = -12, rA2 = -8;
+  const flipping = t < L[0][1] + 0.4;
+  if(flipping){
+    const f = Math.sin(t*9);                                              /* varaq aylantiradi */
+    rA1 = -38 - f*12; rA2 = -6 + f*10;
+    lA1 = 150 - Math.sin(t*14)*5; lA2 = 72 - Math.sin(t*16)*12;           /* boshini qashiydi */
+    const settle = ease(seg(t, L[0][1] - 0.2, L[0][1] + 0.4));
+    lA1 = lerp(lA1, 12, settle); lA2 = lerp(lA2, 8, settle);
+    rA1 = lerp(rA1, -12, settle); rA2 = lerp(rA2, -8, settle);
+  }
+  if(talk(2)){                                                             /* telefon tomonga imo qiladi */
+    const w = Math.sin((t-L[2][0])*5);
+    lA1 = 58 + w*10; lA2 = -36 - w*12;
+  }
+  /* eski daftarni oladi → boshi ustiga ko'taradi → chelak tomonga otadi */
+  const THROW = [-105, -12];
+  if(t >= B.grab[0] && t < B.fly[1] + 0.6){
+    const g  = ease(seg(t, B.grab[0], B.grab[1]));
+    const l  = ease(seg(t, B.lift[0], B.lift[1]));
+    const th = easeOut(seg(t, B.fly[0], B.fly[0] + 0.3));
+    const back = ease(seg(t, B.fly[0] + 0.4, B.fly[1] + 0.6));
+    rA1 = lerp(-12, -40, g);  rA2 = lerp(-8, -6, g);
+    rA1 = lerp(rA1, -168, l); rA2 = lerp(rA2, 12, l);
+    rA1 = lerp(rA1, THROW[0], th); rA2 = lerp(rA2, THROW[1], th);
+    rA1 = lerp(rA1, -12, back); rA2 = lerp(rA2, -8, back);
+  }
+  if(t >= L[4][0] - 0.3 && t <= L[4][1] + 0.4){                            /* xursandchilik */
+    const j = ease(seg(t, L[4][0]-0.3, L[4][0]+0.2)) * (1 - ease(seg(t, L[4][1]-0.1, L[4][1]+0.4)));
+    const w = Math.sin((t-L[4][0])*8);
+    lA1 = lerp(lA1, 150 + w*10, j); lA2 = lerp(lA2, 20, j);
+    rA1 = lerp(rA1, -150 - w*10, j); rA2 = lerp(rA2, -20, j);
+  }
+  poseLimb($('dadArmL'), $('dadElbowL'), -62, -312, lA1, lA2, 74);
+  poseLimb($('dadArmR'), $('dadElbowR'),  62, -312, rA1, rA2, 74);
+
+  const dadTalking = talk(0) || talk(2) || talk(4);
+  mouthTalk($('dadMouth'), $('dadSmile'), dadTalking, t, 25, 11);
+  blink($('dadEyeL'), $('dadEyeR'), t, 0.4);
+  const frown = t < B.phoneIn[0] ? 1 - seg(t, L[1][0], L[1][1]) : 0;      /* qovog'i ochiladi */
+  const joy = talk(4) ? -6 : 0;
+  T($('dadBrowL'), `translate(0,${joy}) rotate(${(frown*14).toFixed(1)},-22,-26)`);
+  T($('dadBrowR'), `translate(0,${joy}) rotate(${(-frown*14).toFixed(1)},22,-26)`);
+
+  /* ── daftar varag'i ── */
+  const fp = flipping && t < L[0][1] - 0.2 ? Math.cos(t*4.5*Math.PI) : 1;
+  T($('flipPage'), `scale(${fp.toFixed(3)},1)`);
+  $('flipPage').setAttribute('opacity', flipping ? 1 : 0);
+
+  /* yopiq daftar qo'lda → havoda → chelakda */
+  const BIN = [1660, FLOOR];
+  T($('bin'), `translate(${BIN[0]},${BIN[1]}) rotate(${(Math.sin((t-B.fly[1])*18)*6*(t>B.fly[1]?Math.exp(-(t-B.fly[1])*3.5):0)).toFixed(2)},0,0)`);
+  const shR = [DX + 62, FLOOR - hop - 312];
+  const [hx, hy] = limbTip(shR[0], shR[1], rA1, rA2, 74, 74);
+  const bookOpen = t < B.grab[1];
+  $('book').setAttribute('opacity', bookOpen ? 1 : 0);
+  let bcx = hx, bcy = hy, brot = rA1 + rA2 + 180, bop = 0;
+  if(!bookOpen){
+    bop = 1;
+    if(t >= B.fly[0] + 0.3){                    /* qo'l to'liq cho'zilganda qo'yib yuboradi */
+      const k = seg(t, B.fly[0] + 0.3, B.fly[1]);
+      const rel = limbTip(shR[0], FLOOR - 312, THROW[0], THROW[1], 74, 74);
+      bcx = lerp(rel[0], BIN[0], k);
+      bcy = lerp(rel[1], BIN[1] - 150, k) - Math.sin(k*Math.PI)*260;
+      brot = THROW[0] + THROW[1] + 180 + k*560;
+      if(k >= 1) bop = 0;
+    }
+  }
+  $('bookClosed').setAttribute('opacity', bop);
+  T($('bookClosed'), `translate(${bcx.toFixed(1)},${bcy.toFixed(1)}) rotate(${brot.toFixed(1)})`);
+
+  const pk = seg(t, B.fly[1], B.fly[1] + 0.8);
+  $('puff').setAttribute('opacity', pk > 0 && pk < 1 ? (1-pk).toFixed(3) : 0);
+  PUFFS.forEach((p,i) => {
+    const a = -Math.PI*(0.15 + 0.7*i/(PUFFS.length-1));
+    p.setAttribute('cx', (BIN[0] + Math.cos(a)*(30 + pk*90)).toFixed(1));
+    p.setAttribute('cy', (BIN[1] - 160 + Math.sin(a)*(20 + pk*70)).toFixed(1));
+  });
+
+  /* ── uchib yurgan varaqlar ── */
+  PAPERS.forEach((p,i) => {
+    const t0 = 1.0 + i*0.55, t1 = t0 + 2.4;
+    if(t < t0){ p.setAttribute('opacity', 0); return; }
+    const k = seg(t, t0, t1);
+    const x0 = 1150 + (i%2?40:-40), y0 = 680;
+    const onCounter = i%3 === 0;
+    const xr = onCounter ? 800 + i*55 : 640 + ((i*173)%820);
+    const yr = onCounter ? 690 : 1030 + (i%3)*12;
+    const x = lerp(x0, xr, k) + Math.sin(k*Math.PI*3 + i)*40*(1-k);
+    const y = lerp(y0, yr, ease(k)) - Math.sin(k*Math.PI)*(260 + (i%4)*50);
+    const rot = k < 1 ? Math.sin(t*4 + i)*35*(1-k) + i*13 : i*13 % 40 - 20;
+    p.setAttribute('opacity', 1);
+    T(p, `translate(${x.toFixed(1)},${y.toFixed(1)}) rotate(${rot.toFixed(1)}) scale(${onCounter?0.8:1},${k>=1?0.55:1})`);
+  });
+
+  /* savol belgisi */
+  const qk = seg(t, L[0][0]+0.3, L[0][0]+0.7) - seg(t, L[0][1]-0.4, L[0][1]);
+  $('qmark').setAttribute('opacity', clamp(qk,0,1).toFixed(3));
+  T($('qmark'), `translate(${DX + 120},${(FLOOR - 470 + Math.sin(t*6)*8).toFixed(1)}) rotate(${(Math.sin(t*5)*10).toFixed(1)}) scale(${(0.5+0.5*easeOut(clamp(qk,0,1))).toFixed(3)})`);
+
+  /* ════ MADINA ════ */
+  const MX = 600;
+  let mx, walking = false;
+  if(t < B.walk[0]) mx = -160;
+  else if(t <= B.walk[1]){ mx = lerp(-160, MX, ease(seg(t, B.walk[0], B.walk[1]))); walking = true; }
+  else mx = MX;
+  const ph = mx * 0.062;
+  const stepA = walking ? Math.sin(ph) : 0;
+  const bob = walking ? Math.abs(Math.sin(ph))*6 : 0;
+  const mHop = (t >= L[4][0] && t <= L[4][0] + 0.9) ? Math.abs(Math.sin((t-L[4][0])*7))*24 : 0;
+  T($('mad'), `translate(${mx.toFixed(1)},${(FLOOR - bob - mHop).toFixed(1)})`);
+
+  const mKneeF = walking ? Math.max(0,-Math.sin(ph+0.7))*44 : 3;
+  const mKneeB = walking ? Math.max(0,-Math.sin(ph+0.7+Math.PI))*44 : 0;
+  poseLimb($('madLegF'), $('madKneeF'), 0, -176, walking ?  stepA*26 :  6, mKneeF, 88);
+  poseLimb($('madLegB'), $('madKneeB'), 0, -176, walking ? -stepA*26 : -8, mKneeB, 88);
+  T($('madBody'), `translate(0,-176)`);
+  const mHeadRot = walking ? stepA*2 : Math.sin(t*1.2)*2 + (talk(1)||talk(3) ? Math.sin(t*4)*3 : 0);
+  T($('madHead'), `translate(0,-338) rotate(${mHeadRot.toFixed(2)})`);
+  T($('madBraid'), `translate(-34,-350) rotate(${(8 + (walking ? -stepA*8 : Math.sin(t*1.6)*3)).toFixed(2)})`);
+
+  /* oldingi qo'l telefonni ushlaydi, orqadagisi bilan imo qiladi */
+  let fA1 = -stepA*26 - 18, fA2 = -60, bA1 = stepA*26, bA2 = 14;
+  if(!walking){ fA1 = -28; fA2 = -70; bA1 = 10; bA2 = 16; }
+  const show = ease(seg(t, L[1][0] + 0.8, L[1][0] + 1.6)) * (1 - ease(seg(t, B.phoneOut[0], B.phoneOut[1])));
+  fA1 = lerp(fA1, -78, show); fA2 = lerp(fA2, -16, show);
+  if(talk(1) || talk(3)){
+    const s = talk(1) ? L[1][0] : L[3][0];
+    const w = Math.sin((t-s)*5.2);
+    bA1 = -95 + w*20; bA2 = -30 - w*14;
+  }
+  if(t >= L[4][0] && t <= L[4][1]){                                       /* chapak */
+    const c = Math.abs(Math.sin((t-L[4][0])*9));
+    bA1 = -70 + c*14; bA2 = -40;
+  }
+  poseLimb($('madArmF'), $('madElbowF'), 0, -290, fA1, fA2, 66);
+  poseLimb($('madArmB'), $('madElbowB'), 0, -290, bA1, bA2, 66);
+  mouthTalk($('madMouth'), $('madSmile'), talk(1) || talk(3), t, 27, 9);
+  blink($('madEyeL'), $('madEyeR'), t, 1.9);
+
+  const [px, py] = limbTip(mx, FLOOR - bob - mHop - 290, fA1, fA2, 66, 68);
+  T($('handPhone'), `translate(${px.toFixed(1)},${py.toFixed(1)}) rotate(${(lerp(-10, 8, show)).toFixed(1)}) scale(${(1 + show*0.15).toFixed(3)})`);
+  $('handGlow').setAttribute('opacity', (show*(0.55 + 0.25*Math.sin(t*5))).toFixed(3));
+
+  /* ota telefonga gapirganda ovoz to'lqinlari */
+  const vk = talk(2) ? 1 : 0;
+  $('voiceWaves').setAttribute('opacity', vk);
+  if(vk){                                     /* og'izdan telefon tomonga */
+    const mouthY = FLOOR - 372 + 38;
+    ['vw1','vw2','vw3'].forEach((id,i) => {
+      const k = ((t*1.8 + i/3) % 1);
+      const r = 18 + k*36;
+      const cx = DX - 70 - k*150;
+      $(id).setAttribute('d', `M${cx.toFixed(1)},${(mouthY - r).toFixed(1)} q${(-r*0.8).toFixed(1)},${r.toFixed(1)} 0,${(2*r).toFixed(1)}`);
+      $(id).setAttribute('opacity', (1-k).toFixed(3));
+    });
+  }
+
+  /* ── eshik ── */
+  const dk = seg(t, B.walk[0] - 0.3, B.walk[0] + 0.6) - seg(t, B.walk[0] + 1.6, B.walk[0] + 2.4);
+  T($('doorPanel'), `translate(${(-clamp(dk,0,1)*120).toFixed(1)},0) scale(${(1-clamp(dk,0,1)*0.45).toFixed(3)},1)`);
+
+  /* ── kamera ── */
+  const [ccx, ccy, cs] = camAt(t, camKeys(B));
+  T($('cam'), `translate(${(960 - ccx*cs).toFixed(1)},${(540 - ccy*cs).toFixed(1)}) scale(${cs.toFixed(4)})`);
+
+  /* ── gap puffaklari ── */
+  TL.bubbles.forEach((b, i) => {
+    const el = $('bub'+i); if(!el) return;
+    const k = clamp(seg(t, L[i][0]-0.25, L[i][0]+0.2) - seg(t, L[i][1]-0.1, L[i][1]+0.35), 0, 1);
+    el.setAttribute('opacity', k.toFixed(3));
+    const [x, y, w] = BUB_POS[i];
+    T(el, `translate(${x + w/2},${y + 75}) scale(${(0.85 + 0.15*easeOut(k)).toFixed(3)}) translate(${-w/2},-75)`);
+  });
+
+  /* ════ TELEFON INTERFEYSI ════ */
+  const pin = ease(seg(t, B.phoneIn[0], B.phoneIn[1])) * (1 - ease(seg(t, B.phoneOut[0], B.phoneOut[1])));
+  $('phoneUI').setAttribute('opacity', clamp(pin*1.4, 0, 1).toFixed(3));
+  T($('phoneUI'), `translate(${((1-pin)*620).toFixed(1)},0)`);
+  $('dim').setAttribute('opacity', (pin*0.22).toFixed(3));
+
+  /* gapirayotganda: mikrofon qizil, to'lqin, matn so'zma-so'z chiqadi */
+  const rec = t >= L[2][0] - 0.2 && t <= B.send;
+  $('micBtn').setAttribute('fill', rec ? '#ef4444' : '#2563eb');
+  $('micPulse').setAttribute('opacity', rec ? (0.25 + 0.25*Math.sin(t*10)).toFixed(3) : 0);
+  $('micPulse').setAttribute('r', rec ? (32 + 6*Math.abs(Math.sin(t*5))).toFixed(1) : 30);
+  const tk = seg(t, L[2][0] + 0.1, L[2][1] - 0.1);
+  const typed = (t > L[2][0] && t < B.send) ? TL.transcript.slice(0, Math.ceil(TL.transcript.length * tk)) : '';
+  const shown = typed.length > 30 ? '…' + typed.slice(-29) : typed;
+  $('transcript').textContent = shown;
+  $('placeholder').setAttribute('opacity', rec || typed ? 0 : 1);
+  WBARS.forEach((b,i) => {
+    const on = rec && !typed;
+    const h = on ? 8 + Math.abs(Math.sin(t*11 + i*0.9))*30 : 0;
+    b.setAttribute('height', h.toFixed(1)); b.setAttribute('y', (954 - h/2).toFixed(1));
+  });
+
+  const sent = seg(t, B.send, B.send + 0.3);
+  $('userMsg').setAttribute('opacity', sent.toFixed(3));
+  T($('userMsg'), `translate(${((1-easeOut(sent))*40).toFixed(1)},${((1-easeOut(sent))*30).toFixed(1)})`);
+  $('welcome').setAttribute('opacity', (1 - sent*0.5).toFixed(3));
+
+  const typingOn = t >= B.typing[0] && t < B.typing[1];
+  $('typingDots').setAttribute('opacity', typingOn ? 1 : 0);
+  DOTS.forEach((d,i) => d.setAttribute('cy', (594 - (typingOn ? Math.max(0, Math.sin(t*10 - i*0.9))*10 : 0)).toFixed(1)));
+
+  const rk = seg(t, B.reply, B.reply + 0.35);
+  $('reply').setAttribute('opacity', rk.toFixed(3));
+  T($('reply'), `translate(0,${((1-easeOut(rk))*24).toFixed(1)})`);
+
+  /* raqamlar aylanadi: kassadan qarz chiqdi, qarzdorlarga qo'shildi */
+  const ck = easeOut(seg(t, B.count[0], B.count[1]));
+  $('vKassa').textContent = fmt(lerp(TL.kassa0, TL.kassa0 - TL.amount, ck));
+  $('vQarz').textContent  = fmt(lerp(0, TL.amount, ck));
+  $('vFoyda').textContent = fmt(TL.foyda);
+  const flash = ck > 0 && ck < 1 ? 1 : 0;
+  $('vKassa').setAttribute('fill', flash ? '#fca5a5' : '#f8fafc');
+  $('vQarz').setAttribute('fill', flash ? '#facc15' : '#f8fafc');
+
+  /* Madina sanab o'tadi: kassa → qarzdorlar → foyda */
+  if(talk(3)){
+    const q = seg(t, L[3][0], L[3][1]);
+    const idx = q < 0.3 ? 0 : q < 0.6 ? 1 : 2;
+    $('hiRing').setAttribute('x', 1196 + idx*166);
+    $('hiRing').setAttribute('opacity', (0.6 + 0.4*Math.sin(t*8)).toFixed(3));
+  } else $('hiRing').setAttribute('opacity', 0);
+
+  /* ════ YAKUN ════ */
+  const ok = ease(seg(t, B.outro, B.outro + 0.7));
+  $('outro').setAttribute('opacity', ok.toFixed(3));
+  T($('outroLogo'), `translate(0,${((1-ok)*40).toFixed(1)})`);
+  const chk = seg(t, B.outro + 0.9, B.outro + 1.8);
+  $('outroChips').setAttribute('opacity', chk.toFixed(3));
+  T($('outroChips'), `translate(0,${((1-easeOut(chk))*30).toFixed(1)})`);
+
+  SPARKS.forEach((s,i) => {
+    const st = B.outro + 0.3 + (i%15)*0.05;
+    const k = seg(t, st, st + 1.7);
+    if(k <= 0 || k >= 1 || ok < 0.2){ s.setAttribute('opacity', 0); return; }
+    const ang = (i/SPARKS.length)*Math.PI*2 + (i%3);
+    const rad = 80 + k*460;
+    s.setAttribute('cx', (960 + Math.cos(ang)*rad*1.3).toFixed(1));
+    s.setAttribute('cy', (420 + Math.sin(ang)*rad*0.7).toFixed(1));
+    s.setAttribute('opacity', ((1-k)*0.9).toFixed(3));
+  });
+};
+
+SEEK(0);
+</script>

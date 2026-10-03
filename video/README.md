@@ -11,6 +11,8 @@ ko'z pirpiraydi, kamera surilib zoom qiladi.
 | `render_anim.py` | Umumiy dvigatel: HTML → kadrlar → MP4 (headless Chrome + ffmpeg) |
 | `multik_energetik.html` | Sahna: bola do'konga kiradi, energetik oladi, kassada MUHASIB haqida so'raydi |
 | `make_multik.py` | To'liq quvur: o'zbek ovozlari (edge-tts) → vaqt jadvali → render |
+| `multik_qarz_daftar.html` | Sahna: ota qarz daftarida adashadi, qizi telefonda MUHASIB ni ko'rsatadi, ota gapiradi — qarz o'zi yoziladi |
+| `make_qarz_daftar.py` | "Qarz daftari" quvuri → `muhasib_qarz_daftar_multik.mp4` (`--tez`, `--ovozsiz`) |
 | `timeline.json` | Sahna vaqtlari (avtomatik yoziladi) |
 | `audio/` | Sintez qilingan ovozlar |
 
@@ -46,6 +48,9 @@ python3 video/render_anim.py \
 ```
 
 Tez ko'rish uchun: `--fps 12 --w 960 --h 540` (bir necha soniyada tayyor bo'ladi).
+
+Chrome boshqa joyda bo'lsa (masalan Linux'dagi Chromium) yo'lini `CHROME`
+muhit o'zgaruvchisi bilan bering: `CHROME=/yo'l/chrome python3 video/render_anim.py ...`
 
 ## O'zbek ovozi
 
